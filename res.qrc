@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/Redo.png</file>
+        <file>res/Undo.png</file>
+        <file>res/twitter.png</file>
+        <file>res/ImageViewer_zh_CN.qm</file>
+        <file>res/qt_zh_CN.qm</file>
+        <file>res/Info.png</file>
+        <file>res/Play.png</file>
+        <file>res/Stop.png</file>
+    </qresource>
+</RCC>
