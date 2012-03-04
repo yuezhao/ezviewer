@@ -23,6 +23,13 @@
 #include "imageviewer.h"
 #include <QtDebug>
 
+//!    paste()
+//    const QMimeData *mimeData = QApplication::clipboard()->mimeData();
+//    if (mimeData->hasImage())
+//        pixmap = qvariant_cast<QPixmap>(mimeData->imageData());
+//    update();
+
+
 ImageViewer::ImageViewer(QWidget *parent)
     : QWidget(parent)
 {
@@ -34,32 +41,6 @@ ImageViewer::ImageViewer(QWidget *parent)
 
     setAcceptDrops(true);   //! !!
     setMinimumSize(MIN_SIZE);
-
-//    QStyle *st = qApp->style();
-//    QPushButton *button = new QPushButton(this);
-//    button->setText("Just test");
-//    button->setIcon(st->standardIcon(QStyle::SP_DialogCloseButton).pixmap(20));
-//    button->setMask(QBitmap(st->standardIcon(QStyle::SP_DialogCloseButton).pixmap(20)));
-
-//    QWidget *button = new QWidget(this);
-//    button->resize(100, 100);
-//    (new QPushButton(button))->setText("Yaya");
-//    button->move(20, 20);
-//    QPalette pal = button->palette();
-//         pal.setColor(QPalette::Background, QColor(100,100,100,50));
-//         button->setPalette(pal);
-//         button->setAutoFillBackground(true );
-//         button->setAttribute(Qt::WA_OpaquePaintEvent,true);
-
-//    button->setAttribute(Qt::WA_TranslucentBackground, true);
-//    button->show();
-//    button->setWindowOpacity(0.5);
-//    button->setToolTip("click to close");
-
-//    setAutoFillBackground(true);
-//    QPalette pal(palette());
-//    pal.setBrush(QPalette::Window, QBrush(BG_GREEN));
-//    setPalette(pal);
 }
 
 ImageViewer::~ImageViewer()
@@ -164,15 +145,16 @@ void ImageViewer::loadImage(const QFileInfo &fileInfo)
 
     QImageReader reader(filePath);
     reader.setDecideFormatFromContent(true);
-//    qDebug() << "reader.format(): " << reader.format();
+    format = reader.format();
+    frameCount = reader.imageCount();
 
-    if(reader.format() == "gif"){
+    if(format == "gif"){
         movie = new QMovie(filePath);
         if(movie->isValid()){
             if(movie->state() == QMovie::NotRunning)
                 movie->start();
             image = movie->currentImage();
-            if(reader.imageCount() != 1)
+            if(frameCount != 1)
                 connect(movie, SIGNAL(updated(QRect)), SLOT(updatePixmap()));
             state = FilePicture;
         }else{//cannot read image, so delete
@@ -181,11 +163,11 @@ void ImageViewer::loadImage(const QFileInfo &fileInfo)
     }
 
     if(!movie){
-        if(reader.format() == "ico"){//! is ico image has the same height and width?
+        if(format == "ico"){//! is ico image has the same height and width?
             reader.read(&image);
             int maxIndex = 0;
             int maxWidth = image.width();
-            for(int i=1; i < reader.imageCount(); ++i){
+            for(int i=1; i < frameCount; ++i){
                 if(!reader.jumpToNextImage())
                     break;
                 reader.read(&image);
@@ -203,6 +185,8 @@ void ImageViewer::loadImage(const QFileInfo &fileInfo)
             state = FileNoPicture;
             image = QImage();   ///
         }
+    }else if(format == "gif" && frameCount == 1){
+        SafeDelete(movie);
     }
 
     rotate = 0;
@@ -348,12 +332,6 @@ void ImageViewer::mirrored(bool horizontal, bool vertical)
 
 void ImageViewer::copyToClipboard()
 {
-//!    paste()
-//    const QMimeData *mimeData = QApplication::clipboard()->mimeData();
-//    if (mimeData->hasImage())
-//        pixmap = qvariant_cast<QPixmap>(mimeData->imageData());
-//    update();
-
     QApplication::clipboard()->setImage(image);
 }
 
@@ -637,8 +615,6 @@ QString ImageViewer::attributeString()
     if(state == NoFileNoPicture) return QString::null;    //
 
     QString info;
-    QImageReader reader(filePath);  //! if(state == PictureNoFile)???
-    reader.setDecideFormatFromContent(true);
     QFileInfo fileInfo(filePath);
 
     if(fileInfo.exists()){
@@ -660,8 +636,8 @@ QString ImageViewer::attributeString()
                 .arg(fileInfo.lastModified().toString(timeFormat));
         info += tr("Last Read: %1")
                 .arg(fileInfo.lastRead().toString(timeFormat));
-        if(!reader.format().isEmpty())
-            info += tr("<br>Image Format: %1").arg(QString(reader.format()));
+        if(!format.isEmpty())
+            info += tr("<br>Image Format: %1").arg(format);
     }
 
     if(!image.isNull()){
@@ -697,8 +673,8 @@ QString ImageViewer::attributeString()
 
         info += tr("Size: %1 x %2 (%3)<br>")
                 .arg(image.width()).arg(image.height()).arg(ratioStr);
-        if(fileInfo.exists() && reader.imageCount() != 1)
-            info += tr("Frame Count: %1<br>").arg(reader.imageCount());
+        if(fileInfo.exists() && frameCount != 1)
+            info += tr("Frame Count: %1<br>").arg(frameCount);
         info += tr("Current Scale: %1%").arg(scale * 100, 0, 'g', 3);
     }
 

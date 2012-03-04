@@ -118,11 +118,14 @@ private:
 
 private:
     ImageState state;
-    QImage image;
-    QMovie *movie;
     int antialiasMode;
     QColor bgColor;
     bool selfAdaptive;
+
+    QImage image;
+    QMovie *movie;
+    QString format;
+    int frameCount;
 
     QPointF topLeft;   //
     qreal scale;

@@ -24,6 +24,7 @@
 #include <QtGui>
 
 #include <QtDebug>
+#include "floatframe.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -40,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    statusBar()->showMessage(tr("Status Bar"));
 
-//!    setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
+//!    setWindowFlags(Qt::Window | Qt::CustomizeWindowHint); //!
     //Qt::FramelessWindowHint | Qt::WindowTitleHint);
 //    setMinimumSize(150, 100);
 
@@ -55,6 +56,45 @@ MainWindow::MainWindow(QWidget *parent) :
     setMyWindowTitle();
     setWindowIcon(QIcon(":/res/twitter.png"));
     setAttribute(Qt::WA_DeleteOnClose); //! !!!
+
+    initTitleButton();
+}
+
+void MainWindow::initTitleButton() //! QAction????
+{
+    titleButtonFF = new FloatFrame(this);
+    titleButtonFF->resize(120, 40);
+    titleButtonFF->move(width() - 120, 0);
+    connect(titleButtonFF, SIGNAL(showContextMenu(QPoint)),
+            SLOT(showContextMenu(QPoint)));
+
+    QStyle *st = qApp->style();
+
+    QPushButton *minButton = new QPushButton(titleButtonFF);
+    minButton->setIcon(st->standardIcon(QStyle::SP_TitleBarMinButton));
+    minButton->setFlat(true);
+    minButton->setToolTip(tr("Minimize"));
+    connect(minButton, SIGNAL(clicked()), SLOT(showMinimized()));
+
+    QPushButton *closeButton = new QPushButton(titleButtonFF);
+    closeButton->setIcon(st->standardIcon(QStyle::SP_DialogCloseButton));
+    closeButton->setFlat(true);
+    closeButton->setToolTip(tr("Close"));
+    connect(closeButton, SIGNAL(clicked()), SLOT(close()));
+
+    QHBoxLayout *hlayout = new QHBoxLayout(titleButtonFF);
+    hlayout->addWidget(minButton);
+    hlayout->addWidget(closeButton);
+    titleButtonFF->setLayout(hlayout);
+
+    titleButtonFF->addWidget(minButton);
+    titleButtonFF->addWidget(closeButton);
+}
+
+void MainWindow::resizeEvent(QResizeEvent *e)
+{
+    titleButtonFF->move(width() - 120, 0);
+    QWidget::resizeEvent(e);
 }
 
 void MainWindow::about()

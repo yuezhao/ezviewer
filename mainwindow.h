@@ -25,6 +25,7 @@
 
 #include "imageviewer.h"
 
+class FloatFrame;
 class QMenu;
 class QAction;
 class MainWindow : public QMainWindow
@@ -46,6 +47,7 @@ public slots:
 
 protected slots:
     void keyPressEvent(QKeyEvent *e);
+    void resizeEvent ( QResizeEvent * event );
 
     void moveWindow(const QPoint &change) { move(pos() + change); }
     void resizeWindow(const QSize &size)  { resize(size); }
@@ -74,6 +76,7 @@ protected slots:
 
 private:
     void initContextMenu();
+    void initTitleButton();
     void openFile(const QString &file) { viewer->openFile(file); }
 
 private:
@@ -81,6 +84,8 @@ private:
     bool WasMaximized;
     QTimer *slideTimer;
     int slideInterval;//msec
+
+    FloatFrame *titleButtonFF;
 
     QMenu *contextMenu;
     QAction *openAction;

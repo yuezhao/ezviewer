@@ -17,12 +17,12 @@ HEADERS       = imageviewer.h \
     mainwindow.h \
     settingwidget.h \
     global.h \
-    floatmanager.h
+    floatframe.h
 SOURCES       = imageviewer.cpp \
                 main.cpp \
     mainwindow.cpp \
     settingwidget.cpp \
-    floatmanager.cpp
+    floatframe.cpp
 
 RESOURCES += \
     res.qrc
