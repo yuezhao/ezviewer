@@ -41,9 +41,6 @@ MainWindow::MainWindow(QWidget *parent) :
     setCentralWidget(viewer);
 
 //    statusBar()->showMessage(tr("Status Bar"));
-
-    setWindowFlags(Qt::Window | Qt::CustomizeWindowHint); //!
-    //Qt::FramelessWindowHint | Qt::WindowTitleHint);
 //    setMinimumSize(150, 100);
 
     connect(viewer, SIGNAL(fileNameChange(QString)), SLOT(setMyWindowTitle(QString)));
@@ -62,6 +59,21 @@ MainWindow::MainWindow(QWidget *parent) :
     setAttribute(Qt::WA_DeleteOnClose); //! !!!
 }
 
+void MainWindow::changeUseTitleBar(bool enable)
+{
+    bool visible = isVisible();
+    if(enable){
+        setWindowFlags(Qt::Window);
+        titleFrame->hide();
+    }else{
+        setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
+        titleFrame->show();
+    }
+
+    if(visible)
+        show(); ///
+}
+
 void MainWindow::initTitleBar()
 {
     titleFrame = new FloatFrame(this);
@@ -73,6 +85,7 @@ void MainWindow::initTitleBar()
             SLOT(changeFullScreen()));
     connect(titleFrame, SIGNAL(siteChange(QPoint)),
             SLOT(moveWindow(QPoint)));
+    connect(titleFrame, SIGNAL(mouseLeave()), SLOT(setFocus()));  ///
 
     titleLabel = new QLabel(titleFrame);
     titleLabel->setAlignment(Qt::AlignCenter);
@@ -118,6 +131,7 @@ void MainWindow::initButtomBar()
             SLOT(changeFullScreen()));
     connect(buttomFrame, SIGNAL(siteChange(QPoint)),
             SLOT(moveWindow(QPoint)));
+    connect(buttomFrame, SIGNAL(mouseLeave()), SLOT(setFocus()));  ///
 
     contralBar = new ContralBar(buttomFrame);
     buttomFrame->addWidget(contralBar);
@@ -200,7 +214,10 @@ void MainWindow::openFile()
 }
 
 MainWindow *MainWindow::creatMainWindow(int sizeMode, int antialiasMode,
-            bool enableBgColor, const QColor &bgColor, int timerInterval)
+                                        bool enableBgColor,
+                                        const QColor &bgColor,
+                                        int timerInterval,
+                                        bool useTitleBar)
 {
     MainWindow *window = new MainWindow;
     window->changeAntialiasMode(antialiasMode);
@@ -208,6 +225,7 @@ MainWindow *MainWindow::creatMainWindow(int sizeMode, int antialiasMode,
         window->changeBgColor(bgColor);
     window->changeTimerInterval(timerInterval);
     window->enableSelfAdaptive(sizeMode == 3);
+    window->changeUseTitleBar(useTitleBar); //
     switch(sizeMode){
     case 2:
         window->showFullScreen();
@@ -235,6 +253,7 @@ void MainWindow::openFile(const QStringList &list) //! static method
     bool enableBgColor = settings->value(EnableBgColorKey, true).toBool();
     QString colorStr = settings->value(BgColorKey, BG_GREEN).toString();
     int timerInterval = settings->value(TimerIntervalKey, 4).toInt();
+    bool useTitleBar = settings->value(UseTitleBarKey, true).toBool();
 
     if(sizeMode < 0 || sizeMode > 3)// 4 modes
         sizeMode = 0;
@@ -260,14 +279,16 @@ void MainWindow::openFile(const QStringList &list) //! static method
     if(fileList.empty()){
         if(qApp->topLevelWidgets().empty()){
             window = creatMainWindow(sizeMode, antialiasMode,
-                                  enableBgColor, bgColor, timerInterval);
+                                     enableBgColor, bgColor,
+                                     timerInterval, useTitleBar);
             if(showDialog)
                 window->openFile();
         }
     }else{  //! is multi-threads needs£¿£¿
         for(int size = fileList.size(), i=0; i < size; ++i){
             window = creatMainWindow(sizeMode, antialiasMode,
-                                  enableBgColor, bgColor, timerInterval);
+                                     enableBgColor, bgColor,
+                                     timerInterval, useTitleBar);
             window->openFile(fileList.at(i));
         }
     }
@@ -580,14 +601,15 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 
 void MainWindow::setting()
 {
-    QDialog *dlg = new QDialog(this, Qt::MSWindowsFixedSizeDialogHint
+    // can not use 'this' for parent, or it will close when changeUseTitleBar()
+    QDialog *settingDialog = new QDialog(0, Qt::MSWindowsFixedSizeDialogHint
                                | Qt::WindowTitleHint);
-    dlg->setWindowTitle(GlobalStr::PROJECT_NAME());
-    SettingWidget *settingWidget = new SettingWidget(dlg);
-    connect(settingWidget, SIGNAL(clickClose()), dlg, SLOT(close()));
-    QVBoxLayout *layout = new QVBoxLayout(dlg);
+    settingDialog->setWindowTitle(GlobalStr::PROJECT_NAME());
+    SettingWidget *settingWidget = new SettingWidget(settingDialog);
+    connect(settingWidget, SIGNAL(clickClose()), settingDialog, SLOT(close()));
+    QVBoxLayout *layout = new QVBoxLayout(settingDialog);
     layout->addWidget(settingWidget);
-    dlg->setLayout(layout);
+    settingDialog->setLayout(layout);
 
     MainWindow *mainWindow;
     foreach(QWidget *window, qApp->topLevelWidgets()){
@@ -602,10 +624,12 @@ void MainWindow::setting()
                         mainWindow, SLOT(enableSelfAdaptive(bool)));
                 connect(settingWidget, SIGNAL(changeTimerInterval(int)),
                         mainWindow, SLOT(changeTimerInterval(int)));
+                connect(settingWidget, SIGNAL(changeUseTitleBar(bool)),
+                        mainWindow, SLOT(changeUseTitleBar(bool)));
             }
 //        }
     }
 
-    dlg->exec();
-    delete dlg;
+    settingDialog->exec();
+    delete settingDialog;
 }

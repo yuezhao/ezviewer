@@ -45,6 +45,8 @@ SettingWidget::SettingWidget(QWidget *parent) :
             SLOT(bgColorEnable(int)));
     connect(ui->timerSpinBox, SIGNAL(valueChanged(int)),
             SLOT(timerIntervalChange(int)));
+    connect(ui->titleBarCheckBox, SIGNAL(stateChanged(int)),
+            SLOT(useTitleBarChange(int)));
 
     QPushButton *button = ui->buttonBox->addButton(QDialogButtonBox::Close);
     button->setDefault(true);
@@ -67,6 +69,7 @@ void SettingWidget::initUIvalue()
     bool enableBgColor = settings->value(EnableBgColorKey, true).toBool();
     QString colorStr = settings->value(BgColorKey, BG_GREEN).toString();
     int timerInterval = settings->value(TimerIntervalKey, 4).toInt();
+    bool useTitleBar = settings->value(UseTitleBarKey, true).toBool();
 
     if(sizeMode < 0 || sizeMode > 3)
         sizeMode = 0;
@@ -82,6 +85,7 @@ void SettingWidget::initUIvalue()
     ui->showDialogCheckBox->setChecked(showDialog);
     ui->antialiasModeCombo->setCurrentIndex(antialiasMode);
     ui->timerSpinBox->setValue(timerInterval);
+    ui->titleBarCheckBox->setChecked(useTitleBar);
 
     QPixmap pix(25, 25);
     pix.fill(bgColor);
@@ -171,6 +175,20 @@ void SettingWidget::timerIntervalChange(int val)
     QSettings *settings = new QSettings(INI_FILE_PATH, QSettings::IniFormat);
     settings->setValue(TimerIntervalKey, val);
     emit changeTimerInterval(val);
+}
+
+void SettingWidget::useTitleBarChange(int state)
+{
+    QSettings *settings = new QSettings(INI_FILE_PATH, QSettings::IniFormat);
+    switch(state){
+    case Qt::Checked:
+        settings->setValue(UseTitleBarKey, true);
+        break;
+    case Qt::Unchecked:
+        settings->setValue(UseTitleBarKey, false);
+        break;
+    }
+    emit changeUseTitleBar(state == Qt::Checked);
 }
 
 void SettingWidget::restoreDefaults()

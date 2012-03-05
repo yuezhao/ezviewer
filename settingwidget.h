@@ -40,6 +40,7 @@ signals:
     void changeAntialiasMode(int mode);
     void enableSelfAdaptive(bool enable);
     void changeTimerInterval(int val);
+    void changeUseTitleBar(bool enable);
     void clickClose();
 
 protected slots:
@@ -50,6 +51,7 @@ protected slots:
     void bgColorEnable(int state);
     void setColor();
     void timerIntervalChange(int val);
+    void useTitleBarChange(int state);
 
     void restoreDefaults();
 

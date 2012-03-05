@@ -38,7 +38,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     static   MainWindow *creatMainWindow(int sizeMode, int antialiasMode,
                     bool enableBgColor, const QColor &bgColor,
-                    int timerInterval);
+                    int timerInterval, bool useTitleBar);
 
 public slots:
     void openFile();
@@ -47,6 +47,7 @@ public slots:
     void changeAntialiasMode(int mode) { viewer->changeAntialiasMode(mode); }
     void changeBgColor(const QColor &color) { viewer->changeBgColor(color); }
     void changeTimerInterval(int sec) { slideTimer->setInterval(sec * 1000); }
+    void changeUseTitleBar(bool enable);
 
 protected slots:
     void keyPressEvent(QKeyEvent *e);

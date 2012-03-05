@@ -75,6 +75,9 @@ const QString EnableBgColorKey(EffectGroup + "/EnableBgColor");
 const QString BgColorKey(EffectGroup + "/BgColor");
 const QString AutoPlayGroup("AutoPlay");
 const QString TimerIntervalKey(AutoPlayGroup + "/TimerInterval");
+const QString FormGroup("Form");
+const QString UseTitleBarKey(FormGroup + "/UseTitleBar");
+
 
 #define SafeDelete(arg) \
     if(arg){ \
