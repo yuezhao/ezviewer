@@ -17,12 +17,14 @@ HEADERS       = imageviewer.h \
     mainwindow.h \
     settingwidget.h \
     global.h \
-    floatframe.h
+    floatframe.h \
+    contralbar.h
 SOURCES       = imageviewer.cpp \
                 main.cpp \
     mainwindow.cpp \
     settingwidget.cpp \
-    floatframe.cpp
+    floatframe.cpp \
+    contralbar.cpp
 
 RESOURCES += \
     res.qrc
@@ -34,4 +36,5 @@ TRANSLATIONS += \
     res/ImageViewer_zh_CN.ts
 
 FORMS += \
-    settingwidget.ui
+    settingwidget.ui \
+    contralbar.ui

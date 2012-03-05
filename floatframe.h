@@ -31,6 +31,8 @@ public:
     explicit FloatFrame(QWidget *parent = 0);
 
 signals:
+    void mouseEnter();
+    void mouseLeave();
     void showContextMenu(const QPoint &pos);
     void mouseDoubleClick();
     void siteChange(const QPoint &change);

@@ -26,8 +26,11 @@
 #include "imageviewer.h"
 
 class FloatFrame;
+class ContralBar;
+class QLabel;
 class QMenu;
 class QAction;
+class QPushButton;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -49,7 +52,7 @@ protected slots:
     void keyPressEvent(QKeyEvent *e);
     void resizeEvent ( QResizeEvent * event );
 
-    void moveWindow(const QPoint &change) { move(pos() + change); }
+    void moveWindow(const QPoint &change) { if(!isFullScreen()) move(pos() + change); }
     void resizeWindow(const QSize &size)  { resize(size); }
 
     void setMyWindowTitle(const QString &title = QString::null);
@@ -76,7 +79,8 @@ protected slots:
 
 private:
     void initContextMenu();
-    void initTitleButton();
+    void initTitleBar();
+    void initButtomBar();
     void openFile(const QString &file) { viewer->openFile(file); }
 
 private:
@@ -85,7 +89,19 @@ private:
     QTimer *slideTimer;
     int slideInterval;//msec
 
-    FloatFrame *titleButtonFF;
+    FloatFrame *titleFrame;
+    FloatFrame *buttomFrame;
+    QLabel *titleLabel;
+
+    ContralBar *contralBar;
+    QPushButton *settingButton;
+    QPushButton *openButton;
+    QPushButton *preButton;
+    QPushButton *playButton;
+    QPushButton *nextButton;
+    QPushButton *rotateLeftButton;
+    QPushButton *rotateRightButton;
+    QPushButton *deleteButton;
 
     QMenu *contextMenu;
     QAction *openAction;

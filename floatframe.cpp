@@ -26,6 +26,8 @@ FloatFrame::FloatFrame(QWidget *parent) :
     QFrame(parent)
 {
 //    setFrameStyle(StyledPanel | Plain);
+//        setFrameStyle(QFrame::Panel);//NoFrame
+    startPos = QPoint(-1, -1);
 
     hideInterval = 1000;
     hideTimer = new QTimer(this);
@@ -67,11 +69,13 @@ void FloatFrame::enterEvent( QEvent * event )
     hideTimer->stop();
     for (int i = 0; i < list.size(); ++i)
         list.at(i)->show();
+    emit mouseEnter();
 }
 
 void FloatFrame::leaveEvent( QEvent * event )
 {
     hideTimer->start();
+    emit mouseLeave();
 }
 
 void FloatFrame::myTimerEvent()
@@ -103,7 +107,8 @@ void FloatFrame::mouseMoveEvent ( QMouseEvent * event )
 {
     //! For mouse move events, this is all buttons that are pressed down.
     if(event->buttons() & Qt::LeftButton){
-        emit siteChange(event->globalPos() - startPos);
+        if(startPos.x() >= 0)
+            emit siteChange(event->globalPos() - startPos);
         startPos = event->globalPos();    //
     }
 }
@@ -111,7 +116,7 @@ void FloatFrame::mouseMoveEvent ( QMouseEvent * event )
 void FloatFrame::mouseReleaseEvent ( QMouseEvent * event )
 {
     if(event->button() & Qt::LeftButton){
-        emit siteChange(event->globalPos() - startPos);
-        startPos = event->globalPos();    //
+//        emit siteChange(event->globalPos() - startPos);
+        startPos = QPoint(-1, -1);
     }
 }

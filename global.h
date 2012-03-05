@@ -58,11 +58,13 @@ const qreal SCALE_MAX = 10.0;
 const qreal SCALE_MIN = 0.1;
 const QPointF ORIGIN_POINT(0.0, 0.0);
 const QSize SIZE_ADJUST(0, 1);
-const QSize MIN_SIZE(100, 100);
+const QSize MIN_SIZE(350, 150);
 const QSize FIT_SIZE(500, 400);
 const QString BG_GREEN("#C7EDCC");
 const QString SUPPORT_FORMAT("*.jpg *.bmp *.gif *.png *.jpeg *.ico *.svg *.pbm *.pgm *.ppm *.tif *.tiff *.xbm *.xpm");
 //const QStringList FORMAT_LIST(QString(SUPPORT_FORMAT).remove("*.").split(' '));
+
+const int TopLevelWidgetsCount = 2;
 
 const QString StartupGroup("Startup");
 const QString SizeModeKey(StartupGroup + "/SizeMode");

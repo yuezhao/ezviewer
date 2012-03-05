@@ -25,6 +25,7 @@
 
 #include <QtDebug>
 #include "floatframe.h"
+#include "contralbar.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -41,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    statusBar()->showMessage(tr("Status Bar"));
 
-//!    setWindowFlags(Qt::Window | Qt::CustomizeWindowHint); //!
+    setWindowFlags(Qt::Window | Qt::CustomizeWindowHint); //!
     //Qt::FramelessWindowHint | Qt::WindowTitleHint);
 //    setMinimumSize(150, 100);
 
@@ -53,47 +54,105 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(viewer, SIGNAL(sizeChange(QSize)), SLOT(resizeWindow(QSize)));
 
     initContextMenu();
+    initTitleBar();
+    initButtomBar();
+
     setMyWindowTitle();
     setWindowIcon(QIcon(":/res/twitter.png"));
     setAttribute(Qt::WA_DeleteOnClose); //! !!!
-
-    initTitleButton();
 }
 
-void MainWindow::initTitleButton() //! QAction????
+void MainWindow::initTitleBar()
 {
-    titleButtonFF = new FloatFrame(this);
-    titleButtonFF->resize(120, 40);
-    titleButtonFF->move(width() - 120, 0);
-    connect(titleButtonFF, SIGNAL(showContextMenu(QPoint)),
+    titleFrame = new FloatFrame(this);
+    titleFrame->resize(width(), 28);
+    titleFrame->move(0, 0);
+    connect(titleFrame, SIGNAL(showContextMenu(QPoint)),
             SLOT(showContextMenu(QPoint)));
+    connect(titleFrame, SIGNAL(mouseDoubleClick()),
+            SLOT(changeFullScreen()));
+    connect(titleFrame, SIGNAL(siteChange(QPoint)),
+            SLOT(moveWindow(QPoint)));
 
-    QStyle *st = qApp->style();
+    titleLabel = new QLabel(titleFrame);
+    titleLabel->setAlignment(Qt::AlignCenter);
+    titleLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    QPushButton *minButton = new QPushButton(titleButtonFF);
-    minButton->setIcon(st->standardIcon(QStyle::SP_TitleBarMinButton));
+    QPushButton *minButton = new QPushButton(titleFrame);
+    minButton->setIcon(style()->standardIcon(QStyle::SP_TitleBarMinButton)); //QIcon(":/res/Min.png"));
     minButton->setFlat(true);
     minButton->setToolTip(tr("Minimize"));
+    minButton->setIconSize(QSize(20, 20));
+//    minButton->setFixedSize(20, 20);
     connect(minButton, SIGNAL(clicked()), SLOT(showMinimized()));
 
-    QPushButton *closeButton = new QPushButton(titleButtonFF);
-    closeButton->setIcon(st->standardIcon(QStyle::SP_DialogCloseButton));
+    QPushButton *closeButton = new QPushButton(titleFrame);
+    closeButton->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton)); //QIcon(":/res/Close.png"));
     closeButton->setFlat(true);
     closeButton->setToolTip(tr("Close"));
+    closeButton->setIconSize(QSize(20, 20));
+//    closeButton->setFixedSize(20, 20);
     connect(closeButton, SIGNAL(clicked()), SLOT(close()));
 
-    QHBoxLayout *hlayout = new QHBoxLayout(titleButtonFF);
+    QHBoxLayout *hlayout = new QHBoxLayout(titleFrame);
+    hlayout->setContentsMargins(0,0,0,0);   ///qframe's layout margis default is not 0.
+    titleFrame->setLayout(hlayout);
+
+    hlayout->addWidget(titleLabel);
     hlayout->addWidget(minButton);
     hlayout->addWidget(closeButton);
-    titleButtonFF->setLayout(hlayout);
 
-    titleButtonFF->addWidget(minButton);
-    titleButtonFF->addWidget(closeButton);
+    titleFrame->addWidget(titleLabel);
+    titleFrame->addWidget(minButton);
+    titleFrame->addWidget(closeButton);
+}
+
+void MainWindow::initButtomBar()
+{
+    buttomFrame = new FloatFrame(this);
+    buttomFrame->resize(width(), 60);
+    buttomFrame->move(0, height() - 60);
+    connect(buttomFrame, SIGNAL(showContextMenu(QPoint)),
+            SLOT(showContextMenu(QPoint)));
+    connect(buttomFrame, SIGNAL(mouseDoubleClick()),
+            SLOT(changeFullScreen()));
+    connect(buttomFrame, SIGNAL(siteChange(QPoint)),
+            SLOT(moveWindow(QPoint)));
+
+    contralBar = new ContralBar(buttomFrame);
+    buttomFrame->addWidget(contralBar);
+
+    QHBoxLayout *hlayout = new QHBoxLayout(buttomFrame);
+    hlayout->setContentsMargins(0,0,0,0);   ///qframe's layout margis default is not 0.
+    hlayout->setAlignment(Qt::AlignCenter);
+    buttomFrame->setLayout(hlayout);
+
+    hlayout->addWidget(contralBar);
+
+    settingButton = contralBar->settingButton;
+    openButton = contralBar->openButton;
+    preButton = contralBar->preButton;
+    playButton = contralBar->playButton;
+    nextButton = contralBar->nextButton;
+    rotateLeftButton = contralBar->rotateLeftButton;
+    rotateRightButton = contralBar->rotateRightButton;
+    deleteButton = contralBar->deleteButton;
+
+    connect(settingButton, SIGNAL(clicked()), SLOT(setting()));
+    connect(openButton, SIGNAL(clicked()), SLOT(openFile()));
+    connect(preButton, SIGNAL(clicked()), SLOT(prePic()));
+    connect(playButton, SIGNAL(clicked()), SLOT(slideShow()));
+    connect(nextButton, SIGNAL(clicked()), SLOT(nextPic()));
+    connect(rotateLeftButton, SIGNAL(clicked()), SLOT(rotateLeft()));
+    connect(rotateRightButton, SIGNAL(clicked()), SLOT(rotateRight()));
+    connect(deleteButton, SIGNAL(clicked()), SLOT(deleteFileAsk()));
 }
 
 void MainWindow::resizeEvent(QResizeEvent *e)
 {
-    titleButtonFF->move(width() - 120, 0);
+    titleFrame->resize(width(), 28);
+    buttomFrame->resize(width(), 60);
+    buttomFrame->move(0, height() - 60);
     QWidget::resizeEvent(e);
 }
 
@@ -106,10 +165,24 @@ void MainWindow::about()
 
 void MainWindow::setMyWindowTitle(const QString &title)
 {
-    if(title.isEmpty())
-        setWindowTitle(GlobalStr::PROJECT_NAME());
-    else
+    bool hasFile = !title.isEmpty();
+    if(hasFile){
         setWindowTitle(title);
+        titleLabel->setText(title);
+    }else{
+        setWindowTitle(GlobalStr::PROJECT_NAME());
+        titleLabel->setText(GlobalStr::PROJECT_NAME());
+    }
+
+    preButton->setEnabled(hasFile);
+    playButton->setEnabled(hasFile);
+    nextButton->setEnabled(hasFile);
+    rotateLeftButton->setEnabled(hasFile);
+    rotateRightButton->setEnabled(hasFile);
+    deleteButton->setEnabled(!slideTimer->isActive() && hasFile);   ////
+
+    if(!hasFile && slideTimer->isActive())
+        slideShow();    ///
 }
 
 void MainWindow::openFile()
@@ -231,23 +304,31 @@ void MainWindow::showAttribute()
 
 void MainWindow::slideShow()// if other commend when slide show??
 {
-    if(!viewer->hasFile())
+    if(!viewer->hasFile() && !slideTimer->isActive())  ////for setMyWindowTitle() call
         return;
 
     if(slideTimer->isActive()){
         slideTimer->stop();
         slideAction->setIcon(QIcon(":/res/Play.png"));
         slideAction->setText(tr("Auto Play"));
+        playButton->setIcon(QIcon(":/res/Play.png"));
+        playButton->setToolTip(tr("Auto Play"));
+        openButton->setEnabled(true);
+        deleteButton->setEnabled(viewer->hasFile());    ///
     }else{
         slideTimer->start();
         slideAction->setIcon(QIcon(":/res/Stop.png"));
         slideAction->setText(tr("Stop Play"));
+        playButton->setIcon(QIcon(":/res/Stop.png"));
+        playButton->setToolTip(tr("Stop Play"));
+        openButton->setEnabled(false);
+        deleteButton->setEnabled(false);
     }
 }
 
 void MainWindow::initContextMenu()
 {
-    QStyle *st = qApp->style();
+//    QStyle *st = style();
 
     QAction *settingAction = new QAction(QIcon(":/res/Setting.png"),
                                          tr("&Setting"), this);
@@ -259,8 +340,8 @@ void MainWindow::initContextMenu()
     QAction *closeAction = new QAction(tr("Close"), this);
     connect(closeAction, SIGNAL(triggered()), SLOT(close()));
 
-    openAction = new QAction(
-                st->standardIcon(QStyle::SP_DialogOpenButton),
+    openAction = new QAction(QIcon(":/res/Open.png"),
+//                st->standardIcon(QStyle::SP_DialogOpenButton),
                 tr("&Open"), this);
     connect(openAction, SIGNAL(triggered()), SLOT(openFile()));
 
@@ -289,8 +370,8 @@ void MainWindow::initContextMenu()
                                   tr("&Property"), this);
     connect(attributeAction, SIGNAL(triggered()), SLOT(showAttribute()));
 
-    deleteAction = new QAction(
-                st->standardIcon(QStyle::SP_DialogCloseButton),
+    deleteAction = new QAction(QIcon(":/res/Delete.png"),
+//                st->standardIcon(QStyle::SP_DialogCloseButton),
                 tr("&Delete"), this);
     connect(deleteAction, SIGNAL(triggered()), SLOT(deleteFileAsk()));
 
@@ -322,7 +403,7 @@ void MainWindow::showContextMenu(const QPoint &pos)
     bool hasPixmap = viewer->hasPicture();
     bool has_file = viewer->hasFile();
     //! QMenu is top-level window, no matter hidden or shown.
-    bool multiWindow = (qApp->topLevelWidgets().size() > 2);
+    bool multiWindow = (qApp->topLevelWidgets().size() > TopLevelWidgetsCount);
     bool notSliding = (!slideTimer->isActive());
 
     openAction->setEnabled(notSliding);
