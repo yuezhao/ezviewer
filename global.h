@@ -58,7 +58,7 @@ const qreal SCALE_MAX = 10.0;
 const qreal SCALE_MIN = 0.1;
 const QPointF ORIGIN_POINT(0.0, 0.0);
 const QSize SIZE_ADJUST(0, 1);
-const QSize MIN_SIZE(350, 150);
+const QSize MIN_SIZE(280, 160);
 const QSize FIT_SIZE(500, 400);
 const QString BG_GREEN("#C7EDCC");
 const QString SUPPORT_FORMAT("*.jpg *.bmp *.gif *.png *.jpeg *.ico *.svg *.pbm *.pgm *.ppm *.tif *.tiff *.xbm *.xpm");

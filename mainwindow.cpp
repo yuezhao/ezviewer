@@ -131,7 +131,8 @@ void MainWindow::initButtomBar()
             SLOT(changeFullScreen()));
     connect(buttomFrame, SIGNAL(siteChange(QPoint)),
             SLOT(moveWindow(QPoint)));
-    connect(buttomFrame, SIGNAL(mouseLeave()), SLOT(setFocus()));  ///
+    ///set all the button's focous policy to Qt::NoFocous in 'ui' file.
+//    connect(buttomFrame, SIGNAL(mouseLeave()), SLOT(setFocus()));
 
     contralBar = new ContralBar(buttomFrame);
     buttomFrame->addWidget(contralBar);

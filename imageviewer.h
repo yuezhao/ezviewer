@@ -23,6 +23,8 @@
 #include <QWidget>
 #include <QDir>
 #include <QFileInfoList>
+#include <QTime>
+#include <QTimer>
 
 
 class ImageViewer : public QWidget
@@ -44,7 +46,7 @@ public:
     inline bool hasFile();
     inline QString currentFile();
     QString attributeString();
-//    inline bool isGif() { return movie; }
+//    inline bool isAnimation () { return movie; }
 
 signals:
     void fileNameChange(const QString &fileName);
@@ -91,6 +93,7 @@ protected slots:
 
 private slots:
     void updatePixmap();            //use update()
+    void myTimerEvent();            // for auto scroll
 
 private:
     void loadImage(const QFileInfo &fileInfo);//use repaint()
@@ -113,7 +116,7 @@ private:
 
     void updateFileIndex(const QString &file);
     void noFileToShow();
-    void mouseMove(const QPoint &change, bool isControlModifier = false);
+    void myMouseMove(QMouseEvent * event);
     void deleteFile(bool messagebox);
 
 private:
@@ -140,6 +143,13 @@ private:
     QString filePath;
     QFileInfoList list;
     int currentIndex;
+
+    bool justPressed;
+    QPoint pressPos;
+    QPoint delta;
+    QPoint speed;
+    QTime  timeStamp;
+    QTimer timer;
 };
 
 

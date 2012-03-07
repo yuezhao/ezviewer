@@ -30,6 +30,17 @@
 //    update();
 
 
+const int threshold = 10;
+
+static QPoint deaccelerate(const QPoint &speed, int a = 1, int max = 64)
+{
+    int x = qBound(-max, speed.x(), max);
+    int y = qBound(-max, speed.y(), max);
+    x = (x == 0) ? x : (x > 0) ? qMax(0, x - a) : qMin(0, x + a);
+    y = (y == 0) ? y : (y > 0) ? qMax(0, y - a) : qMin(0, y + a);
+    return QPoint(x, y);
+}
+
 ImageViewer::ImageViewer(QWidget *parent)
     : QWidget(parent)
 {
@@ -38,6 +49,10 @@ ImageViewer::ImageViewer(QWidget *parent)
     currentIndex = -1;
     antialiasMode = 0;
     selfAdaptive = false;
+
+    justPressed = false;
+    timeStamp = QTime::currentTime();
+    connect(&timer, SIGNAL(timeout()), SLOT(myTimerEvent()));
 
     setAcceptDrops(true);   //! !!
     setMinimumSize(MIN_SIZE);
@@ -472,35 +487,43 @@ void ImageViewer::mousePressEvent ( QMouseEvent * event )
         startPos = event->globalPos();
         if(hasPicture() && cursor().shape() == Qt::OpenHandCursor)
             setCursor(QCursor(Qt::ClosedHandCursor));
+
+        justPressed = true;
+        pressPos = event->pos();
+        if(timer.isActive()){ // auto scroll
+            speed = QPoint(0, 0);
+            timer.stop();
+        }
     }
 }
 
 void ImageViewer::mouseMoveEvent ( QMouseEvent * event )
 {
     //! For mouse move events, this is all buttons that are pressed down.
-    if(event->buttons() & Qt::LeftButton){
-        mouseMove(event->globalPos() - startPos,
-                  event->modifiers() == Qt::ControlModifier);
-
-        startPos = event->globalPos();    //
-    }
+    if(event->buttons() & Qt::LeftButton)
+        myMouseMove(event);
 }
 
 void ImageViewer::mouseReleaseEvent ( QMouseEvent * event )
 {
     if(event->button() & Qt::LeftButton){
-        mouseMove(event->globalPos() - startPos,
-                  event->modifiers() == Qt::ControlModifier);
+        myMouseMove(event);
 
-        startPos = event->globalPos();    //
+        if(!justPressed && speed != QPoint(0, 0)) {
+            speed /= 4; //! ??
+            timer.start(20);
+        }
+
         if(cursor().shape() == Qt::ClosedHandCursor)
             setCursor(QCursor(Qt::OpenHandCursor));
     }
 }
 
-void ImageViewer::mouseMove(const QPoint &change, bool isControlModifier)
+void ImageViewer::myMouseMove(QMouseEvent * event)
 {
-    if(isControlModifier){
+    QPoint change = event->globalPos() - startPos;
+
+    if(event->modifiers() == Qt::ControlModifier){
         emit siteChange(change);
     }else{
         //if widget smaller than widget, allow to move image.
@@ -508,8 +531,42 @@ void ImageViewer::mouseMove(const QPoint &change, bool isControlModifier)
         if(hasPicture() && !(rect().size() + SIZE_ADJUST - image.size()*scale).isValid()){
             shift += change;
             updateShift();
+
+
+            QPoint delta = event->pos() - pressPos;
+            if(justPressed){
+                if (delta.x() > threshold || delta.x() < -threshold ||
+                        delta.y() > threshold || delta.y() < -threshold) {
+                    timeStamp = QTime::currentTime(); //start calculate
+                    justPressed = false; ///
+                    this->delta = QPoint(0, 0);
+                    pressPos = event->pos();
+                }
+            }else{
+                if (timeStamp.elapsed() > 100) {
+                    timeStamp = QTime::currentTime();   //restart calculate
+                    speed = delta - this->delta;    ///
+                    this->delta = delta;
+                }
+            }
         }
     }
+
+    startPos = event->globalPos();    //
+}
+
+void ImageViewer::myTimerEvent()
+{
+    speed = deaccelerate(speed);
+
+    QPointF shiftOld = shift;
+    shift += speed;
+    updateShift();
+
+    if(shift == shiftOld)
+        speed = QPoint(0, 0);
+    if (speed == QPoint(0, 0))
+        timer.stop();
 }
 
 void ImageViewer::resizeEvent(QResizeEvent *e)
