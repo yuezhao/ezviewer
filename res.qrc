@@ -13,5 +13,7 @@
         <file>res/Stop.png</file>
         <file>res/twitter.png</file>
         <file>res/Undo.png</file>
+        <file>res/Min.png</file>
+        <file>res/Close.png</file>
     </qresource>
 </RCC>

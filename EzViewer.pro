@@ -3,16 +3,6 @@ TARGET = EzViewer
 DEPENDPATH += .
 INCLUDEPATH += .
 
-#win32 {
-#    INCLUDEPATH  += $$quote(C:/MinGW/msys/1.0/local/include)
-#    LIBS         += $$quote(C:/MinGW/msys/1.0/local/lib/libexiv2.dll.a)
-#}
-
-#unix {
-#    INCLUDEPATH  += /usr/local/include
-#    LIBS         += -L/usr/local/lib -lexiv2
-#}
-
 HEADERS       = imageviewer.h \
     mainwindow.h \
     settingwidget.h \

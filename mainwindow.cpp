@@ -77,8 +77,11 @@ void MainWindow::changeUseTitleBar(bool enable)
 void MainWindow::initTitleBar()
 {
     titleFrame = new FloatFrame(this);
-    titleFrame->resize(width(), 28);
+    titleFrame->resize(width(), 30);
     titleFrame->move(0, 0);
+    QPalette pal(titleFrame->palette());
+    pal.setBrush(QPalette::Window, QBrush(QColor(255, 255, 255, 100)));
+    titleFrame->setPalette(pal);
     connect(titleFrame, SIGNAL(showContextMenu(QPoint)),
             SLOT(showContextMenu(QPoint)));
     connect(titleFrame, SIGNAL(mouseDoubleClick()),
@@ -92,19 +95,21 @@ void MainWindow::initTitleBar()
     titleLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     QPushButton *minButton = new QPushButton(titleFrame);
-    minButton->setIcon(style()->standardIcon(QStyle::SP_TitleBarMinButton)); //QIcon(":/res/Min.png"));
+//    minButton->setIcon(style()->standardIcon(QStyle::SP_TitleBarMinButton));
+    minButton->setIcon(QIcon(":/res/Min.png"));
     minButton->setFlat(true);
     minButton->setToolTip(tr("Minimize"));
     minButton->setIconSize(QSize(20, 20));
-//    minButton->setFixedSize(20, 20);
+    minButton->setMinimumSize(20, 20);
     connect(minButton, SIGNAL(clicked()), SLOT(showMinimized()));
 
     QPushButton *closeButton = new QPushButton(titleFrame);
-    closeButton->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton)); //QIcon(":/res/Close.png"));
+//    closeButton->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
+    closeButton->setIcon(QIcon(":/res/Close.png"));
     closeButton->setFlat(true);
     closeButton->setToolTip(tr("Close"));
     closeButton->setIconSize(QSize(20, 20));
-//    closeButton->setFixedSize(20, 20);
+    closeButton->setMinimumSize(20, 20);
     connect(closeButton, SIGNAL(clicked()), SLOT(close()));
 
     QHBoxLayout *hlayout = new QHBoxLayout(titleFrame);
@@ -165,7 +170,7 @@ void MainWindow::initButtomBar()
 
 void MainWindow::resizeEvent(QResizeEvent *e)
 {
-    titleFrame->resize(width(), 28);
+    titleFrame->resize(width(), 30);
     buttomFrame->resize(width(), 60);
     buttomFrame->move(0, height() - 60);
     QWidget::resizeEvent(e);
@@ -425,7 +430,7 @@ void MainWindow::showContextMenu(const QPoint &pos)
     bool hasPixmap = viewer->hasPicture();
     bool has_file = viewer->hasFile();
     //! QMenu is top-level window, no matter hidden or shown.
-    bool multiWindow = (qApp->topLevelWidgets().size() > TopLevelWidgetsCount);
+    bool multiWindow = (qApp->topLevelWidgets().size() > TOP_LEVEL_COUNT);
     bool notSliding = (!slideTimer->isActive());
 
     openAction->setEnabled(notSliding);

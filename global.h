@@ -21,8 +21,8 @@
 #define GLOBAL_H
 
 #define INI_FILE_NAME   "EzViewer.ini"
-#define VERSON_NO       "1.4"
-#define BUILD_TIME      "2012/2"
+#define VERSON_NO       "2.0"
+#define BUILD_TIME      "2012/2-2012/3"
 #define WEIBO           "www.weibo.com/huangezhao"
 #define PROJECT_SITE    "code.google.com/p/ezviewer/"
 
@@ -54,7 +54,7 @@ public:
 
 #define QDir_SORT_FLAG QDir::Name | QDir::IgnoreCase
 
-const qreal SCALE_MAX = 10.0;
+const qreal SCALE_MAX = 20.0;
 const qreal SCALE_MIN = 0.1;
 const QPointF ORIGIN_POINT(0.0, 0.0);
 const QSize SIZE_ADJUST(0, 1);
@@ -64,7 +64,8 @@ const QString BG_GREEN("#C7EDCC");
 const QString SUPPORT_FORMAT("*.jpg *.bmp *.gif *.png *.jpeg *.ico *.svg *.pbm *.pgm *.ppm *.tif *.tiff *.xbm *.xpm");
 //const QStringList FORMAT_LIST(QString(SUPPORT_FORMAT).remove("*.").split(' '));
 
-const int TopLevelWidgetsCount = 2;
+const int AUTO_SCROLL_INTERVAL = 25;//20
+const int TOP_LEVEL_COUNT = 2;
 
 const QString StartupGroup("Startup");
 const QString SizeModeKey(StartupGroup + "/SizeMode");

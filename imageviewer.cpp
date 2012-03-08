@@ -511,7 +511,7 @@ void ImageViewer::mouseReleaseEvent ( QMouseEvent * event )
 
         if(!justPressed && speed != QPoint(0, 0)) {
             speed /= 4; //! ??
-            timer.start(20);
+            timer.start(AUTO_SCROLL_INTERVAL);
         }
 
         if(cursor().shape() == Qt::ClosedHandCursor)
@@ -732,7 +732,7 @@ QString ImageViewer::attributeString()
                 .arg(image.width()).arg(image.height()).arg(ratioStr);
         if(fileInfo.exists() && frameCount != 1)
             info += tr("Frame Count: %1<br>").arg(frameCount);
-        info += tr("Current Scale: %1%").arg(scale * 100, 0, 'g', 3);
+        info += tr("Current Scale: %1%").arg(scale * 100, 0, 'g', 4);
     }
 
     return info;
