@@ -23,7 +23,7 @@
 #include <QtGui>
 
 FloatFrame::FloatFrame(QWidget *parent) :
-    QFrame(parent)
+    QFrame(parent), enabled_(true)
 {
 //    setFrameStyle(StyledPanel | Plain);
 //        setFrameStyle(QFrame::Panel);//NoFrame
@@ -32,7 +32,7 @@ FloatFrame::FloatFrame(QWidget *parent) :
     hideInterval = 1000;
     hideTimer = new QTimer(this);
     hideTimer->setInterval(hideInterval);
-    connect(hideTimer, SIGNAL(timeout()), SLOT(myTimerEvent()));
+    connect(hideTimer, SIGNAL(timeout()), SLOT(hideAll()));
 
     QPalette pal(palette());
     pal.setBrush(QPalette::Window, QBrush(QColor(0, 0, 0, 50)));
@@ -63,8 +63,24 @@ void FloatFrame::cancelWidget(QWidget *w)
 //    disconnect(w);
 }
 
+void FloatFrame::setHideInterval(int msec)
+{
+    hideInterval = msec;
+    hideTimer->setInterval(hideInterval);
+}
+
+void FloatFrame::set_enabled(bool enabled)
+{
+    enabled_ = enabled;
+    if(!enabled_)
+        hideAll();
+}
+
 void FloatFrame::enterEvent( QEvent * event )
 {
+    if(!enabled_)
+        return;
+
     setAutoFillBackground(true);
     hideTimer->stop();
     for (int i = 0; i < list.size(); ++i)
@@ -78,7 +94,7 @@ void FloatFrame::leaveEvent( QEvent * event )
     emit mouseLeave();
 }
 
-void FloatFrame::myTimerEvent()
+void FloatFrame::hideAll()
 {
     setAutoFillBackground(false);
     for (int i = 0; i < list.size(); ++i)
@@ -117,6 +133,7 @@ void FloatFrame::mouseReleaseEvent ( QMouseEvent * event )
 {
     if(event->button() & Qt::LeftButton){
 //        emit siteChange(event->globalPos() - startPos);
+        emit mouseClicked();
         startPos = QPoint(-1, -1);
     }
 }

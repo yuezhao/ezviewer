@@ -28,6 +28,8 @@
 #include "floatframe.h"
 #include "contralbar.h"
 
+const int SWITCH_FRAME_WIDTH = 90;
+const int BUTTOM_FRAME_HEIGHT = 60;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -51,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initContextMenu();
     initButtomBar();
+    initSwitchFrame();
 
     resize(FIT_SIZE);
     readSettings();
@@ -85,8 +88,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::initButtomBar()
 {
     buttomFrame = new FloatFrame(this);
-    buttomFrame->resize(width(), 60);
-    buttomFrame->move(0, height() - 60);
+    buttomFrame->resize(width(), BUTTOM_FRAME_HEIGHT);
+    buttomFrame->move(0, height() - BUTTOM_FRAME_HEIGHT);
     connect(buttomFrame, SIGNAL(showContextMenu(QPoint)),
             SLOT(showContextMenu(QPoint)));
     connect(buttomFrame, SIGNAL(mouseDoubleClick()),
@@ -125,10 +128,50 @@ void MainWindow::initButtomBar()
     connect(deleteButton, SIGNAL(clicked()), SLOT(deleteFileAsk()));
 }
 
+void MainWindow::initSwitchFrame()
+{
+    leftFrame = new FloatFrame(this);
+    leftFrame->resize(SWITCH_FRAME_WIDTH, height() - 2*BUTTOM_FRAME_HEIGHT);
+    leftFrame->move(0, BUTTOM_FRAME_HEIGHT);
+    leftFrame->setHideInterval(200);
+    connect(leftFrame, SIGNAL(showContextMenu(QPoint)), SLOT(showContextMenu(QPoint)));
+    connect(leftFrame, SIGNAL(mouseClicked()), SLOT(prePic()));
+
+    QLabel *lb = new QLabel(leftFrame);
+    lb->setPixmap(QPixmap(":/res/Left2.png"));
+    leftFrame->addWidget(lb);
+
+    QHBoxLayout *hlayout = new QHBoxLayout(leftFrame);
+    hlayout->setAlignment(Qt::AlignCenter);
+    hlayout->addWidget(lb);
+    leftFrame->setLayout(hlayout);
+
+
+    rightFrame = new FloatFrame(this);
+    rightFrame->resize(SWITCH_FRAME_WIDTH, height() - 2*BUTTOM_FRAME_HEIGHT);
+    rightFrame->move(width() - SWITCH_FRAME_WIDTH, BUTTOM_FRAME_HEIGHT);
+    rightFrame->setHideInterval(200);
+    connect(rightFrame, SIGNAL(showContextMenu(QPoint)), SLOT(showContextMenu(QPoint)));
+    connect(rightFrame, SIGNAL(mouseClicked()), SLOT(nextPic()));
+
+    lb = new QLabel(rightFrame);
+    lb->setPixmap(QPixmap(":/res/Right2.png"));
+    rightFrame->addWidget(lb);
+
+    hlayout = new QHBoxLayout(rightFrame);
+    hlayout->setAlignment(Qt::AlignCenter);
+    hlayout->addWidget(lb);
+    rightFrame->setLayout(hlayout);
+}
+
 void MainWindow::resizeEvent(QResizeEvent *e)
 {
-    buttomFrame->resize(width(), 60);
-    buttomFrame->move(0, height() - 60);
+    buttomFrame->resize(width(), BUTTOM_FRAME_HEIGHT);
+    buttomFrame->move(0, height() - BUTTOM_FRAME_HEIGHT);
+    leftFrame->resize(SWITCH_FRAME_WIDTH, height() - 2*BUTTOM_FRAME_HEIGHT);
+    leftFrame->move(0, BUTTOM_FRAME_HEIGHT);
+    rightFrame->resize(SWITCH_FRAME_WIDTH, height() - 2*BUTTOM_FRAME_HEIGHT);
+    rightFrame->move(width() - SWITCH_FRAME_WIDTH, BUTTOM_FRAME_HEIGHT);
     QWidget::resizeEvent(e);
 }
 
@@ -151,6 +194,8 @@ void MainWindow::setMyWindowTitle(const QString &title)
     preButton->setEnabled(hasFile);
     playButton->setEnabled(hasFile);
     nextButton->setEnabled(hasFile);
+    leftFrame->set_enabled(hasFile);    ///
+    rightFrame->set_enabled(hasFile);   ///
     rotateLeftButton->setEnabled(hasFile);
     rotateRightButton->setEnabled(hasFile);
     deleteButton->setEnabled(!slideTimer->isActive() && hasFile);   ////

@@ -86,6 +86,7 @@ private:
 
     void initContextMenu();
     void initButtomBar();
+    void initSwitchFrame(); // init left and right float frame
     void openFile(const QString &file) { viewer->openFile(file); }
 
 private:
@@ -95,6 +96,8 @@ private:
     int slideInterval;//msec
 
     FloatFrame *buttomFrame;
+    FloatFrame *leftFrame;
+    FloatFrame *rightFrame;
 
     ContralBar *contralBar;
     QPushButton *settingButton;

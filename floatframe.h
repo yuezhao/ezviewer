@@ -35,11 +35,14 @@ signals:
     void mouseLeave();
     void showContextMenu(const QPoint &pos);
     void mouseDoubleClick();
+    void mouseClicked();
     void siteChange(const QPoint &change);
 
 public slots:
     void addWidget(QWidget *w);
     void cancelWidget(QWidget *w);
+    void setHideInterval(int msec);
+    void set_enabled(bool enabled);
 
 protected slots:
     void contextMenuEvent ( QContextMenuEvent * event );
@@ -50,11 +53,12 @@ protected slots:
     void mouseMoveEvent ( QMouseEvent * event );
     void mouseReleaseEvent ( QMouseEvent * event );
 
-    void myTimerEvent();
+    void hideAll();
 
 private:
     QTimer *hideTimer;
     int hideInterval;
+    bool enabled_;
 
     QList<QWidget *> list;
 

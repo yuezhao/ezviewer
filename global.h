@@ -21,10 +21,11 @@
 #define GLOBAL_H
 
 #define INI_FILE_NAME   "EzViewer.ini"
-#define VERSON_NO       "2.0"
-#define BUILD_TIME      "2012/2-2012/3"
+#define VERSON_NO       "2.2"
+#define BUILD_TIME      "2012/2-2012/9"
 #define WEIBO           "www.weibo.com/huangezhao"
 #define PROJECT_SITE    "code.google.com/p/ezviewer/"
+#define AUTHOR_BLOG     "yuezhaoblog.blogspot.com"
 
 #ifdef Q_OS_WIN32
 #define INI_FILE_PATH   qApp->applicationDirPath() + "/" + INI_FILE_NAME
@@ -46,9 +47,11 @@ public:
                            "<br>Build Time: &nbsp;&nbsp; %3"  \
                            "<br>CopyRight &#169; 2012 by %4</p>" \
                            "<p>Contact Author: &nbsp;&nbsp; <a href='http://%5'>%5</a>" \
-                           "<br>Project Home: &nbsp;&nbsp; <a href='http://%6'>%6</a></p>")
+                           "<br>Project Home: &nbsp;&nbsp; <a href='http://%6'>%6</a>" \
+                           "<br>Author's Blog: &nbsp;&nbsp; <a href='http://%7'>%7</a></p>")
                 .arg(PROJECT_NAME()).arg(VERSON_NO).arg(BUILD_TIME)
-                .arg(PROJECT_AUTHOR()).arg(WEIBO).arg(PROJECT_SITE);
+                .arg(PROJECT_AUTHOR()).arg(WEIBO).arg(PROJECT_SITE)
+                .arg(AUTHOR_BLOG);
     }
 };
 
@@ -58,7 +61,7 @@ const qreal SCALE_MAX = 20.0;
 const qreal SCALE_MIN = 0.1;
 const QPointF ORIGIN_POINT(0.0, 0.0);
 const QSize SIZE_ADJUST(0, 1);
-const QSize MIN_SIZE(280, 160);
+const QSize MIN_SIZE(280, 200);
 const QSize FIT_SIZE(500, 400);
 const QString BG_GREEN("#C7EDCC");
 const QString SUPPORT_FORMAT("*.jpg *.bmp *.gif *.png *.jpeg *.ico *.svg *.pbm *.pgm *.ppm *.tif *.tiff *.xbm *.xpm");
