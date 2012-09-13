@@ -138,6 +138,8 @@ void ImageViewer::noFileToShow()
     state = NoFileNoPicture;
     update();
     emit fileNameChange("");    //
+    if(cursor().shape() != Qt::ArrowCursor)
+        setCursor(QCursor(Qt::ArrowCursor));
 }
 
 void ImageViewer::openFile(const QString &file)

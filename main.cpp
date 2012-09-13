@@ -32,6 +32,8 @@ int main(int argc, char *argv[])
     QTranslator qt_ts;
     if(qt_ts.load(QObject::tr(":/res/qt_%1").arg(lang_country)))
         app.installTranslator( &qt_ts );
+    else if(qt_ts.load(QObject::tr("lang/qt_%1").arg(lang_country)))
+        app.installTranslator( &qt_ts );
     QTranslator app_ts;
     if(app_ts.load(QObject::tr(":/res/ImageViewer_%1").arg(lang_country)))
         app.installTranslator( &app_ts );

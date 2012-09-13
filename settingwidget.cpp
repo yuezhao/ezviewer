@@ -53,6 +53,8 @@ SettingWidget::SettingWidget(QWidget *parent) :
     connect(button, SIGNAL(clicked()), SIGNAL(clickClose()));
     button = ui->buttonBox->addButton(QDialogButtonBox::RestoreDefaults);
     connect(button, SIGNAL(clicked()), SLOT(restoreDefaults()));
+
+
 }
 
 SettingWidget::~SettingWidget()

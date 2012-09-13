@@ -30,7 +30,7 @@
 #define INI_FILE_PATH   qApp->applicationDirPath() + "/" + INI_FILE_NAME
 //QDir::homePath()+"/Application Data/"+qApp->applicationName()+".ini"
 #else
-#define INI_FILE_PATH   INI_FILE_NAME
+#define INI_FILE_PATH   qApp->applicationDirPath() + "/" + INI_FILE_NAME
 #endif
 
 class GlobalStr {
