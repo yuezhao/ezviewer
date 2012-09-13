@@ -35,13 +35,6 @@ public:
     ImageViewer(QWidget *parent = 0);
     ~ImageViewer();
 
-    enum ImageState{
-        NoFileNoPicture,
-        PictureNoFile,
-        FileNoPicture,
-        FilePicture
-    };
-
     inline bool hasPicture();
     inline bool hasFile();
     inline QString currentFile();
@@ -52,14 +45,11 @@ signals:
     void fileNameChange(const QString &fileName);
     void mouseDoubleClick();
     void showContextMenu(const QPoint &pos);
-    void needOpenFile(const QStringList &fileList);
     void siteChange(const QPoint &change);
-    void sizeChange(const QSize &size);
 
 public slots:
     void changeAntialiasMode(int mode);
     void changeBgColor(const QColor &color);
-    inline void enableSelfAdaptive(bool enable);
 
     void openFile(const QString &file);
     void zoomIn(qreal factor);
@@ -79,8 +69,6 @@ public slots:
 protected slots:
     void wheelEvent(QWheelEvent *e);
     void paintEvent(QPaintEvent *e);
-    void dragEnterEvent(QDragEnterEvent * event);
-    void dropEvent(QDropEvent * event);
     void mouseDoubleClickEvent ( QMouseEvent * event );
     void mouseMoveEvent ( QMouseEvent * event );
     void mousePressEvent ( QMouseEvent * event );
@@ -96,6 +84,13 @@ private slots:
     void myTimerEvent();            // for auto scroll
 
 private:
+    enum ImageState{
+        NoFileNoPicture,
+        PictureNoFile,
+        FileNoPicture,
+        FilePicture
+    };
+
     void loadImage(const QFileInfo &fileInfo);//use repaint()
 
     /*! init the value of topLeft and scale, according to the size of image
@@ -104,7 +99,7 @@ private:
     void initToFitWidget();
 
     //! resize the window , according the picture's size
-    void initAdaptiveWidget();
+//    void initAdaptiveWidget();
 
     /*! updateShift() needs the value of topLeft,
      * so the order of these two functions below is important.
@@ -123,7 +118,6 @@ private:
     ImageState state;
     int antialiasMode;
     QColor bgColor;
-    bool selfAdaptive;
 
     QImage image;
     QMovie *movie;
@@ -164,10 +158,6 @@ inline bool ImageViewer::hasFile()
 inline QString ImageViewer::currentFile()
 {
     return hasFile() ? filePath : QString::null;
-}
-inline void ImageViewer::enableSelfAdaptive(bool enable)
-{
-    selfAdaptive = enable;
 }
 inline void ImageViewer::rotateLeft()
 {

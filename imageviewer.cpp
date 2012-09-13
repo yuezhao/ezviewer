@@ -48,13 +48,11 @@ ImageViewer::ImageViewer(QWidget *parent)
     movie = NULL;
     currentIndex = -1;
     antialiasMode = 0;
-    selfAdaptive = false;
 
     justPressed = false;
     timeStamp = QTime::currentTime();
     connect(&timer, SIGNAL(timeout()), SLOT(myTimerEvent()));
 
-    setAcceptDrops(true);   //! !!
     setMinimumSize(MIN_SIZE);
 }
 
@@ -209,47 +207,10 @@ void ImageViewer::loadImage(const QFileInfo &fileInfo)
     rotate = 0;
     mirrorH = false;
     mirrorV = false;
-    hasUserZoom = false;//! must before call initAdaptiveWidget()
-    if(selfAdaptive)
-        initAdaptiveWidget();
-    else
-        initToFitWidget();
+    hasUserZoom = false;
+    initToFitWidget();
     repaint();
     emit fileNameChange(fileInfo.fileName());
-}
-
-void ImageViewer::initAdaptiveWidget()
-{
-    //restore the cursor even if the image cannot load.
-    setCursor(QCursor(Qt::ArrowCursor));
-
-    if(!hasPicture()) return;
-
-    QSize sizeSuitable(image.size().expandedTo(MIN_SIZE));
-    //minus the topLevel window's frame,like the title bar.
-    QSize sizeMaximun(QApplication::desktop()->availableGeometry().size());
-    QWidget *topLevelWidget = parentWidget() ? parentWidget() : this;
-    sizeMaximun -= (topLevelWidget->frameGeometry().size()
-                    - topLevelWidget->geometry().size());
-    sizeSuitable = sizeSuitable.boundedTo(sizeMaximun);
-
-    QSize pixSize(image.size());
-    //if image large than widget, will scale image to fit widget.
-    if(!(sizeSuitable - pixSize).isValid())//! SIZE_ADJUST !!!
-        pixSize.scale(sizeSuitable + SIZE_ADJUST, Qt::KeepAspectRatio);
-    if(image.width() == 0)
-        scale = 1.0;
-    else
-        scale = qreal(pixSize.width()) / image.width();
-    scaleMin = qMin(SCALE_MIN, scale);
-
-    updateTopLeft();
-    shift = ORIGIN_POINT;
-
-    if(parentWidget())
-        emit sizeChange(pixSize);// to parent widget
-    else
-        resize(pixSize);    // if this is top level widget
 }
 
 void ImageViewer::initToFitWidget()//no change the value of rotate
@@ -584,53 +545,6 @@ void ImageViewer::resizeEvent(QResizeEvent *e)
     QWidget::resizeEvent(e);
 }
 
-void ImageViewer::dragEnterEvent(QDragEnterEvent *event)
-{
-//    if (event->mimeData()->hasFormat("text/uri-list")) {
-//        event->acceptProposedAction();
-//    }
-
-    const QMimeData *mimeData = event->mimeData();
-    if (event->mimeData()->hasUrls()){
-        QList<QUrl> urlList(mimeData->urls());
-        QFileInfo fileInfo;
-        for (int i = 0; i < urlList.size(); ++i) {
-            fileInfo.setFile(urlList.at(i).toLocalFile());
-            if(fileInfo.isFile()){
-//                    && FORMAT_LIST.contains(fileInfo.suffix().toLower())){
-                event->acceptProposedAction();
-                break;
-            }
-        }
-    }
-}
-
-void ImageViewer::dropEvent(QDropEvent *event)
-{
-    const QMimeData *mimeData = event->mimeData();
-    if (mimeData->hasUrls()) {
-        QList<QUrl> urlList(mimeData->urls());
-        QFileInfo fileInfo;
-        QString fileName;
-        while(!urlList.empty()){
-            fileName = urlList.first().toLocalFile();
-            urlList.removeFirst();
-            fileInfo.setFile(fileName);
-            if(fileInfo.isFile()){
-                openFile(fileName);
-                break;
-            }
-        }
-
-        QStringList fileList;
-        for(int size = urlList.size(), i=0; i < size; ++i)
-            fileList.append(urlList.at(i).toLocalFile());
-        if(!fileList.empty())
-            emit needOpenFile(fileList);
-    }
-
-    event->acceptProposedAction();
-}
 
 void ImageViewer::deleteFile(bool messagebox)//! MOVE to mainwindow.cpp...
 {

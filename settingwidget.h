@@ -38,20 +38,16 @@ public:
 signals:
     void changeBgColor(const QColor &color);
     void changeAntialiasMode(int mode);
-    void enableSelfAdaptive(bool enable);
     void changeTimerInterval(int val);
-    void changeUseTitleBar(bool enable);
     void clickClose();
 
 protected slots:
     void initUIvalue();
-    void sizeModeChange(int index);
     void showDialogChange(int state);
     void antialiasModeChange(int index);
     void bgColorEnable(int state);
     void setColor();
     void timerIntervalChange(int val);
-    void useTitleBarChange(int state);
 
     void restoreDefaults();
 

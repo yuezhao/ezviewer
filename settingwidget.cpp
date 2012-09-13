@@ -34,8 +34,6 @@ SettingWidget::SettingWidget(QWidget *parent) :
 
     initUIvalue();
 
-    connect(ui->sizeModeCombo, SIGNAL(currentIndexChanged(int)),
-            SLOT(sizeModeChange(int)));
     connect(ui->showDialogCheckBox, SIGNAL(stateChanged(int)),
             SLOT(showDialogChange(int)));
     connect(ui->antialiasModeCombo, SIGNAL(currentIndexChanged(int)),
@@ -45,16 +43,12 @@ SettingWidget::SettingWidget(QWidget *parent) :
             SLOT(bgColorEnable(int)));
     connect(ui->timerSpinBox, SIGNAL(valueChanged(int)),
             SLOT(timerIntervalChange(int)));
-    connect(ui->titleBarCheckBox, SIGNAL(stateChanged(int)),
-            SLOT(useTitleBarChange(int)));
 
     QPushButton *button = ui->buttonBox->addButton(QDialogButtonBox::Close);
     button->setDefault(true);
     connect(button, SIGNAL(clicked()), SIGNAL(clickClose()));
     button = ui->buttonBox->addButton(QDialogButtonBox::RestoreDefaults);
     connect(button, SIGNAL(clicked()), SLOT(restoreDefaults()));
-
-
 }
 
 SettingWidget::~SettingWidget()
@@ -64,17 +58,13 @@ SettingWidget::~SettingWidget()
 
 void SettingWidget::initUIvalue()
 {
-    QSettings *settings = new QSettings(INI_FILE_PATH, QSettings::IniFormat);
-    int sizeMode = settings->value(SizeModeKey, 0).toInt();
-    bool showDialog = settings->value(DialogKey, true).toBool();
-    int antialiasMode = settings->value(AntialiasModeKey, 0).toInt();
-    bool enableBgColor = settings->value(EnableBgColorKey, true).toBool();
-    QString colorStr = settings->value(BgColorKey, BG_GREEN).toString();
-    int timerInterval = settings->value(TimerIntervalKey, 4).toInt();
-    bool useTitleBar = settings->value(UseTitleBarKey, true).toBool();
+    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
+    bool showDialog = settings.value(DialogKey, true).toBool();
+    int antialiasMode = settings.value(AntialiasModeKey, 0).toInt();
+    bool enableBgColor = settings.value(EnableBgColorKey, true).toBool();
+    QString colorStr = settings.value(BgColorKey, BG_GREEN).toString();
+    int timerInterval = settings.value(TimerIntervalKey, 4).toInt();
 
-    if(sizeMode < 0 || sizeMode > 3)
-        sizeMode = 0;
     if(antialiasMode < 0 || antialiasMode > 2)
         antialiasMode = 0;
     bgColor.setNamedColor(colorStr);
@@ -83,11 +73,9 @@ void SettingWidget::initUIvalue()
     if(timerInterval < 1 || timerInterval > 1000)
         timerInterval = 4;
 
-    ui->sizeModeCombo->setCurrentIndex(sizeMode);
     ui->showDialogCheckBox->setChecked(showDialog);
     ui->antialiasModeCombo->setCurrentIndex(antialiasMode);
     ui->timerSpinBox->setValue(timerInterval);
-    ui->titleBarCheckBox->setChecked(useTitleBar);
 
     QPixmap pix(25, 25);
     pix.fill(bgColor);
@@ -99,24 +87,15 @@ void SettingWidget::initUIvalue()
     ui->colorEdit->setEnabled(enableBgColor);
 }
 
-void SettingWidget::sizeModeChange(int index)
-{
-    if(index == -1) return;
-
-    QSettings *settings = new QSettings(INI_FILE_PATH, QSettings::IniFormat);
-    settings->setValue(SizeModeKey, index);
-    emit enableSelfAdaptive(index == 3);
-}
-
 void SettingWidget::showDialogChange(int state)
 {
-    QSettings *settings = new QSettings(INI_FILE_PATH, QSettings::IniFormat);
+    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
     switch(state){
     case Qt::Checked:
-        settings->setValue(DialogKey, true);
+        settings.setValue(DialogKey, true);
         break;
     case Qt::Unchecked:
-        settings->setValue(DialogKey, false);
+        settings.setValue(DialogKey, false);
         break;
     }
 }
@@ -125,22 +104,22 @@ void SettingWidget::antialiasModeChange(int index)
 {
     if(index == -1) return;
 
-    QSettings *settings = new QSettings(INI_FILE_PATH, QSettings::IniFormat);
-    settings->setValue(AntialiasModeKey, index);
+    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
+    settings.setValue(AntialiasModeKey, index);
     emit changeAntialiasMode(index);
 }
 
 void SettingWidget::bgColorEnable(int state)
 {
-    QSettings *settings = new QSettings(INI_FILE_PATH, QSettings::IniFormat);
+    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
     bool enableBgColor = true;
     switch(state){
     case Qt::Checked:
-        settings->setValue(EnableBgColorKey, true);
+        settings.setValue(EnableBgColorKey, true);
         enableBgColor = true;
         break;
     case Qt::Unchecked:
-        settings->setValue(EnableBgColorKey, false);
+        settings.setValue(EnableBgColorKey, false);
         enableBgColor = false;
         break;
     }
@@ -165,8 +144,8 @@ void SettingWidget::setColor()
         pix.fill(bgColor);
         ui->colorButton->setIcon(QIcon(pix));
         ui->colorEdit->setText(bgColor.name());
-        QSettings *settings = new QSettings(INI_FILE_PATH, QSettings::IniFormat);
-        settings->setValue(BgColorKey, bgColor.name());
+        QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
+        settings.setValue(BgColorKey, bgColor.name());
         emit changeBgColor(bgColor);
     }
 }
@@ -174,23 +153,9 @@ void SettingWidget::setColor()
 void SettingWidget::timerIntervalChange(int val)
 {
 //    qDebug() << "timer value change to " << val;
-    QSettings *settings = new QSettings(INI_FILE_PATH, QSettings::IniFormat);
-    settings->setValue(TimerIntervalKey, val);
+    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
+    settings.setValue(TimerIntervalKey, val);
     emit changeTimerInterval(val);
-}
-
-void SettingWidget::useTitleBarChange(int state)
-{
-    QSettings *settings = new QSettings(INI_FILE_PATH, QSettings::IniFormat);
-    switch(state){
-    case Qt::Checked:
-        settings->setValue(UseTitleBarKey, true);
-        break;
-    case Qt::Unchecked:
-        settings->setValue(UseTitleBarKey, false);
-        break;
-    }
-    emit changeUseTitleBar(state == Qt::Checked);
 }
 
 void SettingWidget::restoreDefaults()

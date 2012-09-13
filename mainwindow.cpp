@@ -19,6 +19,7 @@
 
 #include "mainwindow.h"
 
+#include "fileassoc.h"
 #include "settingwidget.h"
 #include "global.h"
 #include <QtGui>
@@ -40,90 +41,45 @@ MainWindow::MainWindow(QWidget *parent) :
     viewer = new ImageViewer(this);
     setCentralWidget(viewer);
 
-//    statusBar()->showMessage(tr("Status Bar"));
 //    setMinimumSize(150, 100);
 
     connect(viewer, SIGNAL(fileNameChange(QString)), SLOT(setMyWindowTitle(QString)));
     connect(viewer, SIGNAL(mouseDoubleClick()), SLOT(changeFullScreen()));
     connect(viewer, SIGNAL(showContextMenu(QPoint)), SLOT(showContextMenu(QPoint)));
-    connect(viewer, SIGNAL(needOpenFile(QStringList)), SLOT(openFile(QStringList))); ///
     connect(viewer, SIGNAL(siteChange(QPoint)), SLOT(moveWindow(QPoint)));
-    connect(viewer, SIGNAL(sizeChange(QSize)), SLOT(resizeWindow(QSize)));
+//    connect(viewer, SIGNAL(sizeChange(QSize)), SLOT(resizeWindow(QSize)));
 
     initContextMenu();
-    initTitleBar();
     initButtomBar();
+
+    readSettings();
 
     setMyWindowTitle();
     setWindowIcon(QIcon(":/res/twitter.png"));
+    setAcceptDrops(true);   //! !!
     setAttribute(Qt::WA_DeleteOnClose); //! !!!
 }
 
-void MainWindow::changeUseTitleBar(bool enable)
+void MainWindow::closeEvent(QCloseEvent *event)
 {
-    bool visible = isVisible();
-    if(enable){
-        setWindowFlags(Qt::Window);
-        titleFrame->hide();
-    }else{
-        setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
-        titleFrame->show();
-    }
-
-    if(visible)
-        show(); ///
+    writeSettings();
+    event->accept();
 }
 
-void MainWindow::initTitleBar()
-{
-    titleFrame = new FloatFrame(this);
-    titleFrame->resize(width(), 30);
-    titleFrame->move(0, 0);
-    QPalette pal(titleFrame->palette());
-    pal.setBrush(QPalette::Window, QBrush(QColor(255, 255, 255, 100)));
-    titleFrame->setPalette(pal);
-    connect(titleFrame, SIGNAL(showContextMenu(QPoint)),
-            SLOT(showContextMenu(QPoint)));
-    connect(titleFrame, SIGNAL(mouseDoubleClick()),
-            SLOT(changeFullScreen()));
-    connect(titleFrame, SIGNAL(siteChange(QPoint)),
-            SLOT(moveWindow(QPoint)));
-    connect(titleFrame, SIGNAL(mouseLeave()), SLOT(setFocus()));  ///
+//void MainWindow::changeUseTitleBar(bool enable)
+//{
+//    bool visible = isVisible();
+//    if(enable){
+//        setWindowFlags(Qt::Window);
+//        titleFrame->hide();
+//    }else{
+//        setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
+//        titleFrame->show();
+//    }
 
-    titleLabel = new QLabel(titleFrame);
-    titleLabel->setAlignment(Qt::AlignCenter);
-    titleLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    QPushButton *minButton = new QPushButton(titleFrame);
-//    minButton->setIcon(style()->standardIcon(QStyle::SP_TitleBarMinButton));
-    minButton->setIcon(QIcon(":/res/Min.png"));
-    minButton->setFlat(true);
-    minButton->setToolTip(tr("Minimize"));
-    minButton->setIconSize(QSize(20, 20));
-    minButton->setMinimumSize(20, 20);
-    connect(minButton, SIGNAL(clicked()), SLOT(showMinimized()));
-
-    QPushButton *closeButton = new QPushButton(titleFrame);
-//    closeButton->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
-    closeButton->setIcon(QIcon(":/res/Close.png"));
-    closeButton->setFlat(true);
-    closeButton->setToolTip(tr("Close"));
-    closeButton->setIconSize(QSize(20, 20));
-    closeButton->setMinimumSize(20, 20);
-    connect(closeButton, SIGNAL(clicked()), SLOT(close()));
-
-    QHBoxLayout *hlayout = new QHBoxLayout(titleFrame);
-    hlayout->setContentsMargins(0,0,0,0);   ///qframe's layout margis default is not 0.
-    titleFrame->setLayout(hlayout);
-
-    hlayout->addWidget(titleLabel);
-    hlayout->addWidget(minButton);
-    hlayout->addWidget(closeButton);
-
-    titleFrame->addWidget(titleLabel);
-    titleFrame->addWidget(minButton);
-    titleFrame->addWidget(closeButton);
-}
+//    if(visible)
+//        show(); ///
+//}
 
 void MainWindow::initButtomBar()
 {
@@ -170,7 +126,6 @@ void MainWindow::initButtomBar()
 
 void MainWindow::resizeEvent(QResizeEvent *e)
 {
-    titleFrame->resize(width(), 30);
     buttomFrame->resize(width(), 60);
     buttomFrame->move(0, height() - 60);
     QWidget::resizeEvent(e);
@@ -188,10 +143,8 @@ void MainWindow::setMyWindowTitle(const QString &title)
     bool hasFile = !title.isEmpty();
     if(hasFile){
         setWindowTitle(title);
-        titleLabel->setText(title);
     }else{
         setWindowTitle(GlobalStr::PROJECT_NAME());
-        titleLabel->setText(GlobalStr::PROJECT_NAME());
     }
 
     preButton->setEnabled(hasFile);
@@ -219,50 +172,43 @@ void MainWindow::openFile()
         viewer->openFile(fileName);
 }
 
-MainWindow *MainWindow::creatMainWindow(int sizeMode, int antialiasMode,
+MainWindow *MainWindow::creatMainWindow(int antialiasMode,
                                         bool enableBgColor,
                                         const QColor &bgColor,
-                                        int timerInterval,
-                                        bool useTitleBar)
+                                        int timerInterval)
 {
     MainWindow *window = new MainWindow;
     window->changeAntialiasMode(antialiasMode);
     if(enableBgColor)
         window->changeBgColor(bgColor);
     window->changeTimerInterval(timerInterval);
-    window->enableSelfAdaptive(sizeMode == 3);
-    window->changeUseTitleBar(useTitleBar); //
-    switch(sizeMode){
-    case 2:
-        window->showFullScreen();
-        break;
-    case 1:
-        window->showMaximized();
-        break;
-//    case 3:
-//    case 0:
-    default:
-        window->resize(FIT_SIZE);
-        window->show();
-        break;
-    }
+
+    window->show();
 
     return window;
 }
 
+void MainWindow::readSettings()
+{
+    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
+    restoreGeometry(settings.value("geometry").toByteArray());
+}
+
+void MainWindow::writeSettings()
+{
+    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
+    settings.setValue("geometry", saveGeometry());
+}
+
 void MainWindow::openFile(const QStringList &list) //! static method
 {
-    QSettings *settings = new QSettings(INI_FILE_PATH, QSettings::IniFormat);
-    int sizeMode = settings->value(SizeModeKey, 0).toInt();
-    bool showDialog = settings->value(DialogKey, true).toBool();
-    int antialiasMode = settings->value(AntialiasModeKey, 0).toInt();
-    bool enableBgColor = settings->value(EnableBgColorKey, true).toBool();
-    QString colorStr = settings->value(BgColorKey, BG_GREEN).toString();
-    int timerInterval = settings->value(TimerIntervalKey, 4).toInt();
-    bool useTitleBar = settings->value(UseTitleBarKey, true).toBool();
+    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
+    bool showDialog = settings.value(DialogKey, true).toBool();
+    int antialiasMode = settings.value(AntialiasModeKey, 0).toInt();
+    bool enableBgColor = settings.value(EnableBgColorKey, true).toBool();
+    QString colorStr = settings.value(BgColorKey, BG_GREEN).toString();
+    int timerInterval = settings.value(TimerIntervalKey, 4).toInt();
 
-    if(sizeMode < 0 || sizeMode > 3)// 4 modes
-        sizeMode = 0;
     if(antialiasMode < 0 || antialiasMode > 2) // 3 modes
         antialiasMode = 0;
     QColor bgColor(colorStr);
@@ -284,20 +230,68 @@ void MainWindow::openFile(const QStringList &list) //! static method
     MainWindow *window;
     if(fileList.empty()){
         if(qApp->topLevelWidgets().empty()){
-            window = creatMainWindow(sizeMode, antialiasMode,
+            window = creatMainWindow(antialiasMode,
                                      enableBgColor, bgColor,
-                                     timerInterval, useTitleBar);
+                                     timerInterval);
             if(showDialog)
                 window->openFile();
         }
     }else{  //! is multi-threads needs？？
         for(int size = fileList.size(), i=0; i < size; ++i){
-            window = creatMainWindow(sizeMode, antialiasMode,
+            window = creatMainWindow(antialiasMode,
                                      enableBgColor, bgColor,
-                                     timerInterval, useTitleBar);
+                                     timerInterval);
             window->openFile(fileList.at(i));
         }
     }
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+//    if (event->mimeData()->hasFormat("text/uri-list")) {
+//        event->acceptProposedAction();
+//    }
+
+    const QMimeData *mimeData = event->mimeData();
+    if (event->mimeData()->hasUrls()){
+        QList<QUrl> urlList(mimeData->urls());
+        QFileInfo fileInfo;
+        for (int i = 0; i < urlList.size(); ++i) {
+            fileInfo.setFile(urlList.at(i).toLocalFile());
+            if(fileInfo.isFile()){
+//                    && FORMAT_LIST.contains(fileInfo.suffix().toLower())){
+                event->acceptProposedAction();
+                break;
+            }
+        }
+    }
+}
+
+void MainWindow::dropEvent(QDropEvent *event)
+{
+    const QMimeData *mimeData = event->mimeData();
+    if (mimeData->hasUrls()) {
+        QList<QUrl> urlList(mimeData->urls());
+        QFileInfo fileInfo;
+        QString fileName;
+        while(!urlList.empty()){
+            fileName = urlList.first().toLocalFile();
+            urlList.removeFirst();
+            fileInfo.setFile(fileName);
+            if(fileInfo.isFile()){
+                viewer->openFile(fileName); // 当前窗口接受一个图片文件
+                break;
+            }
+        }
+
+        QStringList fileList;
+        for(int size = urlList.size(), i=0; i < size; ++i)
+            fileList.append(urlList.at(i).toLocalFile());
+        if(!fileList.empty())
+            openFile(fileList); // 超过一张图片时，新建窗口来显示
+    }
+
+    event->acceptProposedAction();
 }
 
 void MainWindow::changeFullScreen()
@@ -309,6 +303,9 @@ void MainWindow::changeFullScreen()
             showMaximized();
         else
             showNormal();
+
+//        updateGeometry();
+//        move(pos());
     }else{
         WasMaximized = isMaximized();    //! only for windows?
 //        statusBar()->hide();
@@ -605,16 +602,54 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
     }
 }
 
+void MainWindow::changeAssociation(bool enabled)
+{
+    QCheckBox *cb = dynamic_cast<QCheckBox*>(sender());
+    if(cb == NULL) return;
+
+    QString ext(cb->text());
+    if(FileAssoc::isSupportAssociation()){
+        if(enabled){
+            FileAssoc::setAssociation(ext);
+        }else{
+            FileAssoc::clearAssociation(ext);
+        }
+    }
+}
+
 void MainWindow::setting()
 {
-    // can not use 'this' for parent, or it will close when changeUseTitleBar()
-    QDialog *settingDialog = new QDialog(0, Qt::MSWindowsFixedSizeDialogHint
+    QDialog *settingDialog = new QDialog(this, Qt::MSWindowsFixedSizeDialogHint
                                | Qt::WindowTitleHint);
+
+    QTabWidget *tw = new QTabWidget(settingDialog);
+
     settingDialog->setWindowTitle(GlobalStr::PROJECT_NAME());
     SettingWidget *settingWidget = new SettingWidget(settingDialog);
     connect(settingWidget, SIGNAL(clickClose()), settingDialog, SLOT(close()));
+    tw->addTab(settingWidget, tr("Common"));
+
+    if(FileAssoc::isSupportAssociation()){
+        QGridLayout *gl = new QGridLayout;
+
+        const int CountOfColumn = 3;
+        QStringList formatList = QString(SUPPORT_FORMAT).remove("*.").split(' ');
+        QCheckBox *cb;
+        for(int i = 0, size = formatList.size(); i < size; ++i){
+            cb = new QCheckBox(formatList.at(i));
+            cb->setChecked(FileAssoc::checkAssociation(formatList.at(i)));// before connect(). otherwise it will launch the function changeAssociation(bool).
+            connect(cb, SIGNAL(toggled(bool)), SLOT(changeAssociation(bool)));
+
+            gl->addWidget(cb, i / CountOfColumn, i % CountOfColumn);
+        }
+
+        QWidget *assocWidget = new QWidget(settingDialog);
+        assocWidget->setLayout(gl);
+        tw->addTab(assocWidget, tr("File Association"));
+    }
+
     QVBoxLayout *layout = new QVBoxLayout(settingDialog);
-    layout->addWidget(settingWidget);
+    layout->addWidget(tw);
     settingDialog->setLayout(layout);
 
     MainWindow *mainWindow;
@@ -626,12 +661,8 @@ void MainWindow::setting()
                         mainWindow, SLOT(changeAntialiasMode(int)));
                 connect(settingWidget, SIGNAL(changeBgColor(QColor)),
                         mainWindow, SLOT(changeBgColor(QColor)));
-                connect(settingWidget, SIGNAL(enableSelfAdaptive(bool)),
-                        mainWindow, SLOT(enableSelfAdaptive(bool)));
                 connect(settingWidget, SIGNAL(changeTimerInterval(int)),
                         mainWindow, SLOT(changeTimerInterval(int)));
-                connect(settingWidget, SIGNAL(changeUseTitleBar(bool)),
-                        mainWindow, SLOT(changeUseTitleBar(bool)));
             }
 //        }
     }

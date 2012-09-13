@@ -36,29 +36,31 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent = 0);
-    static   MainWindow *creatMainWindow(int sizeMode, int antialiasMode,
+
+    static   MainWindow *creatMainWindow(int antialiasMode,
                     bool enableBgColor, const QColor &bgColor,
-                    int timerInterval, bool useTitleBar);
+                    int timerInterval);
 
 public slots:
     void openFile();
     static void openFile(const QStringList &fileList); //! static method
-    void enableSelfAdaptive(bool enable) { viewer->enableSelfAdaptive(enable); }
     void changeAntialiasMode(int mode) { viewer->changeAntialiasMode(mode); }
     void changeBgColor(const QColor &color) { viewer->changeBgColor(color); }
     void changeTimerInterval(int sec) { slideTimer->setInterval(sec * 1000); }
-    void changeUseTitleBar(bool enable);
 
 protected slots:
+    void closeEvent(QCloseEvent *event);
+    void dragEnterEvent(QDragEnterEvent * event);
+    void dropEvent(QDropEvent * event);
     void keyPressEvent(QKeyEvent *e);
     void resizeEvent ( QResizeEvent * event );
 
     void moveWindow(const QPoint &change) { if(!isFullScreen()) move(pos() + change); }
-    void resizeWindow(const QSize &size)  { resize(size); }
 
     void setMyWindowTitle(const QString &title = QString::null);
     void showContextMenu(const QPoint &pos);
 
+    void changeAssociation(bool enabled);
     void changeFullScreen();
     void showAttribute();
     void slideShow();
@@ -79,8 +81,10 @@ protected slots:
 //    void closeWindow()      { close(); }
 
 private:
+    void readSettings();
+    void writeSettings();
+
     void initContextMenu();
-    void initTitleBar();
     void initButtomBar();
     void openFile(const QString &file) { viewer->openFile(file); }
 
@@ -90,9 +94,7 @@ private:
     QTimer *slideTimer;
     int slideInterval;//msec
 
-    FloatFrame *titleFrame;
     FloatFrame *buttomFrame;
-    QLabel *titleLabel;
 
     ContralBar *contralBar;
     QPushButton *settingButton;

@@ -8,13 +8,15 @@ HEADERS       = imageviewer.h \
     settingwidget.h \
     global.h \
     floatframe.h \
-    contralbar.h
+    contralbar.h \
+    fileassoc.h
 SOURCES       = imageviewer.cpp \
                 main.cpp \
     mainwindow.cpp \
     settingwidget.cpp \
     floatframe.cpp \
-    contralbar.cpp
+    contralbar.cpp \
+    fileassoc.cpp
 
 RESOURCES += \
     res.qrc
