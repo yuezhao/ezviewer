@@ -52,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initContextMenu();
     initButtomBar();
 
+    resize(FIT_SIZE);
     readSettings();
 
     setMyWindowTitle();

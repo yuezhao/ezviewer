@@ -4,47 +4,47 @@
 <context>
     <name>ContralBar</name>
     <message>
-        <location filename="../contralbar.ui" line="6"/>
+        <location filename="../contralbar.ui" line="20"/>
         <source>Form</source>
         <translation>窗体</translation>
     </message>
     <message>
-        <location filename="../contralbar.ui" line="23"/>
+        <location filename="../contralbar.ui" line="52"/>
         <source>Setting</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../contralbar.ui" line="46"/>
+        <location filename="../contralbar.ui" line="90"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../contralbar.ui" line="91"/>
+        <location filename="../contralbar.ui" line="150"/>
         <source>Previous</source>
         <translation>上一张</translation>
     </message>
     <message>
-        <location filename="../contralbar.ui" line="120"/>
+        <location filename="../contralbar.ui" line="188"/>
         <source>Auto Play</source>
         <translation>自动放映</translation>
     </message>
     <message>
-        <location filename="../contralbar.ui" line="143"/>
+        <location filename="../contralbar.ui" line="226"/>
         <source>Next</source>
         <translation>下一张</translation>
     </message>
     <message>
-        <location filename="../contralbar.ui" line="166"/>
+        <location filename="../contralbar.ui" line="264"/>
         <source>Rotate Left</source>
         <translation>逆时钟旋转90度</translation>
     </message>
     <message>
-        <location filename="../contralbar.ui" line="189"/>
+        <location filename="../contralbar.ui" line="302"/>
         <source>Rotate Right</source>
         <translation>顺时钟旋转90度</translation>
     </message>
     <message>
-        <location filename="../contralbar.ui" line="212"/>
+        <location filename="../contralbar.ui" line="340"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
@@ -96,89 +96,89 @@
         <translation type="obsolete">图片文件 (%1);;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="381"/>
+        <location filename="../imageviewer.cpp" line="359"/>
         <source>Cannot load picture:
 &apos;%1&apos;.</source>
         <translation>无法载入图像:
 &apos;%1’</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="585"/>
+        <location filename="../imageviewer.cpp" line="558"/>
         <source>Delete File</source>
         <translation>删除文件</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="586"/>
+        <location filename="../imageviewer.cpp" line="559"/>
         <source>Are you sure to delete file &apos;%1&apos;?</source>
         <translation>是否确定要删除文件 &apos;%1&apos;?</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="598"/>
+        <location filename="../imageviewer.cpp" line="571"/>
         <source>Delete Failed</source>
         <translation>删除失败</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="599"/>
+        <location filename="../imageviewer.cpp" line="572"/>
         <source>Delete file &apos;%1&apos; failed!</source>
         <translation>文件 ‘%1’ 删除失败！</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="631"/>
+        <location filename="../imageviewer.cpp" line="604"/>
         <source>File Name: %1&lt;br&gt;</source>
         <translation>文件名： %1&lt;br&gt;</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="632"/>
+        <location filename="../imageviewer.cpp" line="605"/>
         <source>File Size: %1 (%2 Bytes)&lt;br&gt;</source>
         <translation>文件大小: %1 (%2 字节)&lt;br&gt;</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="633"/>
+        <location filename="../imageviewer.cpp" line="606"/>
         <source>Created Time: %1&lt;br&gt;</source>
         <translation>创建时间: %1&lt;br&gt;</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="635"/>
+        <location filename="../imageviewer.cpp" line="608"/>
         <source>Modified Time: %1&lt;br&gt;</source>
         <translation>修改时间: %1&lt;br&gt;</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="637"/>
+        <location filename="../imageviewer.cpp" line="610"/>
         <source>Last Read: %1</source>
         <translation>最近访问: %1</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="645"/>
+        <location filename="../imageviewer.cpp" line="618"/>
         <source>&lt;br&gt;</source>
         <translation>&lt;br&gt;</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="648"/>
+        <location filename="../imageviewer.cpp" line="621"/>
         <source>Color Count: %1&lt;br&gt;</source>
         <translation>颜色数: %1&lt;br&gt;</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="650"/>
+        <location filename="../imageviewer.cpp" line="623"/>
         <source>Color Count: True color&lt;br&gt;</source>
         <translation>颜色数: 真彩色&lt;br&gt;</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="651"/>
+        <location filename="../imageviewer.cpp" line="624"/>
         <source>Depth: %1&lt;br&gt;</source>
         <translation>深度: %1&lt;br&gt;</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="670"/>
+        <location filename="../imageviewer.cpp" line="643"/>
         <source>%1:1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="672"/>
+        <location filename="../imageviewer.cpp" line="645"/>
         <source>1:%1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="674"/>
+        <location filename="../imageviewer.cpp" line="647"/>
         <source>Size: %1 x %2 (%3)&lt;br&gt;</source>
         <translation>尺寸: %1 x %2 (%3)&lt;br&gt;</translation>
     </message>
@@ -187,12 +187,12 @@
         <translation type="obsolete">尺寸: %1 x %2&lt;br&gt;</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="677"/>
+        <location filename="../imageviewer.cpp" line="650"/>
         <source>Frame Count: %1&lt;br&gt;</source>
         <translation>帧数： %1&lt;br&gt;</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="678"/>
+        <location filename="../imageviewer.cpp" line="651"/>
         <source>Current Scale: %1%</source>
         <translation>当前缩放： %1%</translation>
     </message>
@@ -201,22 +201,22 @@
         <translation type="obsolete">图像查看</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="621"/>
+        <location filename="../imageviewer.cpp" line="594"/>
         <source>yyyy-MM-dd, hh:mm:ss</source>
         <translation>yyyy年MM月dd日，hh:mm:ss</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="625"/>
+        <location filename="../imageviewer.cpp" line="598"/>
         <source>%1 B</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="627"/>
+        <location filename="../imageviewer.cpp" line="600"/>
         <source>%1 KB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="629"/>
+        <location filename="../imageviewer.cpp" line="602"/>
         <source>%1 MB</source>
         <translation></translation>
     </message>
@@ -225,7 +225,7 @@
         <translation type="obsolete">文件名： %1</translation>
     </message>
     <message>
-        <location filename="../imageviewer.cpp" line="640"/>
+        <location filename="../imageviewer.cpp" line="613"/>
         <source>&lt;br&gt;Image Format: %1</source>
         <translation>&lt;br&gt;图像格式： %1</translation>
     </message>
@@ -297,12 +297,12 @@
         <translation type="obsolete">EZ图像查看器</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="210"/>
+        <location filename="../mainwindow.cpp" line="169"/>
         <source>Open File</source>
         <translation>打开文件</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="211"/>
+        <location filename="../mainwindow.cpp" line="170"/>
         <source>Images (%1);;All Files (*)</source>
         <translation>图片文件 (%1);;所有文件 (*)</translation>
     </message>
@@ -311,91 +311,99 @@
         <translation type="obsolete">EZ看图</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="319"/>
+        <location filename="../mainwindow.cpp" line="322"/>
         <source>Property</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="366"/>
+        <location filename="../mainwindow.cpp" line="369"/>
         <source>&amp;Open</source>
         <translation>打开(&amp;O)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="355"/>
+        <location filename="../mainwindow.cpp" line="358"/>
         <source>&amp;Setting</source>
         <translation>设置(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="334"/>
-        <location filename="../mainwindow.cpp" line="336"/>
-        <location filename="../mainwindow.cpp" line="370"/>
+        <location filename="../mainwindow.cpp" line="337"/>
+        <location filename="../mainwindow.cpp" line="339"/>
+        <location filename="../mainwindow.cpp" line="373"/>
         <source>Auto Play</source>
         <translation>自动放映</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="342"/>
-        <location filename="../mainwindow.cpp" line="344"/>
+        <location filename="../mainwindow.cpp" line="345"/>
+        <location filename="../mainwindow.cpp" line="347"/>
         <source>Stop Play</source>
         <translation>停止放映</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="358"/>
+        <location filename="../mainwindow.cpp" line="361"/>
         <source>&amp;About</source>
         <translation>关于(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="105"/>
-        <location filename="../mainwindow.cpp" line="361"/>
+        <location filename="../mainwindow.cpp" line="364"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="97"/>
         <source>Minimize</source>
-        <translation>最小化</translation>
+        <translation type="obsolete">最小化</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="374"/>
+        <location filename="../mainwindow.cpp" line="377"/>
         <source>Rotate &amp;Left</source>
         <translation>逆时钟旋转90度(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="378"/>
+        <location filename="../mainwindow.cpp" line="381"/>
         <source>Rotate &amp;Right</source>
         <translation>顺时钟旋转90度(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="381"/>
+        <location filename="../mainwindow.cpp" line="384"/>
         <source>Mirrored &amp;Horizontal</source>
         <translation>水平镜像(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="384"/>
+        <location filename="../mainwindow.cpp" line="387"/>
         <source>Mirrored &amp;Vertical</source>
         <translation>竖直镜像(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="387"/>
+        <location filename="../mainwindow.cpp" line="390"/>
         <source>&amp;Copy to clipboard</source>
         <translation>复制到剪贴板(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="391"/>
+        <location filename="../mainwindow.cpp" line="394"/>
         <source>&amp;Property</source>
         <translation>属性(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="396"/>
+        <location filename="../mainwindow.cpp" line="399"/>
         <source>&amp;Delete</source>
         <translation>删除(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="399"/>
+        <location filename="../mainwindow.cpp" line="402"/>
         <source>Close All</source>
         <translation>全部关闭</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="176"/>
+        <location filename="../mainwindow.cpp" line="630"/>
+        <source>Common</source>
+        <translation>常规</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="648"/>
+        <source>File Association</source>
+        <translation>文件关联</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="137"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
@@ -439,12 +447,17 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="36"/>
-        <source>:/res/ImageViewer_%1</source>
+        <location filename="../main.cpp" line="35"/>
+        <source>lang/qt_%1</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../main.cpp" line="38"/>
+        <source>:/res/ImageViewer_%1</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="40"/>
         <source>lang/ImageViewer_%1</source>
         <translation></translation>
     </message>
@@ -453,7 +466,6 @@
     <name>SettingWidget</name>
     <message>
         <location filename="../settingwidget.ui" line="14"/>
-        <location filename="../settingwidget.ui" line="263"/>
         <source>Form</source>
         <translation>窗体</translation>
     </message>
@@ -463,97 +475,108 @@
         <translation>启动时</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="26"/>
         <source>Window Size:</source>
-        <translation>窗体大小：</translation>
+        <translation type="obsolete">窗体大小：</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="34"/>
         <source>Fixed Size</source>
-        <translation>固定大小</translation>
+        <translation type="obsolete">固定大小</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="39"/>
         <source>Maximize</source>
-        <translation>最大化</translation>
+        <translation type="obsolete">最大化</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="44"/>
         <source>Full Screen</source>
-        <translation>全屏显示</translation>
+        <translation type="obsolete">全屏显示</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="49"/>
         <source>Adjust to Picture Size</source>
-        <translation>随图片大小调整</translation>
+        <translation type="obsolete">随图片大小调整</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="57"/>
         <source>Show file dialog (if no picture opened).</source>
-        <translation>显示文件选择对话框(没有文件打开时)</translation>
+        <translation type="obsolete">显示文件选择对话框(没有文件打开时)</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="94"/>
+        <location filename="../settingwidget.ui" line="63"/>
         <source>Display Effect</source>
         <translation>显示效果</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="100"/>
+        <location filename="../settingwidget.ui" line="69"/>
         <source>Antialiasing:</source>
         <translation>抗锯齿：</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="107"/>
         <source>Custom Background Color:</source>
-        <translation>自定义背景颜色：</translation>
+        <translation type="obsolete">自定义背景颜色：</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="139"/>
+        <location filename="../settingwidget.ui" line="101"/>
         <source>Background Color:</source>
         <translation>背景颜色：</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="188"/>
+        <location filename="../settingwidget.ui" line="150"/>
         <source>#FFFFFF</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="200"/>
         <source>Enabled</source>
-        <translation>允许</translation>
+        <translation type="obsolete">允许</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="213"/>
+        <location filename="../settingwidget.ui" line="26"/>
+        <source>Show File Dialog (if no picture opened).</source>
+        <translation>显示文件选择对话框(没有文件打开时)</translation>
+    </message>
+    <message>
+        <location filename="../settingwidget.ui" line="162"/>
+        <source>Enable Custom Background Color</source>
+        <translation>允许自定义背景颜色</translation>
+    </message>
+    <message>
+        <location filename="../settingwidget.ui" line="175"/>
         <source>Auto Play</source>
         <translation>自动放映</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="231"/>
+        <location filename="../settingwidget.ui" line="193"/>
         <source> s</source>
         <translation> 秒</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="253"/>
+        <location filename="../settingwidget.ui" line="215"/>
         <source>Timing Interval:</source>
         <translation>定时间隔：</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="269"/>
-        <source>Use System Title Bar</source>
-        <translation>使用系统标题栏</translation>
+        <location filename="../settingwidget.ui" line="225"/>
+        <source>UI</source>
+        <translation>界面</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="121"/>
+        <location filename="../settingwidget.ui" line="231"/>
+        <source>Show Countral Bar</source>
+        <translation>显示控制栏</translation>
+    </message>
+    <message>
+        <source>Use System Title Bar</source>
+        <translation type="obsolete">使用系统标题栏</translation>
+    </message>
+    <message>
+        <location filename="../settingwidget.ui" line="83"/>
         <source>Using when pictures enlarged</source>
         <translation>当放大图片时使用</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="126"/>
+        <location filename="../settingwidget.ui" line="88"/>
         <source>Always using</source>
         <translation>总是使用</translation>
     </message>
     <message>
-        <location filename="../settingwidget.ui" line="131"/>
+        <location filename="../settingwidget.ui" line="93"/>
         <source>Always no using</source>
         <translation>从不使用</translation>
     </message>
