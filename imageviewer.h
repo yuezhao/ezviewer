@@ -113,6 +113,7 @@ private:
     void noFileToShow();
     void myMouseMove(QMouseEvent * event);
     void deleteFile(bool messagebox);
+    bool deleteFile(const QString &filePath);
 
 private:
     ImageState state;

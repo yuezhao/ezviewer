@@ -23,6 +23,16 @@
 #include "imageviewer.h"
 #include <QtDebug>
 
+#ifdef Q_WS_WIN
+#include <windows.h>
+#include <ShellAPI.h>
+#   ifdef UNICODE
+#   define QStringToCHAR(x) (wchar_t*)x.utf16()
+#   else
+#   define QStringToCHAR(x) x.local8Bit().constData()
+#   endif // UNICODE
+#endif // Q_WS_WIN
+
 //!    paste()
 //    const QMimeData *mimeData = QApplication::clipboard()->mimeData();
 //    if (mimeData->hasImage())
@@ -545,18 +555,40 @@ void ImageViewer::resizeEvent(QResizeEvent *e)
     QWidget::resizeEvent(e);
 }
 
+bool ImageViewer::deleteFile(const QString &filePath)
+{
+#ifdef Q_WS_WIN
+    qDebug(qPrintable(QString(filePath).replace(QString("/"), QString("\\"))));
+
+    SHFILEOPSTRUCT FileOp;//定义SHFILEOPSTRUCT结构对象;
+    FileOp.hwnd = 0;
+    FileOp.wFunc = FO_DELETE; //执行文件删除操作;
+    FileOp.pFrom = QStringToCHAR(QString(filePath).replace(QString("/"), QString("\\")));  //源文件路径
+    FileOp.pTo = NULL; //目标文件路径;
+    FileOp.fFlags = FOF_ALLOWUNDO;//此标志使删除文件备份到Windows回收站
+    FileOp.fFlags |= FOF_NOCONFIRMATION;    //! 直接删除，不进行确认
+
+    if(SHFileOperation(&FileOp)) //这里开始删除文件
+        return false;
+    else
+        return true;
+#else
+    return QFile::remove(filePath);
+#endif // Q_WS_WIN
+}
 
 void ImageViewer::deleteFile(bool messagebox)//! MOVE to mainwindow.cpp...
 {
     if(!hasFile()) return;
 
-    QFile file(filePath);
-    if(!file.exists()) return;
+    if(!QFile::exists(filePath)) return;
+
+    QString fname(QFile(filePath).fileName());
 
     if(messagebox){
         int ret = QMessageBox::question(
                     this, tr("Delete File"),
-                    tr("Are you sure to delete file '%1'?").arg(file.fileName()),
+                    tr("Are you sure to delete file '%1'?").arg(fname),
                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
 
         if(ret == QMessageBox::No)
@@ -567,9 +599,10 @@ void ImageViewer::deleteFile(bool messagebox)//! MOVE to mainwindow.cpp...
 
     updateFileIndex(filePath);
     int oldIndex = currentIndex;
-    if(!file.remove()){
+
+    if(!deleteFile(filePath)){// if(!file.remove()){
         QMessageBox::warning(this, tr("Delete Failed"),
-                             tr("Delete file '%1' failed!").arg(file.fileName()));
+                             tr("Delete file '%1' failed!").arg(fname));
     }else{
         updateFileIndex(filePath);
         if(oldIndex != -1)

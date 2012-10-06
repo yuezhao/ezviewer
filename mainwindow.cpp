@@ -646,6 +646,8 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         QWidget::keyPressEvent(e);
         break;
     }
+
+    qApp->processEvents(QEventLoop::ExcludeUserInputEvents); //add:20121006
 }
 
 void MainWindow::changeAssociation(bool enabled)
