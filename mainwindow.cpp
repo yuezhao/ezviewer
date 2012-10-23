@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     slideTimer->setInterval(slideInterval);
     connect(slideTimer, SIGNAL(timeout()), SLOT(nextPic()));
 
-    viewer = new ImageViewer(this);
+    viewer = new PicManager(this);
     setCentralWidget(viewer);
 
 //    setMinimumSize(150, 100);
@@ -49,7 +49,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(viewer, SIGNAL(mouseDoubleClick()), SLOT(changeFullScreen()));
     connect(viewer, SIGNAL(showContextMenu(QPoint)), SLOT(showContextMenu(QPoint)));
     connect(viewer, SIGNAL(siteChange(QPoint)), SLOT(moveWindow(QPoint)));
-//    connect(viewer, SIGNAL(sizeChange(QSize)), SLOT(resizeWindow(QSize)));
 
     initContextMenu();
     initButtomBar();
@@ -206,7 +205,7 @@ void MainWindow::setMyWindowTitle(const QString &title)
 
 void MainWindow::openFile()
 {
-    QString currentFile(viewer->currentFile());
+    QString currentFile(viewer->filePath());
     QString defaultDir(currentFile.isEmpty()
                        ? QDesktopServices::storageLocation(QDesktopServices::PicturesLocation)
                        : QFileInfo(currentFile).absolutePath());
@@ -363,12 +362,12 @@ void MainWindow::showAttribute()
 {
     if(viewer->hasPicture() || viewer->hasFile()){
 #ifdef Q_WS_WIN
-        QWhatsThis::showText(QCursor::pos(), viewer->attributeString(), this);
+        QWhatsThis::showText(QCursor::pos(), viewer->attribute(), this);
 #else//(Q_WS_X11)
-        QMessageBox::information(this, tr("Property"), viewer->attributeString());
+        QMessageBox::information(this, tr("Property"), viewer->attribute());
 #endif
-        //    setToolTip(viewer->attributeString());
-        //    QToolTip::showText(QCursor::pos(), viewer->attributeString(), this);
+        //    setToolTip(viewer->attribute());
+        //    QToolTip::showText(QCursor::pos(), viewer->attribute(), this);
     }
 }
 

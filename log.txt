@@ -27,3 +27,9 @@
 
 2012.10.6
 新增：删除文件到回收站。
+
+2012.10.6-2012.10.7,2012.10.20:
+重构：添加PicManager类，将原来ImageViewer类中文件管理相关的部分转移到PicManager类中，PicManager对象作为ImageViewer的一个成员。
+
+2012.10.22-2012.10.23:
+重构：ImageViewer类只保留图片显示相关的功能，作为PicManager类的基类，PicManager类从ImageViewer类派生。修改反映文件列表变化的代码，改为实时监控。PicManager类增加一个内部类ImageCache，用来保存读取的图片的状态，为下一步多线程预读作准备。

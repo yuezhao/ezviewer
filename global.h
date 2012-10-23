@@ -55,7 +55,7 @@ public:
     }
 };
 
-#define QDir_SORT_FLAG QDir::Name | QDir::IgnoreCase
+#define QDir_SORT_FLAG  QDir::Name | QDir::IgnoreCase
 
 const qreal SCALE_MAX = 20.0;
 const qreal SCALE_MIN = 0.1;

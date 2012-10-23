@@ -23,7 +23,7 @@
 #include <QMainWindow>
 #include <QTimer>
 
-#include "imageviewer.h"
+#include "picmanager.h"
 
 class FloatFrame;
 class ContralBar;
@@ -90,7 +90,7 @@ private:
     void openFile(const QString &file) { viewer->openFile(file); }
 
 private:
-    ImageViewer *viewer;
+    PicManager *viewer;
     bool WasMaximized;
     QTimer *slideTimer;
     int slideInterval;//msec
