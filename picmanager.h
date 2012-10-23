@@ -4,9 +4,9 @@
 #include <QString>
 #include <QFileInfoList>
 #include <QFileSystemWatcher>
-#include <QMovie>
 
 #include "imageviewer.h"
+#include "imagecache.h"
 
 class PicManager : public ImageViewer
 {
@@ -28,9 +28,9 @@ signals:
 
 public slots:
     void openFile(const QString &file);
+    void noFileToShow();
     bool prePic();
     bool nextPic();
-    void noFileToShow();
 
     void deleteFileAsk() { deleteFile(true); }
     void deleteFileNoAsk() { deleteFile(false); }
@@ -54,27 +54,12 @@ protected slots:
 //    };
 
 private:
-    class ImageCache;
+    void updateFileInfoList(const QString &file);
     void updateFileIndex(const QString &file);
     void readFile(const QFileInfo &fileInfo);
-    ImageCache * getCache(const QFileInfo &fileInfo);
-    void deleteFile(bool messagebox);
+    void deleteFile(bool needAsk);
 
-    class ImageCache {
-    public:
-        ImageCache() : movie(NULL) {}
-        ~ImageCache()
-        { if(movie) delete movie; }
-
-        QImage image;
-        QMovie *movie;
-        QString format;
-        int frameCount;
-    private:
-        ImageCache(const ImageCache &r);
-        const ImageCache & operator=(const ImageCache &r);
-    } *curCache;
-
+    ImageCache *curCache;
     QString curPath;
     QString curName;
     QFileInfoList list;

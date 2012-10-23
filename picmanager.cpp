@@ -4,23 +4,27 @@
 #include "toolkit.h"
 
 #include <QMessageBox>
-#include <QImageReader>
 #include <QDir>
 #include <QFile>
 
 #ifdef Q_WS_WIN
 #include <windows.h>
 #include <ShellAPI.h>
-#   ifdef UNICODE
-#   define QStringToCHAR(x) (wchar_t*)x.utf16()
-#   else
-#   define QStringToCHAR(x) x.local8Bit().constData()
-#   endif // UNICODE
+#ifdef UNICODE
+#   define _UNICODE
+#endif // UNICODE
+#include <tchar.h>  // need _UNICODE
+#ifdef UNICODE
+#   define QStringToTCHAR(x) (wchar_t*) x.utf16()   // need UNICODE
+#else
+#   define QStringToTCHAR(x) x.local8Bit().constData()
+#endif // UNICODE
 #endif // Q_WS_WIN
 
 
 PicManager::PicManager(QWidget *parent)
-    : ImageViewer(parent), curCache(new ImageCache()), currentIndex(-1), fsWatcher(this)
+    : ImageViewer(parent), curCache(new ImageCache()),
+      currentIndex(-1), fsWatcher(this)
 {
 //    state = NoFileNoPicture;
     connect(&fsWatcher, SIGNAL(directoryChanged(QString)),
@@ -36,36 +40,83 @@ void PicManager::openFile(const QString &file)
 {
     fsWatcher.removePaths(fsWatcher.files() + fsWatcher.directories());
 
-    //    updateFileIndex(file);
+    QFileInfo fileInfo(file);
+    updateFileIndex(file);
+    readFile(fileInfo);
+
+    QString dirPath(fileInfo.absolutePath());
+    fsWatcher.addPath(dirPath);
+    fsWatcher.addPath(QFileInfo(dirPath).absolutePath()); // notice when rename the dir.
+}
+
+void PicManager::noFileToShow()
+{
+    curCache->image = QImage();
+    curPath = curName = QString::null;
+//    state = NoFileNoPicture;
+    loadImage(curCache->image);
+    emit fileNameChange("");    //
+}
+
+void PicManager::updateFileInfoList(const QString &file)
+{
     QFileInfo fileInfo(file);
     QDir dir(fileInfo.absolutePath(), SUPPORT_FORMAT, QDir_SORT_FLAG,
              QDir::Files);
     list = dir.entryInfoList();
     currentIndex = list.indexOf(fileInfo);
-
-    readFile(fileInfo);
-
-    QString dirPath(fileInfo.absolutePath());
-    fsWatcher.addPath(dirPath);
-    fsWatcher.addPath(QFileInfo(dirPath).absolutePath());
 }
 
 void PicManager::updateFileIndex(const QString &file)
 {
-    QFileInfo fileInfo(file);
-    QDir dir(fileInfo.absolutePath(), SUPPORT_FORMAT, QDir_SORT_FLAG,
-             QDir::Files);
-    list = dir.entryInfoList();
-    //! verify if currentIndex is valid.
-    if(currentIndex < 0 || currentIndex >= list.size() ||
-            list.at(currentIndex).absoluteFilePath() != curPath)
-        currentIndex = list.indexOf(fileInfo);
+    int oldIndex = currentIndex;
+    updateFileInfoList(file);
+
+    if(currentIndex != -1) //! verify if currentIndex is valid.
+        return;
+
+    if(list.isEmpty()){
+        noFileToShow();
+        return;
+    }
+
+    if(oldIndex >= list.size())
+        currentIndex = list.size() - 1;
+    else if(oldIndex != -1)
+        currentIndex = oldIndex;
+    else
+        currentIndex = 0;
+    readFile(list.at(currentIndex));
 }
 
-void PicManager::directoryChanged(const QString &dirPath)
+void PicManager::directoryChanged(const QString &/*dirPath*/)
 {
-    qDebug("dirChanged: %s", qPrintable(dirPath));
     updateFileIndex(curPath);
+}
+
+void PicManager::readFile(const QFileInfo &fileInfo)
+{
+    //! must test if hasPicture() !
+    if(/*hasPicture() && */ curPath == fileInfo.absoluteFilePath() )//! if the image needs refresh?
+        return;
+
+    curPath = fileInfo.absoluteFilePath();
+    curName = fileInfo.fileName();
+
+    SafeDelete(curCache);
+    curCache = ImageCache::getCache(curPath);
+
+    if(curCache->movie){
+        if(curCache->movie->state() == QMovie::NotRunning)
+            curCache->movie->start();
+        connect(curCache->movie, SIGNAL(updated(QRect)), SLOT(updateGifImage()));
+    }
+
+    QString msg = curCache->image.isNull() ? tr("Cannot load picture:\n'%1'.")
+                                      .arg(filePath()) : QString::null;
+    loadImage(curCache->image, msg);
+//     state = image.isNull() ? FileNoPicture : FilePicture;
+    emit fileNameChange(curName);
 }
 
 bool PicManager::prePic()
@@ -86,85 +137,6 @@ bool PicManager::nextPic()
         currentIndex = -1;
     readFile(list.at(++currentIndex));
     return true;
-}
-
-void PicManager::readFile(const QFileInfo &fileInfo)
-{
-    //! must test if hasPicture() !
-    if(/*hasPicture() && */ curPath == fileInfo.absoluteFilePath() )//! if the image needs refresh?
-        return;
-
-    curPath = fileInfo.absoluteFilePath();
-    curName = fileInfo.fileName();
-
-    SafeDelete(curCache);
-    curCache = getCache(fileInfo);
-
-    if(curCache->movie){
-        if(curCache->movie->state() == QMovie::NotRunning)
-            curCache->movie->start();
-        connect(curCache->movie, SIGNAL(updated(QRect)), SLOT(updateGifImage()));
-    }
-
-    QString msg = curCache->image.isNull() ? tr("Cannot load picture:\n'%1'.")
-                                      .arg(filePath()) : QString::null;
-    loadImage(curCache->image, msg);
-//     state = image.isNull() ? FileNoPicture : FilePicture;
-    emit fileNameChange(curName);
-}
-
-PicManager::ImageCache * PicManager::getCache(const QFileInfo &fileInfo)
-{
-    ImageCache *result = new ImageCache();
-    QImage   &image = result->image;
-    QMovie * &movie = result->movie;
-    QString &format = result->format;
-    int &frameCount = result->frameCount;
-
-    QString path(fileInfo.absoluteFilePath());
-
-    QImageReader reader(path);
-    reader.setDecideFormatFromContent(true);
-    format = reader.format();
-    frameCount = reader.imageCount();
-
-    if(format == "gif"){
-        movie = new QMovie(path);
-        if(movie->isValid()){
-            if(movie->state() == QMovie::NotRunning)
-                movie->start(); ///
-            image = movie->currentImage();
-            movie->stop();  ///
-        }else{    //cannot read image, so delete
-            SafeDelete(movie);
-        }
-    }
-
-    if(!movie){
-        if(format == "ico"){//! is ico image has the same height and width?
-            reader.read(&image);
-            int maxIndex = 0;
-            int maxWidth = image.width();
-            for(int i=1; i < frameCount; ++i){
-                if(!reader.jumpToNextImage())
-                    break;
-                reader.read(&image);
-                if(maxWidth < image.width()){
-                    maxWidth = image.width();
-                    maxIndex = i;
-                }
-            }
-            reader.jumpToImage(maxIndex);
-        }
-
-        if (!reader.read(&image)) // cannot read image
-            image = QImage();   ///
-
-    }else if(/*format == "gif" && */ frameCount == 1){
-        SafeDelete(movie);
-    }
-
-    return result;
 }
 
 void PicManager::switchGifPause()
@@ -221,35 +193,11 @@ void PicManager::showEvent ( QShowEvent * event )
     setGifPaused(false);
 }
 
-
-bool deleteFile(const QString &filePath)
+void PicManager::deleteFile(bool needAsk)
 {
-#ifdef Q_WS_WIN
-    qDebug(qPrintable(QDir::toNativeSeparators(filePath)));
+    if(!hasFile() || !QFile::exists(curPath)) return;
 
-    SHFILEOPSTRUCT FileOp;//定义SHFILEOPSTRUCT结构对象;
-    FileOp.hwnd = 0;
-    FileOp.wFunc = FO_DELETE; //执行文件删除操作;
-    FileOp.pFrom = QStringToCHAR(QDir::toNativeSeparators(filePath));  //源文件路径
-    FileOp.pTo = NULL; //目标文件路径;
-    FileOp.fFlags = FOF_ALLOWUNDO;//此标志使删除文件备份到Windows回收站
-    FileOp.fFlags |= FOF_NOCONFIRMATION;    //! 直接删除，不进行确认
-
-    if(SHFileOperation(&FileOp)) //这里开始删除文件
-        return false;
-    else
-        return true;
-#else
-    return QFile::remove(filePath);
-#endif // Q_WS_WIN
-}
-
-void PicManager::deleteFile(bool messagebox)
-{
-    if(!hasFile()) return;
-    if(!QFile::exists(curPath)) return; ////
-
-    if(messagebox){
+    if(needAsk){
         int ret = QMessageBox::question(
                     0, tr("Delete File"),
                     tr("Are you sure to delete file '%1'?").arg(curName),
@@ -261,38 +209,39 @@ void PicManager::deleteFile(bool messagebox)
 
     if(curCache->movie) SafeDelete(curCache->movie); //! gif image: must free movie before delete file.
 
-    updateFileIndex(curPath);
-    int oldIndex = currentIndex;
+#ifdef Q_WS_WIN
 
-    if(!::deleteFile(curPath)){// if(!file.remove()){
+    SHFILEOPSTRUCT FileOp;//定义SHFILEOPSTRUCT结构对象;
+    FileOp.hwnd = 0;
+    FileOp.wFunc = FO_DELETE; //执行文件删除操作;
+
+    TCHAR buf[_MAX_PATH + 1];
+    _tcscpy(buf, QStringToTCHAR(QDir::toNativeSeparators(curPath)));  // 复制路径,end with '\0'.
+    buf[_tcslen(buf)+1] = 0;  //! must end with 2 '\0'.
+
+    FileOp.pFrom = buf; // source file path
+    FileOp.pTo = NULL; //目标文件路径
+    FileOp.fFlags |= FOF_ALLOWUNDO;//此标志使删除文件备份到Windows回收站
+//    FileOp.fFlags &= ~FOF_ALLOWUNDO;    //直接删除，不进入回收站
+
+//    if(!needAsk)
+        FileOp.fFlags |= FOF_NOCONFIRMATION;    //! 直接删除，不进行确认
+
+    if(SHFileOperation(&FileOp)) //这里开始删除文件
         QMessageBox::warning(0, tr("Delete Failed"),
                              tr("Delete file '%1' failed!").arg(curName));
-    }else{
-        updateFileIndex(curPath);
-        if(oldIndex != -1)
-            currentIndex = oldIndex - 1;    ///so that next time will show the next image of current one.
-        if(currentIndex + 1 >= list.size()) //arrive the end of file list
-            currentIndex = -1;
-        if(currentIndex + 1 < list.size())
-            readFile(list.at(++currentIndex));
-        else//no image with suffix supported
-            noFileToShow();
-    }
-}
 
-void PicManager::noFileToShow()
-{
-    curCache->image = QImage();
-    curPath = curName = QString::null;
-//    state = NoFileNoPicture;
-    loadImage(curCache->image);
-    emit fileNameChange("");    //
+#else
+
+    if(!QFile::remove(curPath))
+        QMessageBox::warning(0, tr("Delete Failed"),
+                             tr("Delete file '%1' failed!").arg(curName));
+
+#endif // Q_WS_WIN
 }
 
 QString PicManager::attribute() const
 {
-    //    if(state == NoFileNoPicture) return QString::null;    //
-
     QString info;
     QFileInfo fileInfo(curPath);
 

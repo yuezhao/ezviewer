@@ -11,7 +11,8 @@ HEADERS       = imageviewer.h \
     contralbar.h \
     fileassoc.h \
     picmanager.h \
-    toolkit.h
+    toolkit.h \
+    imagecache.h
 SOURCES       = imageviewer.cpp \
                 main.cpp \
     mainwindow.cpp \
@@ -20,7 +21,8 @@ SOURCES       = imageviewer.cpp \
     contralbar.cpp \
     fileassoc.cpp \
     picmanager.cpp \
-    toolkit.cpp
+    toolkit.cpp \
+    imagecache.cpp
 
 RESOURCES += \
     res.qrc
