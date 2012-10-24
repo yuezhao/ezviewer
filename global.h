@@ -21,7 +21,7 @@
 #define GLOBAL_H
 
 #define INI_FILE_NAME   "EzViewer.ini"
-#define VERSON_NO       "2.2"
+#define VERSON_NO       "2.5 Beta"
 #define BUILD_TIME      "2012/2-2012/9"
 #define WEIBO           "www.weibo.com/huangezhao"
 #define PROJECT_SITE    "code.google.com/p/ezviewer/"

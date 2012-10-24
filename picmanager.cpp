@@ -227,6 +227,7 @@ void PicManager::deleteFile(bool needAsk)
 //    if(!needAsk)
         FileOp.fFlags |= FOF_NOCONFIRMATION;    //! 直接删除，不进行确认
 
+    // 如果文件被占用，返回值是32或1223
     if(SHFileOperation(&FileOp)) //这里开始删除文件
         QMessageBox::warning(0, tr("Delete Failed"),
                              tr("Delete file '%1' failed!").arg(curName));
