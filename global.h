@@ -22,7 +22,7 @@
 
 #define INI_FILE_NAME   "EzViewer.ini"
 #define VERSON_NO       "2.5 Beta"
-#define BUILD_TIME      "2012/2-2012/9"
+#define BUILD_TIME      "2012/2-2012/10"
 #define WEIBO           "www.weibo.com/huangezhao"
 #define PROJECT_SITE    "code.google.com/p/ezviewer/"
 #define AUTHOR_BLOG     "yuezhaoblog.blogspot.com"
@@ -81,13 +81,6 @@ const QString AutoPlayGroup("AutoPlay");
 const QString TimerIntervalKey(AutoPlayGroup + "/TimerInterval");
 const QString FormGroup("Form");
 const QString UseTitleBarKey(FormGroup + "/UseTitleBar");
-
-
-#define SafeDelete(arg) \
-    if(arg){ \
-        delete arg; \
-        arg = NULL; \
-    }
 
 
 #endif // GLOBAL_H

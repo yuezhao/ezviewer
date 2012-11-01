@@ -28,7 +28,7 @@
 #include "floatframe.h"
 #include "contralbar.h"
 
-//! 改为一个窗口，使用QFileSystemWatcher监视设置文件的改变。
+//! TODO: 改为一个窗口，使用QFileSystemWatcher监视设置文件的改变。
 
 
 const int SWITCH_FRAME_WIDTH = 90;
