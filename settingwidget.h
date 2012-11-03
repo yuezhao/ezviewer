@@ -36,9 +36,6 @@ public:
     ~SettingWidget();
 
 signals:
-    void changeBgColor(const QColor &color);
-    void changeAntialiasMode(int mode);
-    void changeTimerInterval(int val);
     void clickClose();
 
 protected slots:

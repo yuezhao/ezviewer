@@ -66,10 +66,10 @@ void ImageViewer::changeAntialiasMode(int mode)
 
 void ImageViewer::changeBgColor(const QColor &color)
 {
-    if(color.isValid()){
+//    if(color.isValid()){
         bgColor = color;
         update();
-    }
+//    }
 }
 
 void ImageViewer::updatePixmap(const QImage &im)

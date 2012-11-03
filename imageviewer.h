@@ -51,6 +51,7 @@ signals:
 
 public slots:
     void changeAntialiasMode(int mode);
+    //! if color is invalid, means disabled custom background color.
     void changeBgColor(const QColor &color);
 
     void zoomIn(qreal factor);

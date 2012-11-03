@@ -22,6 +22,7 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <QFileSystemWatcher>
 
 #include "picmanager.h"
 
@@ -37,16 +38,11 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
 
-    static   MainWindow *creatMainWindow(int antialiasMode,
-                    bool enableBgColor, const QColor &bgColor,
-                    int timerInterval);
+    static   MainWindow *creatMainWindow();
 
 public slots:
     void openFile();
     static void openFile(const QStringList &fileList); //! static method
-    void changeAntialiasMode(int mode) { viewer->changeAntialiasMode(mode); }
-    void changeBgColor(const QColor &color) { viewer->changeBgColor(color); }
-    void changeTimerInterval(int sec) { slideTimer->setInterval(sec * 1000); }
 
 protected slots:
     void closeEvent(QCloseEvent *event);
@@ -57,6 +53,7 @@ protected slots:
 
     void moveWindow(const QPoint &change) { if(!isFullScreen()) move(pos() + change); }
 
+    void configChanged();
     void setMyWindowTitle(const QString &title = QString::null);
     void showContextMenu(const QPoint &pos);
 
@@ -87,13 +84,18 @@ private:
     void initContextMenu();
     void initButtomBar();
     void initSwitchFrame(); // init left and right float frame
+    void watchConfigFile();
     void openFile(const QString &file) { viewer->openFile(file); }
+
+    void changeTimerInterval(int sec) { slideTimer->setInterval(sec * 1000); }
 
 private:
     PicManager *viewer;
     bool WasMaximized;
     QTimer *slideTimer;
     int slideInterval;//msec
+
+    QFileSystemWatcher cfgWatcher;
 
     FloatFrame *buttomFrame;
     FloatFrame *leftFrame;

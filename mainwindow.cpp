@@ -28,14 +28,14 @@
 #include "floatframe.h"
 #include "contralbar.h"
 
-//! TODO: 改为一个窗口，使用QFileSystemWatcher监视设置文件的改变。
+//! TODO: 改为一个窗口 。
 
 
 const int SWITCH_FRAME_WIDTH = 90;
 const int BUTTOM_FRAME_HEIGHT = 60;
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent)
+    QMainWindow(parent), cfgWatcher(this)
 {
     WasMaximized = false;
     slideInterval = 4000;
@@ -59,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     resize(FIT_SIZE);
     readSettings();
+    watchConfigFile();
 
     setMyWindowTitle();
     setWindowIcon(QIcon(":/res/twitter.png"));
@@ -68,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    cfgWatcher.removePath(INI_FILE_PATH);
     writeSettings();
     event->accept();
 }
@@ -220,38 +222,25 @@ void MainWindow::openFile()
         viewer->openFile(fileName);
 }
 
-MainWindow *MainWindow::creatMainWindow(int antialiasMode,
-                                        bool enableBgColor,
-                                        const QColor &bgColor,
-                                        int timerInterval)
+void MainWindow::watchConfigFile()
 {
-    MainWindow *window = new MainWindow;
-    window->changeAntialiasMode(antialiasMode);
-    if(enableBgColor)
-        window->changeBgColor(bgColor);
-    window->changeTimerInterval(timerInterval);
+    if(!QFile::exists(INI_FILE_PATH))   // create config file
+        QFile(INI_FILE_PATH).open(QIODevice::WriteOnly);
 
-    window->show();
-
-    return window;
+    cfgWatcher.addPath(INI_FILE_PATH);
+    connect(&cfgWatcher, SIGNAL(fileChanged(QString)), SLOT(configChanged()));
 }
 
 void MainWindow::readSettings()
 {
+    configChanged();    ///
     QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
     restoreGeometry(settings.value("geometry").toByteArray());
 }
 
-void MainWindow::writeSettings()
+void MainWindow::configChanged()
 {
     QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
-    settings.setValue("geometry", saveGeometry());
-}
-
-void MainWindow::openFile(const QStringList &list) //! static method
-{
-    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
-    bool showDialog = settings.value(DialogKey, true).toBool();
     int antialiasMode = settings.value(AntialiasModeKey, 0).toInt();
     bool enableBgColor = settings.value(EnableBgColorKey, true).toBool();
     QString colorStr = settings.value(BgColorKey, BG_GREEN).toString();
@@ -264,6 +253,32 @@ void MainWindow::openFile(const QStringList &list) //! static method
         bgColor.setNamedColor(BG_GREEN);
     if(timerInterval < 1 || timerInterval > 1000)
         timerInterval = 4;
+
+    viewer->changeAntialiasMode(antialiasMode);
+    if(enableBgColor)
+        viewer->changeBgColor(bgColor);
+    else
+        viewer->changeBgColor(QColor());
+    changeTimerInterval(timerInterval);
+}
+
+void MainWindow::writeSettings()
+{
+    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
+    settings.setValue("geometry", saveGeometry());
+}
+
+MainWindow *MainWindow::creatMainWindow()
+{
+    MainWindow *window = new MainWindow;
+    window->show();
+    return window;
+}
+
+void MainWindow::openFile(const QStringList &list) //! static method
+{
+    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
+    bool showDialog = settings.value(DialogKey, true).toBool();
 
     QStringList fileList;
     QFileInfo fileInfo;
@@ -278,17 +293,13 @@ void MainWindow::openFile(const QStringList &list) //! static method
     MainWindow *window;
     if(fileList.empty()){
         if(qApp->topLevelWidgets().empty()){
-            window = creatMainWindow(antialiasMode,
-                                     enableBgColor, bgColor,
-                                     timerInterval);
+            window = creatMainWindow();
             if(showDialog)
                 window->openFile();
         }
     }else{  //! is multi-threads needs？？
         for(int size = fileList.size(), i=0; i < size; ++i){
-            window = creatMainWindow(antialiasMode,
-                                     enableBgColor, bgColor,
-                                     timerInterval);
+            window = creatMainWindow();
             window->openFile(fileList.at(i));
         }
     }
@@ -701,21 +712,6 @@ void MainWindow::setting()
     QVBoxLayout *layout = new QVBoxLayout(settingDialog);
     layout->addWidget(tw);
     settingDialog->setLayout(layout);
-
-    MainWindow *mainWindow;
-    foreach(QWidget *window, qApp->topLevelWidgets()){
-//        if(QString("MainWindow") == window->metaObject()->className()){
-            mainWindow = dynamic_cast<MainWindow*>(window);
-            if(mainWindow){
-                connect(settingWidget, SIGNAL(changeAntialiasMode(int)),
-                        mainWindow, SLOT(changeAntialiasMode(int)));
-                connect(settingWidget, SIGNAL(changeBgColor(QColor)),
-                        mainWindow, SLOT(changeBgColor(QColor)));
-                connect(settingWidget, SIGNAL(changeTimerInterval(int)),
-                        mainWindow, SLOT(changeTimerInterval(int)));
-            }
-//        }
-    }
 
     settingDialog->exec();
     delete settingDialog;

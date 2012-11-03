@@ -23,8 +23,6 @@
 #include "global.h"
 #include <QtGui>
 
-#include <QDebug>
-
 
 SettingWidget::SettingWidget(QWidget *parent) :
     QWidget(parent),
@@ -106,7 +104,6 @@ void SettingWidget::antialiasModeChange(int index)
 
     QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
     settings.setValue(AntialiasModeKey, index);
-    emit changeAntialiasMode(index);
 }
 
 void SettingWidget::bgColorEnable(int state)
@@ -127,10 +124,6 @@ void SettingWidget::bgColorEnable(int state)
     ui->colorLabel->setEnabled(enableBgColor);
     ui->colorButton->setEnabled(enableBgColor);
     ui->colorEdit->setEnabled(enableBgColor);
-    if(enableBgColor)
-        emit changeBgColor(bgColor);
-    else
-        emit changeBgColor(QColor());
 }
 
 void SettingWidget::setColor()
@@ -146,22 +139,17 @@ void SettingWidget::setColor()
         ui->colorEdit->setText(bgColor.name());
         QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
         settings.setValue(BgColorKey, bgColor.name());
-        emit changeBgColor(bgColor);
     }
 }
 
 void SettingWidget::timerIntervalChange(int val)
 {
-//    qDebug() << "timer value change to " << val;
     QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
     settings.setValue(TimerIntervalKey, val);
-    emit changeTimerInterval(val);
 }
 
 void SettingWidget::restoreDefaults()
 {
-    QFile::remove(INI_FILE_PATH);
+    QSettings(INI_FILE_PATH, QSettings::IniFormat).clear(); ///
     initUIvalue();
-    emit changeAntialiasMode(ui->antialiasModeCombo->currentIndex());
-    emit changeBgColor(bgColor);
 }
