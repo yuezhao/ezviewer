@@ -99,7 +99,8 @@ void PicManager::fileChanged(const QString &filePath)
 void PicManager::readFile(const QString &file)
 {
     QString Seperator(curDir.endsWith('/') ? "" : "/");
-    QString path((file.count('/')) ? file : curDir + Seperator + file);
+    bool isAbsolute = file.contains('/') || file.contains('\\'); ///
+    QString path(isAbsolute ? file : curDir + Seperator + file);
 
     QFileInfo fileInfo(path);
 
@@ -120,7 +121,7 @@ void PicManager::readFile(const QString &file)
     }
 
     QString msg = curCache->image.isNull() ? tr("Cannot load picture:\n'%1'.")
-                                      .arg(filePath()) : QString::null;
+                                      .arg(curPath) : QString::null;
     loadImage(curCache->image, msg);
 //     state = image.isNull() ? FileNoPicture : FilePicture;
     emit fileNameChange(curName);
@@ -157,6 +158,7 @@ void PicManager::openFiles(const QStringList &fileList)
     if(fileList.empty()) return;
     if(fileList.size() == 1){
         openFile(fileList.first());
+        qDebug("list only one file: %s", qPrintable(fileList.first()));
         return;
     }
 
