@@ -21,12 +21,19 @@
 #define SETTINGWIDGET_H
 
 #include <QWidget>
+#include <QDialog>
+
 
 namespace Ui {
     class SettingWidget;
 }
 
-class QAbstractButton;
+class QCheckBox;
+class QComboBox;
+class QDialogButtonBox;
+class QLineEdit;
+class QLabel;
+class QSpinBox;
 class SettingWidget : public QWidget
 {
     Q_OBJECT
@@ -40,17 +47,40 @@ signals:
 
 protected slots:
     void initUIvalue();
+    void restoreDefaults();
+
     void showDialogChange(int state);
     void antialiasModeChange(int index);
     void bgColorEnable(int state);
     void setColor();
     void timerIntervalChange(int val);
 
-    void restoreDefaults();
-
 private:
     Ui::SettingWidget *ui;
+
+    QCheckBox *showDialogCheckBox;
+    QComboBox *antialiasModeCombo;
+    QSpinBox  *timerSpinBox;
+    QPushButton *colorButton;
+    QLineEdit *colorEdit;
+    QCheckBox *colorCheckBox;
+    QLabel    *colorLabel;
+    QDialogButtonBox *buttonBox;
+
     QColor bgColor;
+};
+
+
+class SettingsDialog : public QDialog {
+    Q_OBJECT
+public:
+    explicit SettingsDialog(QWidget *parent = 0);
+
+public slots:
+    void changeAssociation(bool enabled);
+
+private:
+    SettingWidget sw;
 };
 
 #endif // SETTINGWIDGET_H

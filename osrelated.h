@@ -17,61 +17,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ***************************************************************************/
 
-#ifndef TOOLKIT_H
-#define TOOLKIT_H
+#ifndef OSRELATED_H
+#define OSRELATED_H
 
 #include <QString>
-#include <QFileInfo>
 
-
-#define SafeDelete(arg) \
-    if(arg){ \
-        delete arg; \
-        arg = NULL; \
-    }
-
-
-namespace ToolKit{
-
-QString fileSize2Str(qint64 size);
-
-inline QString filename(const QString &file)
-{ return QFileInfo(file).fileName(); }
-
-template<typename T>
-void swap(T &a, T &b);
-
-template<typename T>
-T gcd(T a, T b); //求最大公约数
-}
-
-
-namespace ToolKit{
-template<typename T>
-inline void swap(T &a, T &b)
+namespace OSRelated
 {
-    T temp = b;
-    b = a;
-    a = temp;
+void moveFile2Trash(const QString &filePath);
 }
 
-template<typename T>
-T gcd(T a, T b)
-{
-    if (a == 0) return b;
-    if (b == 0) return a;
-
-    if(b < a) swap(a, b);
-
-    T tmp;
-    while(a != 0)
-    {
-        tmp = b % a;
-        b = a;
-        a = tmp;
-    }
-    return b;
-}
-}
-
-#endif // TOOLKIT_H
+#endif // OSRELATED_H

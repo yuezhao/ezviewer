@@ -21,6 +21,7 @@
 #include "ui_settingwidget.h"
 
 #include "global.h"
+#include "fileassoc.h"
 #include <QtGui>
 
 
@@ -29,23 +30,31 @@ SettingWidget::SettingWidget(QWidget *parent) :
     ui(new Ui::SettingWidget)
 {
     ui->setupUi(this);
+    showDialogCheckBox = ui->showDialogCheckBox;
+    antialiasModeCombo = ui->antialiasModeCombo;
+    timerSpinBox = ui->timerSpinBox;
+    colorButton = ui->colorButton;
+    colorEdit = ui->colorEdit;
+    colorCheckBox = ui->colorCheckBox;
+    colorLabel = ui->colorLabel;
+    buttonBox = ui->buttonBox;
 
     initUIvalue();
 
-    connect(ui->showDialogCheckBox, SIGNAL(stateChanged(int)),
+    connect(showDialogCheckBox, SIGNAL(stateChanged(int)),
             SLOT(showDialogChange(int)));
-    connect(ui->antialiasModeCombo, SIGNAL(currentIndexChanged(int)),
+    connect(antialiasModeCombo, SIGNAL(currentIndexChanged(int)),
             SLOT(antialiasModeChange(int)));
-    connect(ui->colorButton, SIGNAL(clicked()), SLOT(setColor()));
-    connect(ui->colorCheckBox, SIGNAL(stateChanged(int)),
+    connect(colorButton, SIGNAL(clicked()), SLOT(setColor()));
+    connect(colorCheckBox, SIGNAL(stateChanged(int)),
             SLOT(bgColorEnable(int)));
-    connect(ui->timerSpinBox, SIGNAL(valueChanged(int)),
+    connect(timerSpinBox, SIGNAL(valueChanged(int)),
             SLOT(timerIntervalChange(int)));
 
-    QPushButton *button = ui->buttonBox->addButton(QDialogButtonBox::Close);
+    QPushButton *button = buttonBox->addButton(QDialogButtonBox::Close);
     button->setDefault(true);
     connect(button, SIGNAL(clicked()), SIGNAL(clickClose()));
-    button = ui->buttonBox->addButton(QDialogButtonBox::RestoreDefaults);
+    button = buttonBox->addButton(QDialogButtonBox::RestoreDefaults);
     connect(button, SIGNAL(clicked()), SLOT(restoreDefaults()));
 }
 
@@ -71,18 +80,18 @@ void SettingWidget::initUIvalue()
     if(timerInterval < 1 || timerInterval > 1000)
         timerInterval = 4;
 
-    ui->showDialogCheckBox->setChecked(showDialog);
-    ui->antialiasModeCombo->setCurrentIndex(antialiasMode);
-    ui->timerSpinBox->setValue(timerInterval);
+    showDialogCheckBox->setChecked(showDialog);
+    antialiasModeCombo->setCurrentIndex(antialiasMode);
+    timerSpinBox->setValue(timerInterval);
 
     QPixmap pix(25, 25);
     pix.fill(bgColor);
-    ui->colorButton->setIcon(QIcon(pix));
-    ui->colorEdit->setText(bgColor.name());
-    ui->colorCheckBox->setChecked(enableBgColor);
-    ui->colorLabel->setEnabled(enableBgColor);
-    ui->colorButton->setEnabled(enableBgColor);
-    ui->colorEdit->setEnabled(enableBgColor);
+    colorButton->setIcon(QIcon(pix));
+    colorEdit->setText(bgColor.name());
+    colorCheckBox->setChecked(enableBgColor);
+    colorLabel->setEnabled(enableBgColor);
+    colorButton->setEnabled(enableBgColor);
+    colorEdit->setEnabled(enableBgColor);
 }
 
 void SettingWidget::showDialogChange(int state)
@@ -121,9 +130,9 @@ void SettingWidget::bgColorEnable(int state)
         break;
     }
 
-    ui->colorLabel->setEnabled(enableBgColor);
-    ui->colorButton->setEnabled(enableBgColor);
-    ui->colorEdit->setEnabled(enableBgColor);
+    colorLabel->setEnabled(enableBgColor);
+    colorButton->setEnabled(enableBgColor);
+    colorEdit->setEnabled(enableBgColor);
 }
 
 void SettingWidget::setColor()
@@ -135,8 +144,8 @@ void SettingWidget::setColor()
         bgColor = color;
         QPixmap pix(25, 25);
         pix.fill(bgColor);
-        ui->colorButton->setIcon(QIcon(pix));
-        ui->colorEdit->setText(bgColor.name());
+        colorButton->setIcon(QIcon(pix));
+        colorEdit->setText(bgColor.name());
         QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
         settings.setValue(BgColorKey, bgColor.name());
     }
@@ -152,4 +161,63 @@ void SettingWidget::restoreDefaults()
 {
     QSettings(INI_FILE_PATH, QSettings::IniFormat).clear(); ///
     initUIvalue();
+}
+
+
+/**********************************************************************
+ *
+ *  class SettingsDialog
+ *
+ **********************************************************************/
+
+SettingsDialog::SettingsDialog(QWidget *parent)
+    : QDialog(parent, Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint),
+      sw(this)
+{
+    connect(&sw, SIGNAL(clickClose()), SLOT(close()));
+
+    QTabWidget *tab = new QTabWidget(this);
+    tab->addTab(&sw, tr("Common"));
+
+    if(FileAssoc::isSupportAssociation()){
+        QGridLayout *gl = new QGridLayout;
+
+        const int CountOfColumn = 3;
+        QStringList formatList = QString(SUPPORT_FORMAT).remove("*.").split(' ');
+        QCheckBox *cb;
+        for(int i = 0, size = formatList.size(); i < size; ++i){
+            cb = new QCheckBox(formatList.at(i));
+            //! before connect(). otherwise it will launch the function changeAssociation(bool).
+            cb->setChecked(FileAssoc::checkAssociation(formatList.at(i)));
+            connect(cb, SIGNAL(toggled(bool)),
+                    SLOT(changeAssociation(bool)));
+
+            gl->addWidget(cb, i / CountOfColumn, i % CountOfColumn);
+        }
+
+        QWidget *assocWidget = new QWidget(this);
+        assocWidget->setLayout(gl);
+        tab->addTab(assocWidget, tr("File Association"));
+    }
+
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(tab);
+    setLayout(layout);
+
+    setWindowTitle(GlobalStr::PROJECT_NAME());
+}
+
+void SettingsDialog::changeAssociation(bool enabled)
+{
+    QCheckBox *cb = dynamic_cast<QCheckBox*>(sender());
+    if(cb == NULL) return;
+
+    QString ext(cb->text());
+    if(FileAssoc::isSupportAssociation()){
+        if(enabled){
+            FileAssoc::setAssociation(ext);
+        }else{
+            FileAssoc::clearAssociation(ext);
+        }
+    }
 }

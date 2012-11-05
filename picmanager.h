@@ -21,7 +21,7 @@
 #define PICMANAGER_H
 
 #include <QString>
-#include <QFileInfoList>
+#include <QStringList>
 #include <QFileSystemWatcher>
 
 #include "imageviewer.h"
@@ -47,7 +47,7 @@ signals:
 
 public slots:
     void openFile(const QString &file);
-    void noFileToShow();
+    void openFiles(const QStringList &fileList);
     bool prePic();
     bool nextPic();
 
@@ -60,7 +60,8 @@ public slots:
 
 protected slots:
     void updateGifImage();
-    void directoryChanged(const QString &dirPath);
+    void directoryChanged();
+    void fileChanged(const QString &filePath);
 
     void hideEvent ( QHideEvent * event );
     void showEvent ( QShowEvent * event );
@@ -73,15 +74,29 @@ protected slots:
 //    };
 
 private:
-    void updateFileInfoList(const QString &file);
-    void updateFileIndex(const QString &file);
-    void readFile(const QFileInfo &fileInfo);
+    void readFile(const QString &file);
     void deleteFile(bool needAsk);
+
+    // will change curDir, list, currentIndex.
+    void updateFileNameList(const QString &curfile);
+    // remove fileChanged from list.
+    void updateFullPathList(const QString &fileChanged);
+    /* compare oldIndex and currentIndex, if current file changed,
+     * read new file and show; if list is empty, call noFileToShow();
+     */
+    void updateFileIndex(int oldIndex);
+    void noFileToShow();
 
     ImageCache *curCache;
     QString curPath;
     QString curName;
-    QFileInfoList list;
+
+    enum LIST_MODE {
+        FileNameListMode,
+        FullPathListMode,
+    } listMode;
+    QString curDir; // only use for FileNameListMode
+    QStringList list;
     int currentIndex;
     QFileSystemWatcher fsWatcher;
 };

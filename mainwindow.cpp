@@ -19,16 +19,11 @@
 
 #include "mainwindow.h"
 
-#include "fileassoc.h"
 #include "settingwidget.h"
-#include "global.h"
-#include <QtGui>
-
-#include <QtDebug>
 #include "floatframe.h"
 #include "contralbar.h"
-
-//! TODO: 改为一个窗口 。
+#include "global.h"
+#include <QtGui>
 
 
 const int SWITCH_FRAME_WIDTH = 90;
@@ -663,56 +658,9 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents); //add:20121006
 }
 
-void MainWindow::changeAssociation(bool enabled)
-{
-    QCheckBox *cb = dynamic_cast<QCheckBox*>(sender());
-    if(cb == NULL) return;
-
-    QString ext(cb->text());
-    if(FileAssoc::isSupportAssociation()){
-        if(enabled){
-            FileAssoc::setAssociation(ext);
-        }else{
-            FileAssoc::clearAssociation(ext);
-        }
-    }
-}
 
 void MainWindow::setting()
 {
-    QDialog *settingDialog = new QDialog(this, Qt::MSWindowsFixedSizeDialogHint
-                               | Qt::WindowTitleHint);
-
-    QTabWidget *tw = new QTabWidget(settingDialog);
-
-    settingDialog->setWindowTitle(GlobalStr::PROJECT_NAME());
-    SettingWidget *settingWidget = new SettingWidget(settingDialog);
-    connect(settingWidget, SIGNAL(clickClose()), settingDialog, SLOT(close()));
-    tw->addTab(settingWidget, tr("Common"));
-
-    if(FileAssoc::isSupportAssociation()){
-        QGridLayout *gl = new QGridLayout;
-
-        const int CountOfColumn = 3;
-        QStringList formatList = QString(SUPPORT_FORMAT).remove("*.").split(' ');
-        QCheckBox *cb;
-        for(int i = 0, size = formatList.size(); i < size; ++i){
-            cb = new QCheckBox(formatList.at(i));
-            cb->setChecked(FileAssoc::checkAssociation(formatList.at(i)));// before connect(). otherwise it will launch the function changeAssociation(bool).
-            connect(cb, SIGNAL(toggled(bool)), SLOT(changeAssociation(bool)));
-
-            gl->addWidget(cb, i / CountOfColumn, i % CountOfColumn);
-        }
-
-        QWidget *assocWidget = new QWidget(settingDialog);
-        assocWidget->setLayout(gl);
-        tw->addTab(assocWidget, tr("File Association"));
-    }
-
-    QVBoxLayout *layout = new QVBoxLayout(settingDialog);
-    layout->addWidget(tw);
-    settingDialog->setLayout(layout);
-
-    settingDialog->exec();
-    delete settingDialog;
+    SettingsDialog dlg(this);
+    dlg.exec();
 }

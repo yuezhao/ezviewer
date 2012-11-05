@@ -57,7 +57,6 @@ protected slots:
     void setMyWindowTitle(const QString &title = QString::null);
     void showContextMenu(const QPoint &pos);
 
-    void changeAssociation(bool enabled);
     void changeFullScreen();
     void showAttribute();
     void slideShow();
