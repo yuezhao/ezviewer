@@ -19,6 +19,8 @@
 
 #include "toolkit.h"
 
+#include <QStringList>
+
 namespace ToolKit{
 
 QString fileSize2Str(qint64 size)
@@ -35,6 +37,20 @@ QString fileSize2Str(qint64 size)
         return QString("%1 MB").arg(size / qreal(OneM), 0, 'g', 3);
     else
         return QString("%1 GB").arg(size / qreal(OneG), 0, 'g', 3);
+}
+
+QStringList getFilesExist(const QStringList &list)
+{
+    QStringList fileList;
+    QFileInfo fileInfo;
+    QString fileName;
+    for (int size = list.size(), i = 0; i < size; ++i) {
+        fileName = list.at(i);
+        fileInfo.setFile(fileName);
+        if(fileInfo.isFile())//no directory
+            fileList.append(fileName);  //! fileInfo.absolutePath()??
+    }
+    return fileList;
 }
 
 }

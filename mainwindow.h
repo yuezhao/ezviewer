@@ -22,7 +22,6 @@
 
 #include <QMainWindow>
 #include <QTimer>
-#include <QFileSystemWatcher>
 
 #include "picmanager.h"
 
@@ -32,17 +31,13 @@ class QLabel;
 class QMenu;
 class QAction;
 class QPushButton;
+class QFileSystemWatcher;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit MainWindow(QWidget *parent = 0);
-
-    static   MainWindow *creatMainWindow();
-
-public slots:
-    void openFile();
-    static void openFile(const QStringList &fileList); //! static method
+    explicit MainWindow(const QStringList &fileList,
+                        QWidget *parent = 0);
 
 protected slots:
     void closeEvent(QCloseEvent *event);
@@ -52,14 +47,14 @@ protected slots:
     void resizeEvent ( QResizeEvent * event );
 
     void moveWindow(const QPoint &change) { if(!isFullScreen()) move(pos() + change); }
-
-    void configChanged();
+    void applyConfig();
     void setMyWindowTitle(const QString &title = QString::null);
     void showContextMenu(const QPoint &pos);
 
+    void openFile();
     void changeFullScreen();
     void showAttribute();
-    void slideShow();
+    void switchSlideShow();
     void setting();
     void about();
 
@@ -79,12 +74,11 @@ protected slots:
 private:
     void readSettings();
     void writeSettings();
+    void watchConfigFile();
 
     void initContextMenu();
     void initButtomBar();
     void initSwitchFrame(); // init left and right float frame
-    void watchConfigFile();
-    void openFile(const QString &file) { viewer->openFile(file); }
 
     void changeTimerInterval(int sec) { slideTimer->setInterval(sec * 1000); }
 
@@ -94,7 +88,7 @@ private:
     QTimer *slideTimer;
     int slideInterval;//msec
 
-    QFileSystemWatcher cfgWatcher;
+    QFileSystemWatcher *cfgWatcher;
 
     FloatFrame *buttomFrame;
     FloatFrame *leftFrame;
@@ -120,7 +114,6 @@ private:
     QAction *copyAction;
     QAction *deleteAction;
     QAction *attributeAction;
-    QAction *exitAct;
 };
 
 

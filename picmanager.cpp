@@ -59,10 +59,7 @@ void PicManager::updateFullPathList(const QString &file)
     //! 如果文件名已经过滤并且简化，则可以不用验证index != -1 ??
     if(!QFile::exists(file) && index != -1)
         list.removeAt(index);
-
     currentIndex = list.indexOf(file);
-    if(list.size() == 1)
-        openFile(list.first()); ///
 }
 
 void PicManager::updateFileIndex(int oldIndex)
@@ -102,10 +99,7 @@ void PicManager::fileChanged(const QString &filePath)
 void PicManager::readFile(const QString &file)
 {
     QString Seperator(curDir.endsWith('/') ? "" : "/");
-    QString path((listMode == FileNameListMode) ?
-                     curDir + Seperator + file : file);
-
-    qDebug("read file %s", qPrintable(path));
+    QString path((file.count('/')) ? file : curDir + Seperator + file);
 
     QFileInfo fileInfo(path);
 
@@ -143,13 +137,14 @@ void PicManager::noFileToShow()
 
 void PicManager::openFile(const QString &file)
 {
-    if(!QFileInfo(file).isFile()) return; /// ? noFileToShow() ??
+//    if(!QFileInfo(file).isFile()) return;
 
     fsWatcher.removePaths(fsWatcher.files() + fsWatcher.directories());
 
     listMode = FileNameListMode;
     updateFileNameList(file);
-    readFile(list.at(currentIndex));
+    // make sure if file is no a picture, this will show error message.
+    readFile(file); //readFile(list.at(currentIndex));
 
     fsWatcher.addPath(curDir);
     if(!QFileInfo(curDir).isRoot())// watch the parent dir, will get notice when rename current dir.
@@ -158,8 +153,8 @@ void PicManager::openFile(const QString &file)
 
 void PicManager::openFiles(const QStringList &fileList)
 {
-    //! check if is file and if is exist, remove from list if no file.
-    if(fileList.empty()) return; /// ? noFileToShow() ??
+    //! ?? check if is file and if is exist, remove from list if no file.
+    if(fileList.empty()) return;
     if(fileList.size() == 1){
         openFile(fileList.first());
         return;
@@ -178,7 +173,8 @@ void PicManager::openFiles(const QStringList &fileList)
 
 bool PicManager::prePic()
 {
-    if(!hasFile()) return false;
+    // maybe current file is not a picture, and current dir has no any picture also, so we need check if(list.size() < 1).
+    if(!hasFile() || list.size() < 1) return false;
 
     if(currentIndex - 1 < 0) //arrive the head of file list or source file is deleted.
         currentIndex = list.size();
@@ -188,7 +184,7 @@ bool PicManager::prePic()
 
 bool PicManager::nextPic()
 {
-    if(!hasFile()) return false;
+    if(!hasFile() || list.size() < 1) return false; //
 
     if(currentIndex + 1 == list.size()) //arrive the end of the file list
         currentIndex = -1;

@@ -26,7 +26,6 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    app.setQuitOnLastWindowClosed(true);
 
     QString lang_country(QLocale::system().name());
     QTranslator qt_ts;
@@ -40,12 +39,10 @@ int main(int argc, char *argv[])
     else if(app_ts.load(QObject::tr("lang/ImageViewer_%1").arg(lang_country)))
         app.installTranslator( &app_ts );
 
-//    MainWindow window;
-//    window.show();
-
     QStringList args(app.arguments());
     args.removeFirst(); // remove name of executable
-    MainWindow::openFile(args);
+    MainWindow m(args);
+    m.show();
 
     return app.exec();
 }

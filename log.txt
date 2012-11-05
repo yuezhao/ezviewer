@@ -37,5 +37,4 @@
 
 2012.11.2-2012.11.5:
 新增：监视配置文件内容的变化，改变设置后对所有进程同时生效。
-重构：将MainWindow中建立设置窗口的部分包装为类SettingsDialog，放在settingwidget.h中。
- 
+重构：将MainWindow中建立设置窗口的部分包装为类SettingsDialog，放在settingwidget.h中； 拖入多个图片时不启动多个窗口。

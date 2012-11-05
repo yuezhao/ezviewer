@@ -19,23 +19,27 @@
 
 #include "mainwindow.h"
 
-#include "settingwidget.h"
-#include "floatframe.h"
+
 #include "contralbar.h"
+#include "floatframe.h"
+#include "settingwidget.h"
 #include "global.h"
+#include "toolkit.h"
+
 #include <QtGui>
 
 
 const int SWITCH_FRAME_WIDTH = 90;
 const int BUTTOM_FRAME_HEIGHT = 60;
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), cfgWatcher(this)
+MainWindow::MainWindow(const QStringList &fileList, QWidget *parent) :
+    QMainWindow(parent), cfgWatcher(new QFileSystemWatcher(this))
 {
     WasMaximized = false;
     slideInterval = 4000;
     slideTimer = new QTimer(this);
     slideTimer->setInterval(slideInterval);
+    //! if file numbers is 0 or 1, stop timer???......................
     connect(slideTimer, SIGNAL(timeout()), SLOT(nextPic()));
 
     viewer = new PicManager(this);
@@ -59,12 +63,19 @@ MainWindow::MainWindow(QWidget *parent) :
     setMyWindowTitle();
     setWindowIcon(QIcon(":/res/twitter.png"));
     setAcceptDrops(true);   //! !!
-    setAttribute(Qt::WA_DeleteOnClose); //! !!!
+
+    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
+
+    if(!fileList.empty())
+        viewer->openFiles(fileList);
+    else if(settings.value(DialogKey, true).toBool()) // show dialog while launch.
+        QTimer::singleShot(0, this, SLOT(openFile()));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    cfgWatcher.removePath(INI_FILE_PATH);
+    cfgWatcher->removePaths(cfgWatcher->files());
+    SafeDelete(cfgWatcher);
     writeSettings();
     event->accept();
 }
@@ -120,7 +131,7 @@ void MainWindow::initButtomBar()
     connect(settingButton, SIGNAL(clicked()), SLOT(setting()));
     connect(openButton, SIGNAL(clicked()), SLOT(openFile()));
     connect(preButton, SIGNAL(clicked()), SLOT(prePic()));
-    connect(playButton, SIGNAL(clicked()), SLOT(slideShow()));
+    connect(playButton, SIGNAL(clicked()), SLOT(switchSlideShow()));
     connect(nextButton, SIGNAL(clicked()), SLOT(nextPic()));
     connect(rotateLeftButton, SIGNAL(clicked()), SLOT(rotateLeft()));
     connect(rotateRightButton, SIGNAL(clicked()), SLOT(rotateRight()));
@@ -181,9 +192,17 @@ void MainWindow::about()
                        GlobalStr::ABOUT_TEXT());
 }
 
+void MainWindow::setting()
+{
+    SettingsDialog dlg(this);
+    dlg.exec();
+}
+
 void MainWindow::setMyWindowTitle(const QString &title)
 {
     bool hasFile = !title.isEmpty();
+    bool hasPicture = viewer->hasPicture();
+
     if(hasFile){
         setWindowTitle(title);
     }else{
@@ -195,12 +214,12 @@ void MainWindow::setMyWindowTitle(const QString &title)
     nextButton->setEnabled(hasFile);
     leftFrame->set_enabled(hasFile);    ///
     rightFrame->set_enabled(hasFile);   ///
-    rotateLeftButton->setEnabled(hasFile);
-    rotateRightButton->setEnabled(hasFile);
+    rotateLeftButton->setEnabled(hasPicture);
+    rotateRightButton->setEnabled(hasPicture);
     deleteButton->setEnabled(!slideTimer->isActive() && hasFile);   ////
 
     if(!hasFile && slideTimer->isActive())
-        slideShow();    ///
+        switchSlideShow();    ///
 }
 
 void MainWindow::openFile()
@@ -222,18 +241,18 @@ void MainWindow::watchConfigFile()
     if(!QFile::exists(INI_FILE_PATH))   // create config file
         QFile(INI_FILE_PATH).open(QIODevice::WriteOnly);
 
-    cfgWatcher.addPath(INI_FILE_PATH);
-    connect(&cfgWatcher, SIGNAL(fileChanged(QString)), SLOT(configChanged()));
+    cfgWatcher->addPath(INI_FILE_PATH);
+    connect(cfgWatcher, SIGNAL(fileChanged(QString)), SLOT(applyConfig()));
 }
 
 void MainWindow::readSettings()
 {
-    configChanged();    ///
+    applyConfig();    ///
     QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
     restoreGeometry(settings.value("geometry").toByteArray());
 }
 
-void MainWindow::configChanged()
+void MainWindow::applyConfig()
 {
     QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
     int antialiasMode = settings.value(AntialiasModeKey, 0).toInt();
@@ -263,43 +282,6 @@ void MainWindow::writeSettings()
     settings.setValue("geometry", saveGeometry());
 }
 
-MainWindow *MainWindow::creatMainWindow()
-{
-    MainWindow *window = new MainWindow;
-    window->show();
-    return window;
-}
-
-void MainWindow::openFile(const QStringList &list) //! static method
-{
-    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
-    bool showDialog = settings.value(DialogKey, true).toBool();
-
-    QStringList fileList;
-    QFileInfo fileInfo;
-    QString fileName;
-    for (int size = list.size(), i = 0; i < size; ++i) {
-        fileName = list.at(i);
-        fileInfo.setFile(fileName);
-        if(fileInfo.isFile())//no directory
-            fileList.append(fileName);
-    }
-
-    MainWindow *window;
-    if(fileList.empty()){
-        if(qApp->topLevelWidgets().empty()){
-            window = creatMainWindow();
-            if(showDialog)
-                window->openFile();
-        }
-    }else{  //! is multi-threads needs？？
-        for(int size = fileList.size(), i=0; i < size; ++i){
-            window = creatMainWindow();
-            window->openFile(fileList.at(i));
-        }
-    }
-}
-
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
 //    if (event->mimeData()->hasFormat("text/uri-list")) {
@@ -326,23 +308,12 @@ void MainWindow::dropEvent(QDropEvent *event)
     const QMimeData *mimeData = event->mimeData();
     if (mimeData->hasUrls()) {
         QList<QUrl> urlList(mimeData->urls());
-        QFileInfo fileInfo;
-        QString fileName;
-        while(!urlList.empty()){
-            fileName = urlList.first().toLocalFile();
-            urlList.removeFirst();
-            fileInfo.setFile(fileName);
-            if(fileInfo.isFile()){
-                viewer->openFile(fileName); // 当前窗口接受一个图片文件
-                break;
-            }
-        }
-
         QStringList fileList;
         for(int size = urlList.size(), i=0; i < size; ++i)
             fileList.append(urlList.at(i).toLocalFile());
+        fileList = ToolKit::getFilesExist(fileList);   ///
         if(!fileList.empty())
-            openFile(fileList); // 超过一张图片时，新建窗口来显示
+            viewer->openFiles(fileList);
     }
 
     event->acceptProposedAction();
@@ -380,7 +351,7 @@ void MainWindow::showAttribute()
     }
 }
 
-void MainWindow::slideShow()// if other commend when slide show??
+void MainWindow::switchSlideShow()// if other commend when slide show??
 {
     if(!viewer->hasFile() && !slideTimer->isActive())  ////for setMyWindowTitle() call
         return;
@@ -425,7 +396,7 @@ void MainWindow::initContextMenu()
 
     slideAction = new QAction(QIcon(":/res/Play.png"),
                               tr("Auto Play"), this);
-    connect(slideAction, SIGNAL(triggered()), SLOT(slideShow()));
+    connect(slideAction, SIGNAL(triggered()), SLOT(switchSlideShow()));
 
     rotateLeftAction = new QAction(QIcon(":/res/Undo.png"),
                                    tr("Rotate &Left"), this);
@@ -453,9 +424,6 @@ void MainWindow::initContextMenu()
                 tr("&Delete"), this);
     connect(deleteAction, SIGNAL(triggered()), SLOT(deleteFileAsk()));
 
-    exitAct = new QAction(tr("Close All"), this);
-    connect(exitAct, SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
-
     contextMenu = new QMenu(this);
     contextMenu->addAction(openAction);
     contextMenu->addAction(slideAction);
@@ -473,7 +441,6 @@ void MainWindow::initContextMenu()
     contextMenu->addAction(aboutAction);
     contextMenu->addSeparator();
     contextMenu->addAction(closeAction);
-    contextMenu->addAction(exitAct);
 }
 
 void MainWindow::showContextMenu(const QPoint &pos)
@@ -481,7 +448,6 @@ void MainWindow::showContextMenu(const QPoint &pos)
     bool hasPixmap = viewer->hasPicture();
     bool has_file = viewer->hasFile();
     //! QMenu is top-level window, no matter hidden or shown.
-    bool multiWindow = (qApp->topLevelWidgets().size() > TOP_LEVEL_COUNT);
     bool notSliding = (!slideTimer->isActive());
 
     openAction->setEnabled(notSliding);
@@ -493,7 +459,6 @@ void MainWindow::showContextMenu(const QPoint &pos)
     copyAction->setEnabled(hasPixmap);
     deleteAction->setEnabled(has_file && notSliding);
     attributeAction->setEnabled(hasPixmap || has_file); //
-    exitAct->setVisible(multiWindow);
 
     contextMenu->popup(pos);
 }
@@ -502,7 +467,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 {
 //    const int CommandCount = 18;
 //    QStringList CommandList;
-//    CommandList << "openFile" << "changeFullScreen" << "slideShow"
+//    CommandList << "openFile" << "changeFullScreen" << "switchSlideShow"
 //                << "showAttribute" << "setting" << "about"
 //                << "nextPic" << "prePic" << "closeWindow"
 //                << "rotateLeft" << "rotateRight" << "mirrorHorizontal"
@@ -511,7 +476,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
 
 //    void (MainWindow::*Func[CommandCount])() = {   //函数指针数组
 //                &MainWindow::openFile,       &MainWindow::changeFullScreen,
-//                &MainWindow::slideShow,      &MainWindow::showAttribute,
+//                &MainWindow::switchSlideShow,      &MainWindow::showAttribute,
 //                &MainWindow::setting,        &MainWindow::about,
 //                &MainWindow::nextPic,        &MainWindow::prePic,
 //                &MainWindow::closeWindow,          &MainWindow::rotateLeft,
@@ -647,7 +612,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         e->accept();
         break;
     case Qt::Key_P:
-        slideShow();
+        switchSlideShow();
         e->accept();
         break;
     default:
@@ -656,11 +621,4 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
     }
 
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents); //add:20121006
-}
-
-
-void MainWindow::setting()
-{
-    SettingsDialog dlg(this);
-    dlg.exec();
 }

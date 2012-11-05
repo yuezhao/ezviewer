@@ -38,6 +38,9 @@ QString fileSize2Str(qint64 size);
 inline QString filename(const QString &file)
 { return QFileInfo(file).fileName(); }
 
+// return a stringlist that only include file exist.
+QStringList getFilesExist(const QStringList &list);
+
 template<typename T>
 void swap(T &a, T &b);
 
