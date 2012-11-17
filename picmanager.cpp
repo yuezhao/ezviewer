@@ -23,6 +23,7 @@
 #include "osrelated.h"
 #include "toolkit.h"
 
+#include <QApplication>
 #include <QMessageBox>
 #include <QDir>
 #include <QFile>
@@ -112,6 +113,7 @@ void PicManager::readFile(const QString &file)
     curName = fileInfo.fileName();
 
     SafeDelete(curCache);
+
     curCache = ImageCache::getCache(curPath);
 
     if(curCache->movie){
@@ -140,7 +142,9 @@ void PicManager::openFile(const QString &file)
 {
 //    if(!QFileInfo(file).isFile()) return;
 
-    fsWatcher.removePaths(fsWatcher.files() + fsWatcher.directories());
+    QStringList oldWatchList(fsWatcher.files() + fsWatcher.directories());
+    if(!oldWatchList.empty())
+        fsWatcher.removePaths(oldWatchList);
 
     listMode = FileNameListMode;
     updateFileNameList(file);
@@ -162,7 +166,11 @@ void PicManager::openFiles(const QStringList &fileList)
         return;
     }
 
-    fsWatcher.removePaths(fsWatcher.files() + fsWatcher.directories());
+    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
+    QStringList oldWatchList(fsWatcher.files() + fsWatcher.directories());
+    if(!oldWatchList.empty())
+        fsWatcher.removePaths(oldWatchList);
 
     listMode = FullPathListMode;
     curDir = "";
@@ -170,7 +178,9 @@ void PicManager::openFiles(const QStringList &fileList)
     currentIndex = 0;
     readFile(list.at(currentIndex));
 
-    fsWatcher.addPaths(list);
+    fsWatcher.addPaths(list);       //放到另一个线程中？？？
+
+    QApplication::restoreOverrideCursor();
 }
 
 bool PicManager::prePic()

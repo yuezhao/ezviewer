@@ -20,8 +20,10 @@
 #include <QApplication>
 #include <QTranslator>
 #include <QLocale>
+#include <QSettings>
 
 #include "mainwindow.h"
+#include "global.h"
 
 int main(int argc, char *argv[])
 {
@@ -39,10 +41,18 @@ int main(int argc, char *argv[])
     else if(app_ts.load(QObject::tr("lang/ImageViewer_%1").arg(lang_country)))
         app.installTranslator( &app_ts );
 
+    MainWindow m;
+    m.show();
+
     QStringList args(app.arguments());
     args.removeFirst(); // remove name of executable
-    MainWindow m(args);
-    m.show();
+    if(!args.empty()){
+        m.openFiles(args);
+    }else{
+        QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
+        if(settings.value(DialogKey, true).toBool()) // show dialog while launch.
+            m.openFile();
+    }
 
     return app.exec();
 }

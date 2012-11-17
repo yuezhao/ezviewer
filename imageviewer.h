@@ -80,6 +80,9 @@ private:
      */
     void initToFitWidget();
 
+    void updateImageArea()
+    { update(QRect((topLeft + shift).toPoint(), image.size()*scale)); }
+
     /*! updateShift() needs the value of topLeft,
      * so the order of these two functions below is important.
      */
@@ -118,7 +121,7 @@ private:
 inline void ImageViewer::updateTopLeft()
 {
     topLeft = QPointF(rect().width() - image.width()*scale,
-                      rect().height() - image.height()*scale) / qreal(2);
+                      rect().height() - image.height()*scale ) / qreal(2);
 }
 
 #endif

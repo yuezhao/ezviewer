@@ -36,8 +36,12 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit MainWindow(const QStringList &fileList,
-                        QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = 0);
+
+    void openFiles(const QStringList &list) { viewer->openFiles(list);}
+
+public slots:
+    void openFile();
 
 protected slots:
     void closeEvent(QCloseEvent *event);
@@ -51,7 +55,6 @@ protected slots:
     void setMyWindowTitle(const QString &title = QString::null);
     void showContextMenu(const QPoint &pos);
 
-    void openFile();
     void changeFullScreen();
     void showAttribute();
     void switchSlideShow();

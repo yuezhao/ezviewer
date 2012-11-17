@@ -61,7 +61,7 @@ void ImageViewer::changeAntialiasMode(int mode)
     if(mode < 0 || mode > 2) return;
 
     antialiasMode = mode;
-    update();
+    updateImageArea();
 }
 
 void ImageViewer::changeBgColor(const QColor &color)
@@ -81,7 +81,7 @@ void ImageViewer::updatePixmap(const QImage &im)
     if(mirrorH || mirrorV)
         image = image.mirrored(mirrorH, mirrorV);
 
-    update(QRect((topLeft + shift).toPoint(), image.size()*scale));
+    updateImageArea();
 }
 
 void ImageViewer::loadImage(const QImage &im, const QString &msg_if_no_image)
@@ -93,7 +93,7 @@ void ImageViewer::loadImage(const QImage &im, const QString &msg_if_no_image)
     mirrorV = false;
     hasUserZoom = false;
     initToFitWidget();
-    repaint();
+    repaint();      ///
 }
 
 void ImageViewer::updateShift()
@@ -233,10 +233,41 @@ void ImageViewer::paintEvent(QPaintEvent *e)
         break;
     }
 
+    painter.save();
+
     painter.translate(topLeft + shift);
     painter.scale(scale, scale);
 //    painter.setClipRect(e->rect());
     painter.drawImage(ORIGIN_POINT, image);
+
+    painter.restore();  ///
+
+    if(/*!justPressed && */ speed != QPoint(0, 0)){
+        const QColor LINE_COLOR(0, 0, 0, 80);
+        painter.setBrush(LINE_COLOR);
+        painter.setPen(Qt::NoPen);
+
+        const int LINE_WIDTH = 10;
+        const int MARGE = 3;
+        const qreal RADIUS = 6.0;
+        int rectW = rect().width(), rectH = rect().height();
+        qreal scaleW = image.width() * scale; //! qreal
+        qreal scaleH = image.height() * scale;
+        if(scaleW > rectW){
+            QRectF rectangle(-(topLeft + shift).x() / scaleW * rectW,
+                            rectH - LINE_WIDTH - MARGE,
+                            rectW / scaleW * rectW,
+                            LINE_WIDTH);
+            painter.drawRoundedRect(rectangle, RADIUS, RADIUS);
+        }
+        if(scaleH > rectH){
+            QRectF rectangle(rectW - LINE_WIDTH - MARGE,
+                            -(topLeft + shift).y() / scaleH * rectH,
+                            LINE_WIDTH,
+                            rectH / scaleH * rectH);
+            painter.drawRoundedRect(rectangle, RADIUS, RADIUS);
+        }
+    }
 }
 
 void ImageViewer::contextMenuEvent( QContextMenuEvent * event )

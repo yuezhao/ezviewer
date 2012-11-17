@@ -32,7 +32,7 @@
 const int SWITCH_FRAME_WIDTH = 90;
 const int BUTTOM_FRAME_HEIGHT = 60;
 
-MainWindow::MainWindow(const QStringList &fileList, QWidget *parent) :
+MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), cfgWatcher(new QFileSystemWatcher(this))
 {
     WasMaximized = false;
@@ -63,13 +63,6 @@ MainWindow::MainWindow(const QStringList &fileList, QWidget *parent) :
     setMyWindowTitle();
     setWindowIcon(QIcon(":/res/twitter.png"));
     setAcceptDrops(true);   //! !!
-
-    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
-
-    if(!fileList.empty())
-        viewer->openFiles(fileList);
-    else if(settings.value(DialogKey, true).toBool()) // show dialog while launch.
-        QTimer::singleShot(0, this, SLOT(openFile()));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -313,7 +306,7 @@ void MainWindow::dropEvent(QDropEvent *event)
             fileList.append(urlList.at(i).toLocalFile());
         fileList = ToolKit::getFilesExist(fileList);   ///
         if(!fileList.empty())
-            viewer->openFiles(fileList);
+            openFiles(fileList);
     }
 
     event->acceptProposedAction();
