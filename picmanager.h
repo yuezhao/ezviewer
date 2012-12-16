@@ -74,7 +74,8 @@ protected slots:
 //    };
 
 private:
-    void readFile(const QString &file);
+    void readFile(const QString &fullPath);
+    void readFile(int index) { readFile(getPathAtIndex(index)); }
     void deleteFile(bool needAsk);
 
     // will change curDir, list, currentIndex.
@@ -90,6 +91,34 @@ private:
     ImageCache *curCache;
     QString curPath;
     QString curName;
+
+    int getPreIndex(int curIndex) const {
+        //arrive the head of file list or source file is deleted.
+        return (curIndex - 1 < 0) ? list.size() - 1 : curIndex - 1;
+    }
+
+    int getNextIndex(int curIndex) const {
+        //arrive the end of the file list
+        return (curIndex + 1 == list.size()) ? 0 : curIndex + 1;
+    }
+
+    QString getPathAtIndex(int index) const;
+
+    void preReadingPic(int index) const {
+        curCache->preReading(getPathAtIndex(index));
+    }
+
+    void preReadingPrePic() const {
+        if(list.size() > 1){ // pre-reading previous one
+            preReadingPic(getPreIndex(currentIndex));
+        }
+    }
+
+    void preReadingNextPic() const{
+        if(list.size() > 1){ // pre-reading next one
+            preReadingPic(getNextIndex(currentIndex));
+        }
+    }
 
     enum LIST_MODE {
         FileNameListMode,

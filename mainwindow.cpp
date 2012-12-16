@@ -73,21 +73,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
     event->accept();
 }
 
-//void MainWindow::changeUseTitleBar(bool enable)
-//{
-//    bool visible = isVisible();
-//    if(enable){
-//        setWindowFlags(Qt::Window);
-//        titleFrame->hide();
-//    }else{
-//        setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
-//        titleFrame->show();
-//    }
-
-//    if(visible)
-//        show(); ///
-//}
-
 void MainWindow::initButtomBar()
 {
     buttomFrame = new FloatFrame(this);

@@ -30,7 +30,7 @@
 
 
 PicManager::PicManager(QWidget *parent)
-    : ImageViewer(parent), curCache(new ImageCache()),
+    : ImageViewer(parent), curCache(ImageCache::getNullCache()),
       listMode(FileNameListMode), currentIndex(-1), fsWatcher(this)
 {
 //    state = NoFileNoPicture;
@@ -42,13 +42,16 @@ PicManager::PicManager(QWidget *parent)
 
 PicManager::~PicManager()
 {
-    SafeDelete(curCache);
+    curCache->freeCache();
 }
 
 void PicManager::updateFileNameList(const QString &curfile)
 {
     QFileInfo fileInfo(curfile);
     curDir = fileInfo.absolutePath();
+    if(!curDir.endsWith('/'))
+        curDir.append('/');
+
     list = QDir(curDir, SUPPORT_FORMAT, QDir_SORT_FLAG, QDir::Files)
             .entryList();
     currentIndex = list.indexOf(fileInfo.fileName());
@@ -80,7 +83,8 @@ void PicManager::updateFileIndex(int oldIndex)
     else
         currentIndex = 0;
 
-    readFile(list.at(currentIndex));
+    readFile(currentIndex);
+    preReadingNextPic(); ///
 }
 
 void PicManager::directoryChanged()
@@ -97,22 +101,25 @@ void PicManager::fileChanged(const QString &filePath)
     updateFileIndex(oldIndex);
 }
 
-void PicManager::readFile(const QString &file)
+QString PicManager::getPathAtIndex(int index) const
 {
-    QString Seperator(curDir.endsWith('/') ? "" : "/");
+    QString file = list.at(index);
     bool isAbsolute = file.contains('/') || file.contains('\\'); ///
-    QString path(isAbsolute ? file : curDir + Seperator + file);
+    return isAbsolute ? file : curDir + file;
+}
 
-    QFileInfo fileInfo(path);
-
-    //! must test if hasPicture() !
-    if(/*hasPicture() && */ curPath == fileInfo.absoluteFilePath() )//! if the image needs refresh?
+void PicManager::readFile(const QString &fullPath)
+{
+    QFileInfo fileInfo(fullPath);
+    if(curPath == fileInfo.absoluteFilePath() )//! if the image needs refresh?
         return;
 
     curPath = fileInfo.absoluteFilePath();
     curName = fileInfo.fileName();
 
-    SafeDelete(curCache);
+    // SafeDelete(curCache);
+    if(curCache->movie)
+        curCache->movie->stop();
 
     curCache = ImageCache::getCache(curPath);
 
@@ -131,7 +138,7 @@ void PicManager::readFile(const QString &file)
 
 void PicManager::noFileToShow()
 {
-    curCache->image = QImage();
+    curCache = ImageCache::getNullCache();
     curPath = curName = QString::null;
 //    state = NoFileNoPicture;
     loadImage(curCache->image);
@@ -150,6 +157,7 @@ void PicManager::openFile(const QString &file)
     updateFileNameList(file);
     // make sure if file is no a picture, this will show error message.
     readFile(file); //readFile(list.at(currentIndex));
+    preReadingNextPic();    ///
 
     fsWatcher.addPath(curDir);
     if(!QFileInfo(curDir).isRoot())// watch the parent dir, will get notice when rename current dir.
@@ -176,7 +184,8 @@ void PicManager::openFiles(const QStringList &fileList)
     curDir = "";
     list = fileList;
     currentIndex = 0;
-    readFile(list.at(currentIndex));
+    readFile(currentIndex);
+    preReadingNextPic(); ///
 
     fsWatcher.addPaths(list);       //放到另一个线程中？？？
 
@@ -188,9 +197,10 @@ bool PicManager::prePic()
     // maybe current file is not a picture, and current dir has no any picture also, so we need check if(list.size() < 1).
     if(!hasFile() || list.size() < 1) return false;
 
-    if(currentIndex - 1 < 0) //arrive the head of file list or source file is deleted.
-        currentIndex = list.size();
-    readFile(list.at(--currentIndex));
+    currentIndex = getPreIndex(currentIndex);
+    readFile(currentIndex);
+
+    preReadingPrePic();
     return true;
 }
 
@@ -198,9 +208,10 @@ bool PicManager::nextPic()
 {
     if(!hasFile() || list.size() < 1) return false; //
 
-    if(currentIndex + 1 == list.size()) //arrive the end of the file list
-        currentIndex = -1;
-    readFile(list.at(++currentIndex));
+    currentIndex = getNextIndex(currentIndex);
+    readFile(currentIndex);
+
+    preReadingNextPic();
     return true;
 }
 
@@ -244,8 +255,9 @@ void PicManager::setGifPaused(bool paused)
 
 void PicManager::updateGifImage()
 {
-    curCache->image = curCache->movie->currentImage();
-    updatePixmap(curCache->image);
+//    curCache->image = curCache->movie->currentImage();
+//    updatePixmap(curCache->image);
+    updatePixmap(curCache->movie->currentImage());
 }
 
 void PicManager::hideEvent ( QHideEvent * event )
@@ -272,6 +284,7 @@ void PicManager::deleteFile(bool needAsk)
             return;
     }
 
+    // change ImageCache's hashCode ??!
     if(curCache->movie) SafeDelete(curCache->movie); //! gif image: must free movie before delete file.
 
     OSRelated::moveFile2Trash(curPath); ///

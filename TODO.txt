@@ -6,6 +6,7 @@ EzViewer TODO:
 幻灯片切换时使用动画效果？
 自定义快捷键功能。
 显示 EXIF 信息。
- 
+
+ QMovie::CacheMode.
  
  

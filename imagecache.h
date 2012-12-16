@@ -23,26 +23,67 @@
 #include <QMovie>
 #include <QString>
 #include <QImage>
+#include <QThread>
 
 
-class ImageCache {
+class ImageCache;
+class PreReadingThread : public QThread
+{
+    Q_OBJECT
 public:
-    ImageCache() : movie(NULL), frameCount(0) {}
-    ~ImageCache()
-    {
-        if(movie) delete movie;
-    }
+    PreReadingThread() { start(); }
 
+public slots:
+    void preReading(ImageCache *cache, const QString &filePath);
+
+//private:
+//    void run() { qDebug("enter event loop..."); exec(); }
+};
+
+class ImageCache : public QObject
+{
+    Q_OBJECT
+public:
     static ImageCache * getCache(const QString &filePath);
+    static ImageCache * getNullCache();
+    static void freeCache();
+    static void preReading(const QString &filePath);
 
     QImage  image;
     QMovie *movie;
     QString format;
     int frameCount;
 
+    friend class PreReadingThread;
+    static PreReadingThread prThread;
+
+signals:
+   void cacheNeedReading(ImageCache *ic, const QString &filePath);
+
 private:
+   ImageCache()
+       : movie(NULL), frameCount(0), hashCode(0), isReady(false)
+   {}
+    ~ImageCache()
+    {
+        if(movie) delete movie;
+    }
+
+   void callOtherThread(const QString &filePath);
+
+   void readFile(const QString &filePath);
+
+   static uint getHashCode(const QString &filePath);
+
+   static QList<ImageCache *> list;
+
+   uint hashCode;
+   bool isReady;
+
+private: // do not copy object
     ImageCache(const ImageCache &r);
     const ImageCache & operator=(const ImageCache &r);
 };
+
 
 #endif // IMAGECACHE_H
