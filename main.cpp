@@ -44,6 +44,8 @@ int main(int argc, char *argv[])
     MainWindow m;
     m.show();
 
+//    app.processEvents(QEventLoop::ExcludeUserInputEvents);
+
     QStringList args(app.arguments());
     args.removeFirst(); // remove name of executable
     if(!args.empty()){

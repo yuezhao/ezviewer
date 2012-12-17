@@ -42,6 +42,10 @@ public:
     bool  isAnimation() const        { return curCache->movie; }
     QString attribute() const;
 
+    void setCacheNumber(int val) { ImageCache::setCacheNumber(val); }
+    void setPreReadingEnabled(bool enabled)
+    { ImageCache::setPreReadingEnabled(enabled); }
+
 signals:
     void fileNameChange(const QString &fileName);
 
@@ -92,33 +96,13 @@ private:
     QString curPath;
     QString curName;
 
-    int getPreIndex(int curIndex) const {
-        //arrive the head of file list or source file is deleted.
-        return (curIndex - 1 < 0) ? list.size() - 1 : curIndex - 1;
-    }
-
-    int getNextIndex(int curIndex) const {
-        //arrive the end of the file list
-        return (curIndex + 1 == list.size()) ? 0 : curIndex + 1;
-    }
-
+    int getPreIndex(int curIndex) const;
+    int getNextIndex(int curIndex) const;
     QString getPathAtIndex(int index) const;
-
-    void preReadingPic(int index) const {
-        curCache->preReading(getPathAtIndex(index));
-    }
-
-    void preReadingPrePic() const {
-        if(list.size() > 1){ // pre-reading previous one
-            preReadingPic(getPreIndex(currentIndex));
-        }
-    }
-
-    void preReadingNextPic() const{
-        if(list.size() > 1){ // pre-reading next one
-            preReadingPic(getNextIndex(currentIndex));
-        }
-    }
+    void preReadingPic(const QString &filePath) const;
+    void preReadingPic(int index) const;
+    void preReadingPrePic() const;
+    void preReadingNextPic() const;
 
     enum LIST_MODE {
         FileNameListMode,
@@ -130,5 +114,36 @@ private:
     QFileSystemWatcher fsWatcher;
 };
 
+inline void PicManager::preReadingPic(const QString &filePath) const
+{
+    curCache->preReading(filePath);
+}
+
+inline void PicManager::preReadingPic(int index) const
+{
+    preReadingPic(getPathAtIndex(index));
+}
+
+inline int PicManager::getPreIndex(int curIndex) const {
+    //arrive the head of file list or source file is deleted.
+    return (curIndex - 1 < 0) ? list.size() - 1 : curIndex - 1;
+}
+
+inline int PicManager::getNextIndex(int curIndex) const {
+    //arrive the end of the file list
+    return (curIndex + 1 == list.size()) ? 0 : curIndex + 1;
+}
+
+inline void PicManager::preReadingPrePic() const {
+    if(ImageCache::preReadingEnabled() && list.size() > 1){ // pre-reading previous one
+        preReadingPic(getPreIndex(currentIndex));
+    }
+}
+
+inline void PicManager::preReadingNextPic() const{
+    if(ImageCache::preReadingEnabled() && list.size() > 1){ // pre-reading next one
+        preReadingPic(getNextIndex(currentIndex));
+    }
+}
 
 #endif // PICMANAGER_H

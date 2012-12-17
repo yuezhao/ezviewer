@@ -21,7 +21,7 @@
 #include "ui_settingwidget.h"
 
 #include "global.h"
-#include "fileassoc.h"
+#include "osrelated.h"
 #include <QtGui>
 
 
@@ -30,6 +30,8 @@ SettingWidget::SettingWidget(QWidget *parent) :
     ui(new Ui::SettingWidget)
 {
     ui->setupUi(this);
+    ui->ui_groupBox->hide();
+
     showDialogCheckBox = ui->showDialogCheckBox;
     antialiasModeCombo = ui->antialiasModeCombo;
     timerSpinBox = ui->timerSpinBox;
@@ -37,7 +39,10 @@ SettingWidget::SettingWidget(QWidget *parent) :
     colorEdit = ui->colorEdit;
     colorCheckBox = ui->colorCheckBox;
     colorLabel = ui->colorLabel;
+    preReadingCheckBox = ui->preReadingCheckBox;
     buttonBox = ui->buttonBox;
+    cacheValueLabel = ui->cacheValueLabel;
+    cacheValueSlider = ui->cacheValueSlider;
 
     initUIvalue();
 
@@ -50,6 +55,10 @@ SettingWidget::SettingWidget(QWidget *parent) :
             SLOT(bgColorEnable(int)));
     connect(timerSpinBox, SIGNAL(valueChanged(int)),
             SLOT(timerIntervalChange(int)));
+    connect(preReadingCheckBox, SIGNAL(stateChanged(int)),
+            SLOT(preReadingChanged(int)));
+    connect(cacheValueSlider, SIGNAL(valueChanged(int)),
+            SLOT(cacheValueChanged(int)));
 
     QPushButton *button = buttonBox->addButton(QDialogButtonBox::Close);
     button->setDefault(true);
@@ -71,6 +80,8 @@ void SettingWidget::initUIvalue()
     bool enableBgColor = settings.value(EnableBgColorKey, true).toBool();
     QString colorStr = settings.value(BgColorKey, BG_GREEN).toString();
     int timerInterval = settings.value(TimerIntervalKey, 4).toInt();
+    bool enablePreReading = settings.value(EnablePreReadingKey, true).toBool();
+    int  cacheValue = settings.value(CacheValueKey, -1).toInt();
 
     if(antialiasMode < 0 || antialiasMode > 2)
         antialiasMode = 0;
@@ -79,10 +90,15 @@ void SettingWidget::initUIvalue()
         bgColor.setNamedColor(BG_GREEN);
     if(timerInterval < 1 || timerInterval > 1000)
         timerInterval = 4;
+    if(cacheValue < 0 || cacheValue > 5)
+        cacheValue = OSRelated::cacheSizeSuggested();
 
     showDialogCheckBox->setChecked(showDialog);
     antialiasModeCombo->setCurrentIndex(antialiasMode);
     timerSpinBox->setValue(timerInterval);
+    preReadingCheckBox->setChecked(enablePreReading);
+    cacheValueLabel->setText(QString::number(cacheValue));
+    cacheValueSlider->setValue(cacheValue);
 
     QPixmap pix(25, 25);
     pix.fill(bgColor);
@@ -157,6 +173,27 @@ void SettingWidget::timerIntervalChange(int val)
     settings.setValue(TimerIntervalKey, val);
 }
 
+void SettingWidget::preReadingChanged(int state)
+{
+    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
+    switch(state){
+    case Qt::Checked:
+        settings.setValue(EnablePreReadingKey, true);
+        break;
+    case Qt::Unchecked:
+        settings.setValue(EnablePreReadingKey, false);
+        break;
+    }
+}
+
+void SettingWidget::cacheValueChanged(int val)
+{
+    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
+    settings.setValue(CacheValueKey, val);
+
+    cacheValueLabel->setText(QString::number(val));
+}
+
 void SettingWidget::restoreDefaults()
 {
     QSettings(INI_FILE_PATH, QSettings::IniFormat).clear(); ///
@@ -179,7 +216,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     QTabWidget *tab = new QTabWidget(this);
     tab->addTab(&sw, tr("Common"));
 
-    if(FileAssoc::isSupportAssociation()){
+    if(OSRelated::isSupportAssociation()){
         QGridLayout *gl = new QGridLayout;
 
         const int CountOfColumn = 3;
@@ -188,7 +225,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
         for(int i = 0, size = formatList.size(); i < size; ++i){
             cb = new QCheckBox(formatList.at(i));
             //! before connect(). otherwise it will launch the function changeAssociation(bool).
-            cb->setChecked(FileAssoc::checkAssociation(formatList.at(i)));
+            cb->setChecked(OSRelated::checkAssociation(formatList.at(i)));
             connect(cb, SIGNAL(toggled(bool)),
                     SLOT(changeAssociation(bool)));
 
@@ -213,11 +250,11 @@ void SettingsDialog::changeAssociation(bool enabled)
     if(cb == NULL) return;
 
     QString ext(cb->text());
-    if(FileAssoc::isSupportAssociation()){
+    if(OSRelated::isSupportAssociation()){
         if(enabled){
-            FileAssoc::setAssociation(ext);
+            OSRelated::setAssociation(ext);
         }else{
-            FileAssoc::clearAssociation(ext);
+            OSRelated::clearAssociation(ext);
         }
     }
 }

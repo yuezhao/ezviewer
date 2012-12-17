@@ -21,8 +21,8 @@
 #define GLOBAL_H
 
 #define INI_FILE_NAME   "EzViewer.ini"
-#define VERSON_NO       "2.6"
-#define BUILD_TIME      "2012/2-2012/11"
+#define VERSON_NO       "3.0 beta"
+#define BUILD_TIME      "2012/2-2012/12"
 #define WEIBO           "www.weibo.com/huangezhao"
 #define PROJECT_SITE    "code.google.com/p/ezviewer/"
 #define AUTHOR_BLOG     "yuezhaoblog.blogspot.com"
@@ -79,6 +79,9 @@ const QString EnableBgColorKey(EffectGroup + "/EnableBgColor");
 const QString BgColorKey(EffectGroup + "/BgColor");
 const QString AutoPlayGroup("AutoPlay");
 const QString TimerIntervalKey(AutoPlayGroup + "/TimerInterval");
+const QString AdvancedGroup("Advanced");
+const QString EnablePreReadingKey(AdvancedGroup + "/PreReading");
+const QString CacheValueKey(AdvancedGroup + "/CacheValue");
 const QString FormGroup("Form");
 const QString UseTitleBarKey(FormGroup + "/UseTitleBar");
 

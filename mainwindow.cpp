@@ -25,6 +25,7 @@
 #include "settingwidget.h"
 #include "global.h"
 #include "toolkit.h"
+#include "osrelated.h"
 
 #include <QtGui>
 
@@ -237,6 +238,8 @@ void MainWindow::applyConfig()
     bool enableBgColor = settings.value(EnableBgColorKey, true).toBool();
     QString colorStr = settings.value(BgColorKey, BG_GREEN).toString();
     int timerInterval = settings.value(TimerIntervalKey, 4).toInt();
+    bool enablePreReading = settings.value(EnablePreReadingKey, true).toBool();
+    int  cacheValue = settings.value(CacheValueKey, -1).toInt();
 
     if(antialiasMode < 0 || antialiasMode > 2) // 3 modes
         antialiasMode = 0;
@@ -245,6 +248,8 @@ void MainWindow::applyConfig()
         bgColor.setNamedColor(BG_GREEN);
     if(timerInterval < 1 || timerInterval > 1000)
         timerInterval = 4;
+    if(cacheValue < 0 || cacheValue > 5)
+        cacheValue = OSRelated::cacheSizeSuggested();
 
     viewer->changeAntialiasMode(antialiasMode);
     if(enableBgColor)
@@ -252,6 +257,8 @@ void MainWindow::applyConfig()
     else
         viewer->changeBgColor(QColor());
     changeTimerInterval(timerInterval);
+    viewer->setCacheNumber(cacheValue);
+    viewer->setPreReadingEnabled(enablePreReading);
 }
 
 void MainWindow::writeSettings()
@@ -598,5 +605,5 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         break;
     }
 
-    qApp->processEvents(QEventLoop::ExcludeUserInputEvents); //add:20121006
+//    qApp->processEvents(QEventLoop::ExcludeUserInputEvents); //add:20121006
 }

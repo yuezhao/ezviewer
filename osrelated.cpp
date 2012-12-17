@@ -24,6 +24,10 @@
 #include <QFileInfo>
 #include <QMessageBox>
 
+#ifdef Q_WS_WIN
+#define _WIN32_WINNT  0x0500    //! for memory size
+#include <windows.h>
+#endif // Q_WS_WIN
 
 #ifdef Q_WS_WIN
 #include <windows.h>
@@ -42,6 +46,26 @@
 
 namespace OSRelated
 {
+
+int cacheSizeSuggested()
+{
+    int totalMemory = 0;
+
+#ifdef Q_WS_WIN
+    MEMORYSTATUSEX statex;
+    statex.dwLength = sizeof (statex);
+    GlobalMemoryStatusEx (&statex);
+    totalMemory = statex.ullTotalPhys / (1024*1024); // convert bytes to MB
+#endif // Q_WS_WIN
+
+    qDebug("memory is %d", totalMemory);
+    if(totalMemory < 1000) // memory less than 1G
+        return 0;
+    else if(totalMemory < 1500)
+        return 1;
+    else
+        return 2;
+}
 
 void moveFile2Trash(const QString &filePath)
 {

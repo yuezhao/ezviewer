@@ -22,8 +22,13 @@
 
 #include <QString>
 
+#include "fileassoc.h"
+
 namespace OSRelated
 {
+using namespace FileAssoc;
+
+int cacheSizeSuggested();
 void moveFile2Trash(const QString &filePath);
 }
 

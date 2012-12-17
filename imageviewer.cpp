@@ -29,9 +29,6 @@
 //        pixmap = qvariant_cast<QPixmap>(mimeData->imageData());
 //    update();
 
-//! HOWTO improve the loading? multi-threads to read the previous image and the next one?
-//void ImageViewer::loadImage(const QImage &im, const QString &msg_if_no_image)
-
 
 const int threshold = 10;
 

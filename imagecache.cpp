@@ -20,17 +20,19 @@
 #include "imagecache.h"
 #include "toolkit.h"
 
+#include <QApplication>
 #include <QDateTime>
 #include <QHash>
 
-const int CacheNumber = 4;
-
+/* list:
+ * first one hold curCache for PicManager,
+ * second one is for pre-reading (if enabled),
+ * others are caches for file that had been viewed.
+ */
 QList<ImageCache *> ImageCache::list;
+int ImageCache::CacheNumber = 0;
+PreReadingThread *ImageCache::prThread = NULL;
 
-PreReadingThread ImageCache::prThread;
-
-// 复用cache?
-// 更多线程？
 
 uint ImageCache::getHashCode(const QString &filePath)
 {
@@ -44,100 +46,141 @@ uint ImageCache::getHashCode(const QString &filePath)
     return hash;
 }
 
-ImageCache * ImageCache::getNullCache()
-{
-    ImageCache *result = new ImageCache();
-    result->isReady = true;
-
-    if(list.size() == CacheNumber){
-        delete list.at(3);
-        list.removeAt(3);
-    }
-    list.prepend(result);
-
-    qDebug("new a null ImageCache, now list size is %d", list.size());
-
-    return result;
-}
-
-void ImageCache::freeCache()    /// 需要互斥？
+void ImageCache::freeCache()
 {
     foreach(ImageCache *ic, list)
         delete ic;
 
-    qDebug("free all ImageCache");
+    if(prThread){
+        prThread->quit();
+        prThread->deleteLater();
+    }
+}
 
-    prThread.quit();
+ImageCache * ImageCache::newCache()
+{
+    int total = 1 + (prThread ? 1 : 0) + CacheNumber;
+
+    ImageCache *ic;
+    if(list.size() < total){
+        ic = new ImageCache;
+        if(prThread){
+            QObject::connect(ic, SIGNAL(cacheNeedReading(ImageCache*,QString)),
+                    prThread, SLOT(preReading(ImageCache*,QString)));
+        }
+    }else{
+        ic = list.at(total - 1);
+        list.removeAt(total - 1);
+        ic->isReady = false;
+        SafeDelete(ic->movie);
+    }
+
+    return ic;
+}
+
+ImageCache * ImageCache::findCache(uint hash)
+{
+    foreach(ImageCache *ic, list){
+        if(ic->hashCode == hash){
+            list.removeOne(ic);
+            return ic;
+        }
+    }
+    return NULL;
+}
+
+ImageCache * ImageCache::getNullCache()
+{
+    ImageCache *ic = findCache(0);
+    if(!ic){
+        ic = newCache();
+        if(ic->hashCode == 0){
+            ic->isReady = true;
+        }else{
+            ic->image = QImage();
+            ic->format = QString::null;
+            ic->frameCount = 0;
+        }
+    }
+
+    list.prepend(ic);
+    return ic;
 }
 
 ImageCache * ImageCache::getCache(const QString &filePath)
 {
     uint hash = getHashCode(filePath);
-    foreach(ImageCache *ic, list){
-        if(ic->hashCode == hash){
-            list.removeOne(ic);       /// 需要互斥？
-            list.prepend(ic);       /// 需要互斥？
+    if(ImageCache *ic = findCache(hash)){
+        list.prepend(ic);
 
-            qDebug("find exist ImageCache, now list size is %d", list.size());
-
-            while(!ic->isReady) {} /// wait for pre-reading in another thread
-
-            return ic;
+        while(!ic->isReady) { /// wait for pre-reading in another thread
+///            qApp->processEvents();
         }
+        return ic;
     }
 
-    ImageCache *result = new ImageCache();
-    result->hashCode = hash;
-    result->readFile(filePath);
+    ImageCache *cache = newCache();
+    cache->hashCode = hash;
+    cache->readFile(filePath);
+    list.prepend(cache);
 
-    if(list.size() == CacheNumber){
-        delete list.at(3);
-        list.removeAt(3);
-
-        qDebug("delete 4th ImageCache, now list size is %d", list.size());
-    }
-    list.prepend(result);
-
-    qDebug("new a ImageCache, now list size is %d", list.size());
-
-    return result;
+    return cache;
 }
 
 void ImageCache::preReading(const QString &filePath)
 {
+    if(!prThread)
+        return;
+
     uint hash = getHashCode(filePath);
-    foreach(ImageCache *ic, list){
-        if(ic->hashCode == hash){
-            list.removeOne(ic);       /// 需要互斥？
-            list.prepend(ic);       /// 需要互斥？
-
-            qDebug("prereading: find exist ImageCache, now list size is %d", list.size());
-
-            return;
-        }
+    if(ImageCache *ic = findCache(hash)){
+        list.insert(1, ic);  /// assert(list.size());
+        return;
     }
 
-    ImageCache *result = new ImageCache();
-    result->hashCode = hash;
+    ImageCache *cache = newCache();
+    cache->hashCode = hash;
+    list.insert(1, cache);  /// assert(list.size());
 
-    if(list.size() == CacheNumber){
-        delete list.at(3);
-        list.removeAt(3);
-
-        qDebug("prereading: delete 4th ImageCache, now list size is %d", list.size());
-    }
-    list.prepend(result);
-
-    qDebug("prereading: new a ImageCache, now list size is %d", list.size());
-
-    result->callOtherThread(filePath);
+    cache->callPreReadingThread(filePath);
 }
 
-void ImageCache::callOtherThread(const QString &filePath)
+void ImageCache::cacheSizeAdjusted()
 {
-    connect(this, SIGNAL(cacheNeedReading(ImageCache*,QString)),
-            &prThread, SLOT(preReading(ImageCache*,QString)));
-    emit cacheNeedReading(this, filePath);
+    int total = 1 + (prThread ? 1 : 0) + CacheNumber;
+    while(list.size() > total){
+        ImageCache *ic = list.last();
+        list.removeLast();
+        while(!ic->isReady) {} ///
+        delete ic;
+    }
+}
+
+void ImageCache::setCacheNumber(int val)
+{
+    if(val < 0 || CacheNumber == val) return;
+
+    CacheNumber = val;
+    cacheSizeAdjusted();
+}
+
+void ImageCache::setPreReadingEnabled(bool enabled)
+{
+    if(enabled){
+        if(!prThread){
+            prThread = new PreReadingThread;
+            foreach(ImageCache *ic, list)
+                QObject::connect(ic, SIGNAL(cacheNeedReading(ImageCache*,QString)),
+                                 prThread, SLOT(preReading(ImageCache*,QString)));
+        }
+    }else{
+        if(prThread){
+            prThread->quit();
+            prThread->deleteLater();
+            prThread = NULL;
+            cacheSizeAdjusted();
+        }
+    }
 }
 
 void ImageCache::readFile(const QString &filePath)
@@ -176,25 +219,12 @@ void ImageCache::readFile(const QString &filePath)
             reader.jumpToImage(maxIndex);
         }
 
-        reader.read(&image);
-//        if (!reader.read(&image)) // cannot read image
-//            image = QImage();   ///
+        if (!reader.read(&image)) // cannot read image
+            image = QImage();   ///
 
     }else if(/*format == "gif" && */ frameCount == 1){
         SafeDelete(movie);
     }
 
     isReady = true;
-}
-
-/**********************************************************************
- *
- * PrefetchThread
- *
- **********************************************************************/
-
-void PreReadingThread::preReading(ImageCache *cache, const QString &filePath)
-{
-    cache->readFile(filePath);
-    qDebug("pre reading file success");
 }

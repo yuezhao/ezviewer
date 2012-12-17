@@ -26,20 +26,7 @@
 #include <QThread>
 
 
-class ImageCache;
-class PreReadingThread : public QThread
-{
-    Q_OBJECT
-public:
-    PreReadingThread() { start(); }
-
-public slots:
-    void preReading(ImageCache *cache, const QString &filePath);
-
-//private:
-//    void run() { qDebug("enter event loop..."); exec(); }
-};
-
+class PreReadingThread;
 class ImageCache : public QObject
 {
     Q_OBJECT
@@ -49,33 +36,40 @@ public:
     static void freeCache();
     static void preReading(const QString &filePath);
 
+    static void setCacheNumber(int val);
+    static void setPreReadingEnabled(bool enabled);
+    static bool preReadingEnabled(){ return prThread; }
+
+    void cacheHasChanged() { hashCode = -1; } // if cache had changed, it turns useless.
+
     QImage  image;
     QMovie *movie;
     QString format;
     int frameCount;
-
-    friend class PreReadingThread;
-    static PreReadingThread prThread;
+    //QIcon *icon;
 
 signals:
    void cacheNeedReading(ImageCache *ic, const QString &filePath);
 
 private:
-   ImageCache()
-       : movie(NULL), frameCount(0), hashCode(0), isReady(false)
-   {}
-    ~ImageCache()
-    {
-        if(movie) delete movie;
-    }
-
-   void callOtherThread(const QString &filePath);
-
-   void readFile(const QString &filePath);
+   ImageCache() : movie(NULL), frameCount(0), hashCode(0), isReady(false) {}
+   ~ImageCache() { if(movie) delete movie; }
 
    static uint getHashCode(const QString &filePath);
+   static ImageCache *newCache();
+   static ImageCache *findCache(uint hash);
+
+   static void cacheSizeAdjusted();
 
    static QList<ImageCache *> list;
+   static int CacheNumber;
+
+   friend class PreReadingThread;
+   static PreReadingThread *prThread;
+
+   void readFile(const QString &filePath);
+   void callPreReadingThread(const QString &filePath)
+   {  emit cacheNeedReading(this, filePath); }
 
    uint hashCode;
    bool isReady;
@@ -85,5 +79,16 @@ private: // do not copy object
     const ImageCache & operator=(const ImageCache &r);
 };
 
+
+class PreReadingThread : public QThread
+{
+    Q_OBJECT
+public:
+    PreReadingThread() { start(); }
+
+public slots:
+    void preReading(ImageCache *cache, const QString &filePath)
+    { cache->readFile(filePath); }
+};
 
 #endif // IMAGECACHE_H

@@ -34,6 +34,7 @@ class QDialogButtonBox;
 class QLineEdit;
 class QLabel;
 class QSpinBox;
+class QSlider;
 class SettingWidget : public QWidget
 {
     Q_OBJECT
@@ -54,6 +55,8 @@ protected slots:
     void bgColorEnable(int state);
     void setColor();
     void timerIntervalChange(int val);
+    void preReadingChanged(int state);
+    void cacheValueChanged(int val);
 
 private:
     Ui::SettingWidget *ui;
@@ -65,6 +68,9 @@ private:
     QLineEdit *colorEdit;
     QCheckBox *colorCheckBox;
     QLabel    *colorLabel;
+    QCheckBox *preReadingCheckBox;
+    QLabel    *cacheValueLabel;
+    QSlider   *cacheValueSlider;
     QDialogButtonBox *buttonBox;
 
     QColor bgColor;

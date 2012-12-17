@@ -117,9 +117,10 @@ void PicManager::readFile(const QString &fullPath)
     curPath = fileInfo.absoluteFilePath();
     curName = fileInfo.fileName();
 
-    // SafeDelete(curCache);
-    if(curCache->movie)
+    if(curCache->movie){
         curCache->movie->stop();
+        disconnect(curCache->movie, SIGNAL(updated(QRect)));
+    }
 
     curCache = ImageCache::getCache(curPath);
 
@@ -138,6 +139,10 @@ void PicManager::readFile(const QString &fullPath)
 
 void PicManager::noFileToShow()
 {
+    if(curCache->movie){
+        curCache->movie->stop();
+        disconnect(curCache->movie, SIGNAL(updated(QRect)));
+    }
     curCache = ImageCache::getNullCache();
     curPath = curName = QString::null;
 //    state = NoFileNoPicture;
@@ -170,7 +175,6 @@ void PicManager::openFiles(const QStringList &fileList)
     if(fileList.empty()) return;
     if(fileList.size() == 1){
         openFile(fileList.first());
-        qDebug("list only one file: %s", qPrintable(fileList.first()));
         return;
     }
 
@@ -255,8 +259,6 @@ void PicManager::setGifPaused(bool paused)
 
 void PicManager::updateGifImage()
 {
-//    curCache->image = curCache->movie->currentImage();
-//    updatePixmap(curCache->image);
     updatePixmap(curCache->movie->currentImage());
 }
 
@@ -284,8 +286,8 @@ void PicManager::deleteFile(bool needAsk)
             return;
     }
 
-    // change ImageCache's hashCode ??!
     if(curCache->movie) SafeDelete(curCache->movie); //! gif image: must free movie before delete file.
+    curCache->cacheHasChanged();
 
     OSRelated::moveFile2Trash(curPath); ///
 }
