@@ -3,19 +3,22 @@ TARGET = EzViewer
 DEPENDPATH += .
 INCLUDEPATH += .
 
-HEADERS       = imageviewer.h \
+HEADERS = global.h \
+    config.h \
+    imageviewer.h \
     mainwindow.h \
     settingwidget.h \
-    global.h \
     floatframe.h \
     contralbar.h \
     fileassoc.h \
     picmanager.h \
     toolkit.h \
     imagecache.h \
-    osrelated.h
-SOURCES       = imageviewer.cpp \
-                main.cpp \
+    osrelated.h \
+    tooltip.h
+
+SOURCES = main.cpp \
+    imageviewer.cpp \
     mainwindow.cpp \
     settingwidget.cpp \
     floatframe.cpp \
@@ -24,25 +27,22 @@ SOURCES       = imageviewer.cpp \
     picmanager.cpp \
     toolkit.cpp \
     imagecache.cpp \
-    osrelated.cpp
-
-RESOURCES += \
-    res.qrc
-
-win32:RC_FILE += \
-    icon.rc
-
-win32 {
-VERSION = 2.0
-QMAKE_TARGET_COMPANY = huangezhao
-QMAKE_TARGET_DESCRIPTION = "A Simple Picture View"
-QMAKE_TARGET_COPYRIGHT = "Copyright (C) 2012 huangezhao"
-QMAKE_TARGET_PRODUCT = $${TARGET}
-}
+    osrelated.cpp \
+    tooltip.cpp
 
 TRANSLATIONS += \
-    res/ImageViewer_zh_CN.ts
+    res/EzViewer_zh_CN.ts
 
 FORMS += \
     settingwidget.ui \
     contralbar.ui
+
+RESOURCES += \
+    res/res.qrc
+
+win32:RC_FILE += \
+    win.rc
+
+OTHER_FILES += $$RC_FILE \
+    log.txt \
+    TODO.txt

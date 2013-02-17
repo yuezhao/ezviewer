@@ -19,7 +19,7 @@
 
 #include "picmanager.h"
 
-#include "global.h"
+#include "config.h"
 #include "osrelated.h"
 #include "toolkit.h"
 
@@ -52,7 +52,7 @@ void PicManager::updateFileNameList(const QString &curfile)
     if(!curDir.endsWith('/'))
         curDir.append('/');
 
-    list = QDir(curDir, SUPPORT_FORMAT, QDir_SORT_FLAG, QDir::Files)
+    list = QDir(curDir, ToolKit::supportFormats(), Config::DirSortFlag, QDir::Files)
             .entryList();
     currentIndex = list.indexOf(fileInfo.fileName());
 }
@@ -84,7 +84,8 @@ void PicManager::updateFileIndex(int oldIndex)
         currentIndex = 0;
 
     readFile(currentIndex);
-    preReadingNextPic(); ///
+//    QTimer::singleShot(0, this, SLOT(preReadingNextPic()));
+    preReadingNextPic();    ///
 }
 
 void PicManager::directoryChanged()
@@ -162,7 +163,8 @@ void PicManager::openFile(const QString &file)
     updateFileNameList(file);
     // make sure if file is no a picture, this will show error message.
     readFile(file); //readFile(list.at(currentIndex));
-    preReadingNextPic();    ///
+///    QTimer::singleShot(50, this, SLOT(preReadingNextPic()));
+    preReadingNextPic(); ///
 
     fsWatcher.addPath(curDir);
     if(!QFileInfo(curDir).isRoot())// watch the parent dir, will get notice when rename current dir.
@@ -189,6 +191,7 @@ void PicManager::openFiles(const QStringList &fileList)
     list = fileList;
     currentIndex = 0;
     readFile(currentIndex);
+//    QTimer::singleShot(0, this, SLOT(preReadingNextPic()));
     preReadingNextPic(); ///
 
     fsWatcher.addPaths(list);       //放到另一个线程中？？？
@@ -300,30 +303,25 @@ QString PicManager::attribute() const
     if(fileInfo.exists()){
         const QString timeFormat(tr("yyyy-MM-dd, hh:mm:ss"));
         qint64 size = fileInfo.size();
-        QString sizeStr = ToolKit::fileSize2Str(size);
 
-        info += tr("File Name: %1<br>").arg(curName);
-        info += tr("File Size: %1 (%2 Bytes)<br>").arg(sizeStr).arg(size);
-        info += tr("Created Time: %1<br>")
+        info += tr("File Name: %1").arg(curName);
+        info += "<br>" + tr("File Size: %1 (%2 Bytes)").arg(ToolKit::fileSize2Str(size)).arg(size);
+        info += "<br>" + tr("Created Time: %1")
                 .arg(fileInfo.created().toString(timeFormat));
-        info += tr("Modified Time: %1<br>")
-                .arg(fileInfo.lastModified().toString(timeFormat));
-        info += tr("Last Read: %1")
-                .arg(fileInfo.lastRead().toString(timeFormat));
-        if(!curCache->format.isEmpty())
-            info += tr("<br>Image Format: %1").arg(curCache->format);
     }
 
     if(!currentImage().isNull()){
         if(!info.isEmpty())
-            info += tr("<br>");
+            info += QString("<br>");
 
+        if(!curCache->format.isEmpty())
+            info += tr("Image Format: %1").arg(curCache->format);
         if(currentImage().colorCount() > 0)
-            info += tr("Color Count: %1<br>").arg(currentImage().colorCount());
+            info += "<br>" + tr("Color Count: %1").arg(currentImage().colorCount());
         else if(currentImage().depth() >= 16)
-            info += tr("Color Count: True color<br>");
-        info += tr("Depth: %1<br>").arg(currentImage().depth());
-    //    info += tr("BitPlaneCount: %1<br>").arg(image.bitPlaneCount());//the color counts actual used, <= Depth
+            info += "<br>" + tr("Color Count: True color");
+        info += "<br>" + tr("Depth: %1").arg(currentImage().depth());
+    //    info += "<br>" + tr("BitPlaneCount: %1").arg(image.bitPlaneCount());//the color counts actual used, <= Depth
 
         int gcd = ToolKit::gcd(currentImage().width(), currentImage().height());
         QString ratioStr = (gcd == 0) ? "1:1" : QString("%1:%2")
@@ -331,13 +329,13 @@ QString PicManager::attribute() const
                                         .arg(currentImage().height() / gcd);
 
 
-        info += tr("Size: %1 x %2 (%3)<br>")
+        info += "<br>" + tr("Size: %1 x %2 (%3)")
                 .arg(currentImage().width())
                 .arg(currentImage().height())
                 .arg(ratioStr);
         if(fileInfo.exists() && curCache->frameCount != 1)
-            info += tr("Frame Count: %1<br>").arg(curCache->frameCount);
-        info += tr("Current Scale: %1%").arg(currentScale() * 100, 0, 'g', 4);
+            info += "<br>" + tr("Frame Count: %1").arg(curCache->frameCount);
+//        info += "<br>" + tr("Current Scale: %1%").arg(currentScale() * 100, 0, 'g', 4);
     }
 
     return info;

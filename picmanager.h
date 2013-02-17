@@ -27,6 +27,7 @@
 #include "imageviewer.h"
 #include "imagecache.h"
 
+
 class PicManager : public ImageViewer
 {
     Q_OBJECT
@@ -63,9 +64,11 @@ public slots:
     void setGifPaused(bool paused);
 
 protected slots:
-    void updateGifImage();
+    void updateGifImage();      /// updateAnimationImage()? updateImage()?
     void directoryChanged();
     void fileChanged(const QString &filePath);
+    void preReadingPrePic() const;
+    void preReadingNextPic() const;
 
     void hideEvent ( QHideEvent * event );
     void showEvent ( QShowEvent * event );
@@ -101,8 +104,6 @@ private:
     QString getPathAtIndex(int index) const;
     void preReadingPic(const QString &filePath) const;
     void preReadingPic(int index) const;
-    void preReadingPrePic() const;
-    void preReadingNextPic() const;
 
     enum LIST_MODE {
         FileNameListMode,

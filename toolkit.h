@@ -23,7 +23,6 @@
 #include <QString>
 #include <QFileInfo>
 
-
 #define SafeDelete(arg) \
     if(arg){ \
         delete arg; \
@@ -32,6 +31,9 @@
 
 
 namespace ToolKit{
+
+QString supportFormats();
+QStringList formatsList();
 
 QString fileSize2Str(qint64 size);
 

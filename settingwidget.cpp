@@ -20,8 +20,11 @@
 #include "settingwidget.h"
 #include "ui_settingwidget.h"
 
+#include "config.h"
 #include "global.h"
 #include "osrelated.h"
+#include "toolkit.h"
+
 #include <QtGui>
 
 
@@ -74,20 +77,20 @@ SettingWidget::~SettingWidget()
 
 void SettingWidget::initUIvalue()
 {
-    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
-    bool showDialog = settings.value(DialogKey, true).toBool();
-    int antialiasMode = settings.value(AntialiasModeKey, 0).toInt();
-    bool enableBgColor = settings.value(EnableBgColorKey, true).toBool();
-    QString colorStr = settings.value(BgColorKey, BG_GREEN).toString();
-    int timerInterval = settings.value(TimerIntervalKey, 4).toInt();
-    bool enablePreReading = settings.value(EnablePreReadingKey, true).toBool();
-    int  cacheValue = settings.value(CacheValueKey, -1).toInt();
+    QSettings settings(Config::ConfigFilePath(), QSettings::IniFormat);
+    bool showDialog = settings.value(Config::DialogKey, true).toBool();
+    int antialiasMode = settings.value(Config::AntialiasModeKey, 0).toInt();
+    bool enableBgColor = settings.value(Config::EnableBgColorKey, true).toBool();
+    QString colorStr = settings.value(Config::BgColorKey, Config::BgGreen).toString();
+    int timerInterval = settings.value(Config::TimerIntervalKey, 4).toInt();
+    bool enablePreReading = settings.value(Config::EnablePreReadingKey, true).toBool();
+    int  cacheValue = settings.value(Config::CacheValueKey, -1).toInt();
 
     if(antialiasMode < 0 || antialiasMode > 2)
         antialiasMode = 0;
     bgColor.setNamedColor(colorStr);
     if(!bgColor.isValid())
-        bgColor.setNamedColor(BG_GREEN);
+        bgColor.setNamedColor(Config::BgGreen);
     if(timerInterval < 1 || timerInterval > 1000)
         timerInterval = 4;
     if(cacheValue < 0 || cacheValue > 5)
@@ -112,39 +115,20 @@ void SettingWidget::initUIvalue()
 
 void SettingWidget::showDialogChange(int state)
 {
-    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
-    switch(state){
-    case Qt::Checked:
-        settings.setValue(DialogKey, true);
-        break;
-    case Qt::Unchecked:
-        settings.setValue(DialogKey, false);
-        break;
-    }
+    Config::setValue(Config::DialogKey, state == Qt::Checked);
 }
 
 void SettingWidget::antialiasModeChange(int index)
 {
     if(index == -1) return;
 
-    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
-    settings.setValue(AntialiasModeKey, index);
+    Config::setValue(Config::AntialiasModeKey, index);
 }
 
 void SettingWidget::bgColorEnable(int state)
 {
-    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
-    bool enableBgColor = true;
-    switch(state){
-    case Qt::Checked:
-        settings.setValue(EnableBgColorKey, true);
-        enableBgColor = true;
-        break;
-    case Qt::Unchecked:
-        settings.setValue(EnableBgColorKey, false);
-        enableBgColor = false;
-        break;
-    }
+    bool enableBgColor = (state == Qt::Checked);
+    Config::setValue(Config::EnableBgColorKey, enableBgColor);
 
     colorLabel->setEnabled(enableBgColor);
     colorButton->setEnabled(enableBgColor);
@@ -153,50 +137,37 @@ void SettingWidget::bgColorEnable(int state)
 
 void SettingWidget::setColor()
 {
-    QColor color = QColorDialog::getColor(bgColor, this);//! Native Dialog
-    //QColorDialog::getColor(bgColor, this, tr("Select Color"), QColorDialog::DontUseNativeDialog);
-
+    QColor color = QColorDialog::getColor(bgColor, this);
     if (color.isValid()) {
         bgColor = color;
         QPixmap pix(25, 25);
         pix.fill(bgColor);
         colorButton->setIcon(QIcon(pix));
         colorEdit->setText(bgColor.name());
-        QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
-        settings.setValue(BgColorKey, bgColor.name());
+        Config::setValue(Config::BgColorKey, bgColor.name());
     }
 }
 
 void SettingWidget::timerIntervalChange(int val)
 {
-    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
-    settings.setValue(TimerIntervalKey, val);
+    Config::setValue(Config::TimerIntervalKey, val);
 }
 
 void SettingWidget::preReadingChanged(int state)
 {
-    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
-    switch(state){
-    case Qt::Checked:
-        settings.setValue(EnablePreReadingKey, true);
-        break;
-    case Qt::Unchecked:
-        settings.setValue(EnablePreReadingKey, false);
-        break;
-    }
+    Config::setValue(Config::EnablePreReadingKey, state == Qt::Checked);
 }
 
 void SettingWidget::cacheValueChanged(int val)
 {
-    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
-    settings.setValue(CacheValueKey, val);
+    Config::setValue(Config::CacheValueKey, val);
 
     cacheValueLabel->setText(QString::number(val));
 }
 
 void SettingWidget::restoreDefaults()
 {
-    QSettings(INI_FILE_PATH, QSettings::IniFormat).clear(); ///
+    Config::clearConfig();
     initUIvalue();
 }
 
@@ -216,11 +187,21 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     QTabWidget *tab = new QTabWidget(this);
     tab->addTab(&sw, tr("Common"));
 
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(tab);
+    setLayout(layout);
+
+    setWindowTitle(Global::ProjectName());
+
+
+    show();
+    qApp->processEvents();
+
     if(OSRelated::isSupportAssociation()){
         QGridLayout *gl = new QGridLayout;
 
         const int CountOfColumn = 3;
-        QStringList formatList = QString(SUPPORT_FORMAT).remove("*.").split(' ');
+        QStringList formatList = ToolKit::formatsList();
         QCheckBox *cb;
         for(int i = 0, size = formatList.size(); i < size; ++i){
             cb = new QCheckBox(formatList.at(i));
@@ -236,12 +217,6 @@ SettingsDialog::SettingsDialog(QWidget *parent)
         assocWidget->setLayout(gl);
         tab->addTab(assocWidget, tr("File Association"));
     }
-
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->addWidget(tab);
-    setLayout(layout);
-
-    setWindowTitle(GlobalStr::PROJECT_NAME());
 }
 
 void SettingsDialog::changeAssociation(bool enabled)

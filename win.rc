@@ -1,0 +1,33 @@
+#include "winver.h"
+
+IDI_ICON1 ICON DISCARDABLE "res/EzViewer.ico"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 3,0,0,0
+ PRODUCTVERSION 3,0,0,0
+ FILEFLAGS 0x0L
+ FILEFLAGSMASK 0x3fL
+ FILEOS 0x00040004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004b0"
+        BEGIN
+            VALUE "CompanyName", "huangezhao@gmail.com"
+            VALUE "FileDescription", "A Simple Picture Viewer"
+                        VALUE "FileVersion", "3.0.0.0 beta"
+            VALUE "LegalCopyright", "Copyright (C) 2012 huangezhao."
+            VALUE "InternalName", "EzViewer"
+            VALUE "OriginalFilename", "EzViewer.exe"
+            VALUE "ProductName", "EzViewer"
+                        VALUE "ProductVersion", "3.0.0.0 beta"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1200
+    END
+END
+

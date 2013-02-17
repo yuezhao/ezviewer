@@ -19,36 +19,29 @@
 
 #include "floatframe.h"
 
-#include <QDebug>
-#include <QtGui>
+#include <QTimerEvent>
+#include <QContextMenuEvent>
+#include <QMouseEvent>
+
 
 FloatFrame::FloatFrame(QWidget *parent) :
-    QFrame(parent), enabled_(true)
+    QWidget(parent), fillBackground(true), _enabled(true)
 {
-//    setFrameStyle(StyledPanel | Plain);
-//        setFrameStyle(QFrame::Panel);//NoFrame
-    startPos = QPoint(-1, -1);
-
     hideInterval = 1000;
-    hideTimer = new QTimer(this);
-    hideTimer->setInterval(hideInterval);
-    connect(hideTimer, SIGNAL(timeout()), SLOT(hideAll()));
+    expireInterval = 300;
 
     QPalette pal(palette());
     pal.setBrush(QPalette::Window, QBrush(QColor(0, 0, 0, 50)));
     setPalette(pal);
 
-    if(underMouse())
-        setAutoFillBackground(true);
+    setFillBackground(true);
 }
 
 void FloatFrame::addWidget(QWidget *w)
 {
-    if(w == NULL) return;
-    if(list.contains(w)) return;
+    if(w == NULL || list.contains(w)) return;
 
     list.append(w);
-//    connect(hideTimer, SIGNAL(timeout()), w, SLOT(hide()));
 
     if(!underMouse())
         w->hide();
@@ -56,42 +49,22 @@ void FloatFrame::addWidget(QWidget *w)
 
 void FloatFrame::cancelWidget(QWidget *w)
 {
-    if(w == NULL) return;
-    if(!list.contains(w)) return;
-
+    if(w == NULL || !list.contains(w)) return;
     list.removeOne(w);
-//    disconnect(w);
 }
 
-void FloatFrame::setHideInterval(int msec)
+void FloatFrame::setFillBackground(bool enabled)
 {
-    hideInterval = msec;
-    hideTimer->setInterval(hideInterval);
+    fillBackground = enabled;
+    if(underMouse())  ///
+        setAutoFillBackground(fillBackground);
 }
 
 void FloatFrame::set_enabled(bool enabled)
 {
-    enabled_ = enabled;
-    if(!enabled_)
+    _enabled = enabled;
+    if(!_enabled)
         hideAll();
-}
-
-void FloatFrame::enterEvent( QEvent * event )
-{
-    if(!enabled_)
-        return;
-
-    setAutoFillBackground(true);
-    hideTimer->stop();
-    for (int i = 0; i < list.size(); ++i)
-        list.at(i)->show();
-    emit mouseEnter();
-}
-
-void FloatFrame::leaveEvent( QEvent * event )
-{
-    hideTimer->start();
-    emit mouseLeave();
 }
 
 void FloatFrame::hideAll()
@@ -101,39 +74,54 @@ void FloatFrame::hideAll()
         list.at(i)->hide();
 }
 
-void FloatFrame::contextMenuEvent( QContextMenuEvent * event )
+void FloatFrame::showAll()
+{
+    if(fillBackground)
+        setAutoFillBackground(true);
+    for (int i = 0; i < list.size(); ++i)
+        list.at(i)->show();
+}
+
+void FloatFrame::enterEvent(QEvent * /*event*/)
+{
+    if(!_enabled) return;
+
+    hideTimer.stop();
+    if (!expireTimer.isActive())
+        expireTimer.start(expireInterval, this);
+}
+
+void FloatFrame::leaveEvent(QEvent * /*event*/)
+{
+    expireTimer.stop();
+    if (!hideTimer.isActive())
+        hideTimer.start(hideInterval, this);
+}
+
+void FloatFrame::timerEvent(QTimerEvent *e)
+{
+    if (e->timerId() == hideTimer.timerId())
+        hideAll();
+    else if (e->timerId() == expireTimer.timerId())
+        showAll();
+
+    hideTimer.stop();
+    expireTimer.stop();
+}
+
+void FloatFrame::contextMenuEvent(QContextMenuEvent *event)
 {
     emit showContextMenu(event->globalPos());
 }
 
-
-void FloatFrame::mouseDoubleClickEvent ( QMouseEvent * event )
+void FloatFrame::mouseDoubleClickEvent(QMouseEvent *event)
 {
     if(event->button() & Qt::LeftButton)
         emit mouseDoubleClick();
 }
 
-void FloatFrame::mousePressEvent ( QMouseEvent * event )
+void FloatFrame::mouseReleaseEvent(QMouseEvent *event)
 {
     if(event->button() & Qt::LeftButton)
-        startPos = event->globalPos();
-}
-
-void FloatFrame::mouseMoveEvent ( QMouseEvent * event )
-{
-    //! For mouse move events, this is all buttons that are pressed down.
-    if(event->buttons() & Qt::LeftButton){
-        if(startPos.x() >= 0)
-            emit siteChange(event->globalPos() - startPos);
-        startPos = event->globalPos();    //
-    }
-}
-
-void FloatFrame::mouseReleaseEvent ( QMouseEvent * event )
-{
-    if(event->button() & Qt::LeftButton){
-//        emit siteChange(event->globalPos() - startPos);
         emit mouseClicked();
-        startPos = QPoint(-1, -1);
-    }
 }

@@ -20,70 +20,37 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#define INI_FILE_NAME   "EzViewer.ini"
-#define VERSON_NO       "3.0 beta"
-#define BUILD_TIME      "2012/2-2012/12"
-#define WEIBO           "www.weibo.com/huangezhao"
-#define PROJECT_SITE    "code.google.com/p/ezviewer/"
-#define AUTHOR_BLOG     "yuezhaoblog.blogspot.com"
+#include <QString>
+#include <QObject>
 
-#ifdef Q_OS_WIN32
-#define INI_FILE_PATH   qApp->applicationDirPath() + "/" + INI_FILE_NAME
-//QDir::homePath()+"/Application Data/"+qApp->applicationName()+".ini"
-#else
-#define INI_FILE_PATH   qApp->applicationDirPath() + "/" + INI_FILE_NAME
-#endif
 
-class GlobalStr {
-public:
-    static inline QString PROJECT_NAME()
-    { return QObject::tr("EzViewer"); }
-    static inline QString PROJECT_AUTHOR()
-    { return QObject::tr("huangezhao"); }
-    static inline QString ABOUT_TEXT()
-    {
-        return QObject::tr("<p align='center'>%1 - A Simple Image Viewer</p>" \
-                           "<p>Version: &nbsp;&nbsp; v%2"
-                           "<br>Build Time: &nbsp;&nbsp; %3"  \
-                           "<br>CopyRight &#169; 2012 by %4</p>" \
-                           "<p>Contact Author: &nbsp;&nbsp; <a href='http://%5'>%5</a>" \
-                           "<br>Project Home: &nbsp;&nbsp; <a href='http://%6'>%6</a>" \
-                           "<br>Author's Blog: &nbsp;&nbsp; <a href='http://%7'>%7</a></p>")
-                .arg(PROJECT_NAME()).arg(VERSON_NO).arg(BUILD_TIME)
-                .arg(PROJECT_AUTHOR()).arg(WEIBO).arg(PROJECT_SITE)
-                .arg(AUTHOR_BLOG);
-    }
-};
+namespace Global {
 
-#define QDir_SORT_FLAG  QDir::Name | QDir::IgnoreCase
+const QString Version = "3.0 beta";
+const QString BuildTime = "2012/2-2012/2";
+const QString WeiboSite = "www.weibo.com/huangezhao";
+const QString ProjectSite = "code.google.com/p/ezviewer/";
+const QString AuthorBlog = "yuezhaoblog.blogspot.com";
 
-const qreal SCALE_MAX = 20.0;
-const qreal SCALE_MIN = 0.1;
-const QPointF ORIGIN_POINT(0.0, 0.0);
-const QSize SIZE_ADJUST(0, 1);
-const QSize MIN_SIZE(280, 200);
-const QSize FIT_SIZE(500, 400);
-const QString BG_GREEN("#C7EDCC");
-const QString SUPPORT_FORMAT("*.jpg *.bmp *.gif *.png *.jpeg *.ico *.svg *.pbm *.pgm *.ppm *.tif *.tiff *.xbm *.xpm");
-//const QStringList FORMAT_LIST(QString(SUPPORT_FORMAT).remove("*.").split(' '));
+static inline QString ProjectName()
+{ return QObject::tr("EzViewer"); }
 
-const int AUTO_SCROLL_INTERVAL = 25;//20
-const int TOP_LEVEL_COUNT = 2;
+static inline QString ProjectAuthor()
+{ return QObject::tr("huangezhao"); }
 
-const QString StartupGroup("Startup");
-const QString SizeModeKey(StartupGroup + "/SizeMode");
-const QString DialogKey(StartupGroup + "/ShowDialog");
-const QString EffectGroup("Effect");
-const QString AntialiasModeKey(EffectGroup + "/Antialiasing");
-const QString EnableBgColorKey(EffectGroup + "/EnableBgColor");
-const QString BgColorKey(EffectGroup + "/BgColor");
-const QString AutoPlayGroup("AutoPlay");
-const QString TimerIntervalKey(AutoPlayGroup + "/TimerInterval");
-const QString AdvancedGroup("Advanced");
-const QString EnablePreReadingKey(AdvancedGroup + "/PreReading");
-const QString CacheValueKey(AdvancedGroup + "/CacheValue");
-const QString FormGroup("Form");
-const QString UseTitleBarKey(FormGroup + "/UseTitleBar");
-
+static inline QString AboutInfo()
+{
+    return QObject::tr("<p align='center'>%1 - A Simple Image Viewer</p>" \
+                       "<p>Version: &nbsp;&nbsp; v%2"
+                       "<br>Build Time: &nbsp;&nbsp; %3"  \
+                       "<br>CopyRight &#169; 2012 by %4</p>" \
+                       "<p>Contact Author: &nbsp;&nbsp; <a href='http://%5'>%5</a>" \
+                       "<br>Project Home: &nbsp;&nbsp; <a href='http://%6'>%6</a>" \
+                       "<br>Author's Blog: &nbsp;&nbsp; <a href='http://%7'>%7</a></p>")
+            .arg(ProjectName()).arg(Version).arg(BuildTime)
+            .arg(ProjectAuthor()).arg(WeiboSite).arg(ProjectSite)
+            .arg(AuthorBlog);
+}
+}
 
 #endif // GLOBAL_H

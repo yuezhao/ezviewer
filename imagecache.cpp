@@ -41,15 +41,18 @@ uint ImageCache::getHashCode(const QString &filePath)
     if(fileInfo.exists())
         hash = qHash(filePath) + qHash(fileInfo.size())
                 + qHash(fileInfo.created().toTime_t())
-                + qHash(fileInfo.lastModified().toTime_t())
-                + qHash(fileInfo.lastRead().toTime_t());
+                + qHash(fileInfo.lastModified().toTime_t());
     return hash;
 }
 
 void ImageCache::freeCache()
 {
-    foreach(ImageCache *ic, list)
+    foreach(ImageCache *ic, list){
+        while(!ic->isReady){
+            // waiting pre-reading thread.
+        }
         delete ic;
+    }
 
     if(prThread){
         prThread->quit();
@@ -190,7 +193,9 @@ void ImageCache::readFile(const QString &filePath)
     format = reader.format();
     frameCount = reader.imageCount();
 
-    if(format == "gif"){
+    qDebug("format is %s", qPrintable(format));
+
+    if(format == "gif" || format == "mng"){   /// if(isAnimation())...///////////
         movie = new QMovie(filePath);
         if(movie->isValid()){
             if(movie->state() == QMovie::NotRunning)
@@ -226,5 +231,9 @@ void ImageCache::readFile(const QString &filePath)
         SafeDelete(movie);
     }
 
+    if(image.isNull()){
+        format = "";
+        frameCount = 0;
+    }
     isReady = true;
 }

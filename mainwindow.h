@@ -38,23 +38,23 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
 
-    void openFiles(const QStringList &list) { viewer->openFiles(list);}
-
-public slots:
-    void openFile();
+    void parseCmd(QStringList args);
 
 protected slots:
     void closeEvent(QCloseEvent *event);
     void dragEnterEvent(QDragEnterEvent * event);
     void dropEvent(QDropEvent * event);
-    void keyPressEvent(QKeyEvent *e);
-    void resizeEvent ( QResizeEvent * event );
+    void keyPressEvent(QKeyEvent *event);
+    void resizeEvent(QResizeEvent *event);
+
+    bool eventFilter(QObject *obj, QEvent *event);
 
     void moveWindow(const QPoint &change) { if(!isFullScreen()) move(pos() + change); }
     void applyConfig();
-    void setMyWindowTitle(const QString &title = QString::null);
+    void imageChanged(const QString &title = QString::null);
     void showContextMenu(const QPoint &pos);
 
+    void openFile();
     void changeFullScreen();
     void showAttribute();
     void switchSlideShow();
@@ -90,6 +90,7 @@ private:
     bool WasMaximized;
     QTimer *slideTimer;
     int slideInterval;//msec
+    QRect attributeRect;
 
     QFileSystemWatcher *cfgWatcher;
 

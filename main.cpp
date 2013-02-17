@@ -20,41 +20,30 @@
 #include <QApplication>
 #include <QTranslator>
 #include <QLocale>
-#include <QSettings>
 
 #include "mainwindow.h"
-#include "global.h"
+
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    QString lang_country(QLocale::system().name());
+    QString lang_country = QLocale::system().name();
     QTranslator qt_ts;
-    if(qt_ts.load(QObject::tr(":/res/qt_%1").arg(lang_country)))
+    if(qt_ts.load(QString(":/qt_%1").arg(lang_country)))
         app.installTranslator( &qt_ts );
-    else if(qt_ts.load(QObject::tr("lang/qt_%1").arg(lang_country)))
+    else if(qt_ts.load(QString("lang/qt_%1").arg(lang_country)))
         app.installTranslator( &qt_ts );
     QTranslator app_ts;
-    if(app_ts.load(QObject::tr(":/res/ImageViewer_%1").arg(lang_country)))
+    if(app_ts.load(QString(":/EzViewer_%1").arg(lang_country)))
         app.installTranslator( &app_ts );
-    else if(app_ts.load(QObject::tr("lang/ImageViewer_%1").arg(lang_country)))
+    else if(app_ts.load(QString("lang/EzViewer_%1").arg(lang_country)))
         app.installTranslator( &app_ts );
 
     MainWindow m;
     m.show();
-
-//    app.processEvents(QEventLoop::ExcludeUserInputEvents);
-
-    QStringList args(app.arguments());
-    args.removeFirst(); // remove name of executable
-    if(!args.empty()){
-        m.openFiles(args);
-    }else{
-        QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
-        if(settings.value(DialogKey, true).toBool()) // show dialog while launch.
-            m.openFile();
-    }
+    app.processEvents(QEventLoop::ExcludeUserInputEvents);
+    m.parseCmd(app.arguments());
 
     return app.exec();
 }

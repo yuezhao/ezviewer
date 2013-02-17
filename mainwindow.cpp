@@ -23,15 +23,20 @@
 #include "contralbar.h"
 #include "floatframe.h"
 #include "settingwidget.h"
+#include "config.h"
 #include "global.h"
 #include "toolkit.h"
 #include "osrelated.h"
+#include "tooltip.h"
 
 #include <QtGui>
 
 
 const int SWITCH_FRAME_WIDTH = 90;
 const int BUTTOM_FRAME_HEIGHT = 60;
+const int ATTRIBUTE_RECT_WIDTH = 100;
+const int ATTRIBUTE_RECT_HEIGHT = 100;
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), cfgWatcher(new QFileSystemWatcher(this))
@@ -45,10 +50,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     viewer = new PicManager(this);
     setCentralWidget(viewer);
+    viewer->installEventFilter(this);
 
-//    setMinimumSize(150, 100);
-
-    connect(viewer, SIGNAL(fileNameChange(QString)), SLOT(setMyWindowTitle(QString)));
+    connect(viewer, SIGNAL(fileNameChange(QString)), SLOT(imageChanged(QString)));
     connect(viewer, SIGNAL(mouseDoubleClick()), SLOT(changeFullScreen()));
     connect(viewer, SIGNAL(showContextMenu(QPoint)), SLOT(showContextMenu(QPoint)));
     connect(viewer, SIGNAL(siteChange(QPoint)), SLOT(moveWindow(QPoint)));
@@ -57,12 +61,12 @@ MainWindow::MainWindow(QWidget *parent) :
     initButtomBar();
     initSwitchFrame();
 
-    resize(FIT_SIZE);
+    resize(Config::WindowFitSize);
     readSettings();
     watchConfigFile();
 
-    setMyWindowTitle();
-    setWindowIcon(QIcon(":/res/twitter.png"));
+    imageChanged();
+    setWindowIcon(QIcon(":/appIcon"));
     setAcceptDrops(true);   //! !!
 }
 
@@ -74,101 +78,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
     event->accept();
 }
 
-void MainWindow::initButtomBar()
-{
-    buttomFrame = new FloatFrame(this);
-    buttomFrame->resize(width(), BUTTOM_FRAME_HEIGHT);
-    buttomFrame->move(0, height() - BUTTOM_FRAME_HEIGHT);
-    connect(buttomFrame, SIGNAL(showContextMenu(QPoint)),
-            SLOT(showContextMenu(QPoint)));
-    connect(buttomFrame, SIGNAL(mouseDoubleClick()),
-            SLOT(changeFullScreen()));
-    connect(buttomFrame, SIGNAL(siteChange(QPoint)),
-            SLOT(moveWindow(QPoint)));
-    ///set all the button's focous policy to Qt::NoFocous in 'ui' file.
-//    connect(buttomFrame, SIGNAL(mouseLeave()), SLOT(setFocus()));
-
-    contralBar = new ContralBar(buttomFrame);
-    buttomFrame->addWidget(contralBar);
-
-    QHBoxLayout *hlayout = new QHBoxLayout(buttomFrame);
-    hlayout->setContentsMargins(0,0,0,0);   ///qframe's layout margis default is not 0.
-    hlayout->setAlignment(Qt::AlignCenter);
-    buttomFrame->setLayout(hlayout);
-
-    hlayout->addWidget(contralBar);
-
-    settingButton = contralBar->settingButton;
-    openButton = contralBar->openButton;
-    preButton = contralBar->preButton;
-    playButton = contralBar->playButton;
-    nextButton = contralBar->nextButton;
-    rotateLeftButton = contralBar->rotateLeftButton;
-    rotateRightButton = contralBar->rotateRightButton;
-    deleteButton = contralBar->deleteButton;
-
-    connect(settingButton, SIGNAL(clicked()), SLOT(setting()));
-    connect(openButton, SIGNAL(clicked()), SLOT(openFile()));
-    connect(preButton, SIGNAL(clicked()), SLOT(prePic()));
-    connect(playButton, SIGNAL(clicked()), SLOT(switchSlideShow()));
-    connect(nextButton, SIGNAL(clicked()), SLOT(nextPic()));
-    connect(rotateLeftButton, SIGNAL(clicked()), SLOT(rotateLeft()));
-    connect(rotateRightButton, SIGNAL(clicked()), SLOT(rotateRight()));
-    connect(deleteButton, SIGNAL(clicked()), SLOT(deleteFileAsk()));
-}
-
-void MainWindow::initSwitchFrame()
-{
-    leftFrame = new FloatFrame(this);
-    leftFrame->resize(SWITCH_FRAME_WIDTH, height() - 2*BUTTOM_FRAME_HEIGHT);
-    leftFrame->move(0, BUTTOM_FRAME_HEIGHT);
-    leftFrame->setHideInterval(200);
-    connect(leftFrame, SIGNAL(showContextMenu(QPoint)), SLOT(showContextMenu(QPoint)));
-    connect(leftFrame, SIGNAL(mouseClicked()), SLOT(prePic()));
-
-    QLabel *lb = new QLabel(leftFrame);
-    lb->setPixmap(QPixmap(":/res/Left2.png"));
-    leftFrame->addWidget(lb);
-
-    QHBoxLayout *hlayout = new QHBoxLayout(leftFrame);
-    hlayout->setAlignment(Qt::AlignCenter);
-    hlayout->addWidget(lb);
-    leftFrame->setLayout(hlayout);
-
-
-    rightFrame = new FloatFrame(this);
-    rightFrame->resize(SWITCH_FRAME_WIDTH, height() - 2*BUTTOM_FRAME_HEIGHT);
-    rightFrame->move(width() - SWITCH_FRAME_WIDTH, BUTTOM_FRAME_HEIGHT);
-    rightFrame->setHideInterval(200);
-    connect(rightFrame, SIGNAL(showContextMenu(QPoint)), SLOT(showContextMenu(QPoint)));
-    connect(rightFrame, SIGNAL(mouseClicked()), SLOT(nextPic()));
-
-    lb = new QLabel(rightFrame);
-    lb->setPixmap(QPixmap(":/res/Right2.png"));
-    rightFrame->addWidget(lb);
-
-    hlayout = new QHBoxLayout(rightFrame);
-    hlayout->setAlignment(Qt::AlignCenter);
-    hlayout->addWidget(lb);
-    rightFrame->setLayout(hlayout);
-}
-
-void MainWindow::resizeEvent(QResizeEvent *e)
-{
-    buttomFrame->resize(width(), BUTTOM_FRAME_HEIGHT);
-    buttomFrame->move(0, height() - BUTTOM_FRAME_HEIGHT);
-    leftFrame->resize(SWITCH_FRAME_WIDTH, height() - 2*BUTTOM_FRAME_HEIGHT);
-    leftFrame->move(0, BUTTOM_FRAME_HEIGHT);
-    rightFrame->resize(SWITCH_FRAME_WIDTH, height() - 2*BUTTOM_FRAME_HEIGHT);
-    rightFrame->move(width() - SWITCH_FRAME_WIDTH, BUTTOM_FRAME_HEIGHT);
-    QWidget::resizeEvent(e);
-}
-
 void MainWindow::about()
 {
-    QMessageBox::about(this,
-                       tr("About %1").arg(GlobalStr::PROJECT_NAME()),
-                       GlobalStr::ABOUT_TEXT());
+    QMessageBox::about(this, tr("About %1").arg(Global::ProjectName()),
+                       Global::AboutInfo());
 }
 
 void MainWindow::setting()
@@ -177,16 +90,14 @@ void MainWindow::setting()
     dlg.exec();
 }
 
-void MainWindow::setMyWindowTitle(const QString &title)
+void MainWindow::imageChanged(const QString &title)
 {
     bool hasFile = !title.isEmpty();
     bool hasPicture = viewer->hasPicture();
 
-    if(hasFile){
-        setWindowTitle(title);
-    }else{
-        setWindowTitle(GlobalStr::PROJECT_NAME());
-    }
+    setWindowTitle(hasFile ? title : Global::ProjectName());
+    ToolTip::hideText();
+    QWhatsThis::hideText();
 
     preButton->setEnabled(hasFile);
     playButton->setEnabled(hasFile);
@@ -197,7 +108,7 @@ void MainWindow::setMyWindowTitle(const QString &title)
     rotateRightButton->setEnabled(hasPicture);
     deleteButton->setEnabled(!slideTimer->isActive() && hasFile);   ////
 
-    if(!hasFile && slideTimer->isActive())
+    if(!hasFile && slideTimer->isActive())  // TODO: if only one file, stop slide show.
         switchSlideShow();    ///
 }
 
@@ -210,42 +121,39 @@ void MainWindow::openFile()
     QString fileName =
             QFileDialog::getOpenFileName(
                 this, tr("Open File"), defaultDir,
-                tr("Images (%1);;All Files (*)").arg(SUPPORT_FORMAT));
+                tr("Images (%1);;All Files (*)").arg(ToolKit::supportFormats()));
     if (!fileName.isEmpty())
         viewer->openFile(fileName);
 }
 
 void MainWindow::watchConfigFile()
 {
-    if(!QFile::exists(INI_FILE_PATH))   // create config file
-        QFile(INI_FILE_PATH).open(QIODevice::WriteOnly);
-
-    cfgWatcher->addPath(INI_FILE_PATH);
+    Config::makesureConfigFileExist();
+    cfgWatcher->addPath(Config::ConfigFilePath());
     connect(cfgWatcher, SIGNAL(fileChanged(QString)), SLOT(applyConfig()));
 }
 
 void MainWindow::readSettings()
 {
     applyConfig();    ///
-    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
-    restoreGeometry(settings.value("geometry").toByteArray());
+    restoreGeometry(Config::value(Config::GeometryKey).toByteArray());
 }
 
 void MainWindow::applyConfig()
 {
-    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
-    int antialiasMode = settings.value(AntialiasModeKey, 0).toInt();
-    bool enableBgColor = settings.value(EnableBgColorKey, true).toBool();
-    QString colorStr = settings.value(BgColorKey, BG_GREEN).toString();
-    int timerInterval = settings.value(TimerIntervalKey, 4).toInt();
-    bool enablePreReading = settings.value(EnablePreReadingKey, true).toBool();
-    int  cacheValue = settings.value(CacheValueKey, -1).toInt();
+    QSettings settings(Config::ConfigFilePath(), QSettings::IniFormat);
+    int antialiasMode = settings.value(Config::AntialiasModeKey, 0).toInt();
+    bool enableBgColor = settings.value(Config::EnableBgColorKey, true).toBool();
+    QString colorStr = settings.value(Config::BgColorKey, Config::BgGreen).toString();
+    int timerInterval = settings.value(Config::TimerIntervalKey, 4).toInt();
+    bool enablePreReading = settings.value(Config::EnablePreReadingKey, true).toBool();
+    int  cacheValue = settings.value(Config::CacheValueKey, -1).toInt();
 
     if(antialiasMode < 0 || antialiasMode > 2) // 3 modes
         antialiasMode = 0;
     QColor bgColor(colorStr);
     if(!bgColor.isValid())
-        bgColor.setNamedColor(BG_GREEN);
+        bgColor.setNamedColor(Config::BgGreen);
     if(timerInterval < 1 || timerInterval > 1000)
         timerInterval = 4;
     if(cacheValue < 0 || cacheValue > 5)
@@ -263,8 +171,7 @@ void MainWindow::applyConfig()
 
 void MainWindow::writeSettings()
 {
-    QSettings settings(INI_FILE_PATH, QSettings::IniFormat);
-    settings.setValue("geometry", saveGeometry());
+    Config::setValue(Config::GeometryKey, saveGeometry());
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -298,7 +205,7 @@ void MainWindow::dropEvent(QDropEvent *event)
             fileList.append(urlList.at(i).toLocalFile());
         fileList = ToolKit::getFilesExist(fileList);   ///
         if(!fileList.empty())
-            openFiles(fileList);
+            viewer->openFiles(fileList);
     }
 
     event->acceptProposedAction();
@@ -326,14 +233,28 @@ void MainWindow::changeFullScreen()
 void MainWindow::showAttribute()
 {
     if(viewer->hasPicture() || viewer->hasFile()){
-#ifdef Q_WS_WIN
+#ifndef QT_NO_WHATSTHIS
         QWhatsThis::showText(QCursor::pos(), viewer->attribute(), this);
-#else//(Q_WS_X11)
+#else
         QMessageBox::information(this, tr("Property"), viewer->attribute());
 #endif
-        //    setToolTip(viewer->attribute());
-        //    QToolTip::showText(QCursor::pos(), viewer->attribute(), this);
     }
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == viewer && event->type() == QEvent::ToolTip) {
+        QHelpEvent* helpEvent = static_cast<QHelpEvent*>(event);
+        if (attributeRect.contains(helpEvent->pos())){
+            QString attribute = viewer->attribute();
+            if(!attribute.isEmpty())
+                ToolTip::showText(helpEvent->globalPos(),
+                                  attribute.prepend("<b>").append("</b>"),
+                                  false, 0.8);
+        }
+        return true;
+    }
+    return false;
 }
 
 void MainWindow::switchSlideShow()// if other commend when slide show??
@@ -343,28 +264,113 @@ void MainWindow::switchSlideShow()// if other commend when slide show??
 
     if(slideTimer->isActive()){
         slideTimer->stop();
-        slideAction->setIcon(QIcon(":/res/Play.png"));
+        slideAction->setIcon(QIcon(":/Play.png"));
         slideAction->setText(tr("Auto Play"));
-        playButton->setIcon(QIcon(":/res/Play.png"));
+        playButton->setIcon(QIcon(":/Play.png"));
         playButton->setToolTip(tr("Auto Play"));
         openButton->setEnabled(true);
         deleteButton->setEnabled(viewer->hasFile());    ///
     }else{
         slideTimer->start();
-        slideAction->setIcon(QIcon(":/res/Stop.png"));
+        slideAction->setIcon(QIcon(":/Stop.png"));
         slideAction->setText(tr("Stop Play"));
-        playButton->setIcon(QIcon(":/res/Stop.png"));
+        playButton->setIcon(QIcon(":/Stop.png"));
         playButton->setToolTip(tr("Stop Play"));
         openButton->setEnabled(false);
         deleteButton->setEnabled(false);
     }
 }
 
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    buttomFrame->resize(width(), BUTTOM_FRAME_HEIGHT);
+    buttomFrame->move(0, height() - BUTTOM_FRAME_HEIGHT);
+    leftFrame->resize(SWITCH_FRAME_WIDTH, height() - BUTTOM_FRAME_HEIGHT - ATTRIBUTE_RECT_HEIGHT);
+    leftFrame->move(0, ATTRIBUTE_RECT_HEIGHT);
+    rightFrame->resize(SWITCH_FRAME_WIDTH, height() - BUTTOM_FRAME_HEIGHT - ATTRIBUTE_RECT_HEIGHT);
+    rightFrame->move(width() - SWITCH_FRAME_WIDTH, ATTRIBUTE_RECT_HEIGHT);
+
+    attributeRect = QRect(width() - ATTRIBUTE_RECT_WIDTH, 0, ATTRIBUTE_RECT_WIDTH, ATTRIBUTE_RECT_HEIGHT);
+
+    QWidget::resizeEvent(event);
+}
+
+void MainWindow::initButtomBar()
+{
+    buttomFrame = new FloatFrame(this);
+    connect(buttomFrame, SIGNAL(showContextMenu(QPoint)),
+            SLOT(showContextMenu(QPoint)));
+    connect(buttomFrame, SIGNAL(mouseDoubleClick()),
+            SLOT(changeFullScreen()));
+    ///set all the button's focous policy to Qt::NoFocous in 'ui' file.
+
+    contralBar = new ContralBar(buttomFrame);
+    buttomFrame->addWidget(contralBar);
+
+    QHBoxLayout *hlayout = new QHBoxLayout(buttomFrame);
+    hlayout->setContentsMargins(0,0,0,0);   ///qframe's layout margis default is not 0.
+    hlayout->setAlignment(Qt::AlignCenter);
+    hlayout->addWidget(contralBar);
+    buttomFrame->setLayout(hlayout);
+
+    settingButton = contralBar->settingButton;
+    openButton = contralBar->openButton;
+    preButton = contralBar->preButton;
+    playButton = contralBar->playButton;
+    nextButton = contralBar->nextButton;
+    rotateLeftButton = contralBar->rotateLeftButton;
+    rotateRightButton = contralBar->rotateRightButton;
+    deleteButton = contralBar->deleteButton;
+
+    connect(settingButton, SIGNAL(clicked()), SLOT(setting()));
+    connect(openButton, SIGNAL(clicked()), SLOT(openFile()));
+    connect(preButton, SIGNAL(clicked()), SLOT(prePic()));
+    connect(playButton, SIGNAL(clicked()), SLOT(switchSlideShow()));
+    connect(nextButton, SIGNAL(clicked()), SLOT(nextPic()));
+    connect(rotateLeftButton, SIGNAL(clicked()), SLOT(rotateLeft()));
+    connect(rotateRightButton, SIGNAL(clicked()), SLOT(rotateRight()));
+    connect(deleteButton, SIGNAL(clicked()), SLOT(deleteFileAsk()));
+}
+
+void MainWindow::initSwitchFrame()
+{
+    leftFrame = new FloatFrame(this);
+    leftFrame->setFillBackground(false);
+    leftFrame->setHideInterval(400);
+    connect(leftFrame, SIGNAL(showContextMenu(QPoint)), SLOT(showContextMenu(QPoint)));
+    connect(leftFrame, SIGNAL(mouseClicked()), SLOT(prePic()));
+
+    QLabel *lb = new QLabel(leftFrame);
+    lb->setPixmap(QPixmap(":/Left2.png"));
+    leftFrame->addWidget(lb);
+
+    QHBoxLayout *hlayout = new QHBoxLayout(leftFrame);
+    hlayout->setAlignment(Qt::AlignCenter);
+    hlayout->addWidget(lb);
+    leftFrame->setLayout(hlayout);
+
+
+    rightFrame = new FloatFrame(this);
+    rightFrame->setFillBackground(false);
+    rightFrame->setHideInterval(400);
+    connect(rightFrame, SIGNAL(showContextMenu(QPoint)), SLOT(showContextMenu(QPoint)));
+    connect(rightFrame, SIGNAL(mouseClicked()), SLOT(nextPic()));
+
+    lb = new QLabel(rightFrame);
+    lb->setPixmap(QPixmap(":/Right2.png"));
+    rightFrame->addWidget(lb);
+
+    hlayout = new QHBoxLayout(rightFrame);
+    hlayout->setAlignment(Qt::AlignCenter);
+    hlayout->addWidget(lb);
+    rightFrame->setLayout(hlayout);
+}
+
 void MainWindow::initContextMenu()
 {
 //    QStyle *st = style();
 
-    QAction *settingAction = new QAction(QIcon(":/res/Setting.png"),
+    QAction *settingAction = new QAction(QIcon(":/Setting.png"),
                                          tr("&Setting"), this);
     connect(settingAction, SIGNAL(triggered()), SLOT(setting()));
 
@@ -374,20 +380,20 @@ void MainWindow::initContextMenu()
     QAction *closeAction = new QAction(tr("Close"), this);
     connect(closeAction, SIGNAL(triggered()), SLOT(close()));
 
-    openAction = new QAction(QIcon(":/res/Open.png"),
+    openAction = new QAction(QIcon(":/Open.png"),
 //                st->standardIcon(QStyle::SP_DialogOpenButton),
                 tr("&Open"), this);
     connect(openAction, SIGNAL(triggered()), SLOT(openFile()));
 
-    slideAction = new QAction(QIcon(":/res/Play.png"),
+    slideAction = new QAction(QIcon(":/Play.png"),
                               tr("Auto Play"), this);
     connect(slideAction, SIGNAL(triggered()), SLOT(switchSlideShow()));
 
-    rotateLeftAction = new QAction(QIcon(":/res/Undo.png"),
+    rotateLeftAction = new QAction(QIcon(":/Undo.png"),
                                    tr("Rotate &Left"), this);
     connect(rotateLeftAction, SIGNAL(triggered()), SLOT(rotateLeft()));
 
-    rotateRightAction = new QAction(QIcon(":/res/Redo.png"),
+    rotateRightAction = new QAction(QIcon(":/Redo.png"),
                                     tr("Rotate &Right"), this);
     connect(rotateRightAction, SIGNAL(triggered()), SLOT(rotateRight()));
 
@@ -400,11 +406,11 @@ void MainWindow::initContextMenu()
     copyAction = new QAction(tr("&Copy to clipboard"), this);
     connect(copyAction, SIGNAL(triggered()), SLOT(copyToClipboard()));
 
-    attributeAction = new QAction(QIcon(":/res/Info.png"),
+    attributeAction = new QAction(QIcon(":/Info.png"),
                                   tr("&Property"), this);
     connect(attributeAction, SIGNAL(triggered()), SLOT(showAttribute()));
 
-    deleteAction = new QAction(QIcon(":/res/Delete.png"),
+    deleteAction = new QAction(QIcon(":/Delete.png"),
 //                st->standardIcon(QStyle::SP_DialogCloseButton),
                 tr("&Delete"), this);
     connect(deleteAction, SIGNAL(triggered()), SLOT(deleteFileAsk()));
@@ -426,6 +432,18 @@ void MainWindow::initContextMenu()
     contextMenu->addAction(aboutAction);
     contextMenu->addSeparator();
     contextMenu->addAction(closeAction);
+}
+
+
+void MainWindow::parseCmd(QStringList args)
+{
+    args.removeFirst(); // remove name of executable
+    if(!args.empty()){
+        viewer->openFiles(args);
+    }else{
+        if(Config::value(Config::DialogKey, true).toBool()) // show dialog while launch.
+            openFile();
+    }
 }
 
 void MainWindow::showContextMenu(const QPoint &pos)

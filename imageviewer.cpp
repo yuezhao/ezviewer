@@ -19,9 +19,9 @@
 
 #include <QtGui>
 
-#include "global.h"
+#include "config.h"
 #include "imageviewer.h"
-#include <QtDebug>
+#include "tooltip.h"
 
 //!    paste()
 //    const QMimeData *mimeData = QApplication::clipboard()->mimeData();
@@ -50,7 +50,7 @@ ImageViewer::ImageViewer(QWidget *parent)
     timeStamp = QTime::currentTime();
     connect(&timer, SIGNAL(timeout()), SLOT(myTimerEvent()));
 
-    setMinimumSize(MIN_SIZE);
+    setMinimumSize(Config::WindowMinSize);
 }
 
 void ImageViewer::changeAntialiasMode(int mode)
@@ -99,7 +99,7 @@ void ImageViewer::updateShift()
     QRectF pixRect(topLeft + shift, image.size()*scale);
     if(pixRect.width() <= widgetRect.width()
             && pixRect.height() <= widgetRect.height()){
-        shift = ORIGIN_POINT;
+        shift = Config::OriginPoint;
         setCursor(QCursor(Qt::ArrowCursor));
     }else{
         if(pixRect.width() <= widgetRect.width())
@@ -133,15 +133,15 @@ void ImageViewer::initToFitWidget()//no change the value of rotate
     QSize pixSize(image.size());
     //if image large than widget, will scale image to fit widget.
     if(!(rect().size() - pixSize).isValid())//! SIZE_ADJUST !!!
-        pixSize.scale(rect().size() + SIZE_ADJUST, Qt::KeepAspectRatio);
+        pixSize.scale(rect().size() + Config::SizeAdjusted, Qt::KeepAspectRatio);
     if(image.width() == 0)
         scale = 1.0;
     else
         scale = qreal(pixSize.width()) / image.width();
-    scaleMin = qMin(SCALE_MIN, scale);
+    scaleMin = qMin(Config::ScaleMin, scale);
 
     updateTopLeft();
-    shift = ORIGIN_POINT;
+    shift = Config::OriginPoint;
 }
 
 void ImageViewer::zoomIn(qreal factor)
@@ -150,7 +150,7 @@ void ImageViewer::zoomIn(qreal factor)
 
     qreal scale_old = scale;
     scale += factor;
-    scale = qMax(scaleMin, qMin(SCALE_MAX, scale));
+    scale = qMax(scaleMin, qMin(Config::ScaleMax, scale));
     if(scale == scale_old)//scale no changed
         return;
 
@@ -162,6 +162,10 @@ void ImageViewer::zoomIn(qreal factor)
     shift *= scale;
     updateShift();
     hasUserZoom = true;
+
+    ToolTip::showText(mapToGlobal(rect().center()),
+                      QString("<font size='7'><b>%1%</b></font>").arg(scale * 100, 0, 'g', 4),
+                      true, 0.8, 800);
 }
 
 void ImageViewer::rotatePixmap(bool isLeft)
@@ -235,7 +239,7 @@ void ImageViewer::paintEvent(QPaintEvent *e)
     painter.translate(topLeft + shift);
     painter.scale(scale, scale);
 //    painter.setClipRect(e->rect());
-    painter.drawImage(ORIGIN_POINT, image);
+    painter.drawImage(Config::OriginPoint, image);
 
     painter.restore();  ///
 
@@ -346,7 +350,7 @@ void ImageViewer::mouseReleaseEvent ( QMouseEvent * event )
 
         if(!justPressed && speed != QPoint(0, 0)) {
             speed /= 4; //! ??
-            timer.start(AUTO_SCROLL_INTERVAL);
+            timer.start(Config::AutoScrollInterval);
         }
 
         if(cursor().shape() == Qt::ClosedHandCursor)
@@ -363,7 +367,7 @@ void ImageViewer::myMouseMove(QMouseEvent * event)
     }else{
         //if widget smaller than widget, allow to move image.
         //! + SIZE_ADJUST
-        if(hasPicture() && !(rect().size() + SIZE_ADJUST - image.size()*scale).isValid()){
+        if(hasPicture() && !(rect().size() + Config::SizeAdjusted - image.size()*scale).isValid()){
             shift += change;
             updateShift();
 

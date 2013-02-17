@@ -253,22 +253,6 @@
       <string>Advanced</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_6">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="preReadingCheckBox">
-        <property name="toolTip">
-         <string>This will speed up picture switching.</string>
-        </property>
-        <property name="statusTip">
-         <string/>
-        </property>
-        <property name="text">
-         <string>Pre-reading Next Picture</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
@@ -351,11 +335,23 @@
         </item>
        </layout>
       </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="preReadingCheckBox">
+        <property name="toolTip">
+         <string>This will speed up picture switching.</string>
+        </property>
+        <property name="statusTip">
+         <string/>
+        </property>
+        <property name="text">
+         <string>Pre-reading Next Picture</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
      </layout>
-     <zorder>preReadingCheckBox</zorder>
-     <zorder>cacheValueSlider</zorder>
-     <zorder>cacheValueSlider</zorder>
-     <zorder>cacheValueSlider</zorder>
     </widget>
    </item>
   </layout>

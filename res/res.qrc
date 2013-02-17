@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Delete.png</file>
+        <file alias="appIcon">EzViewer.png</file>
+        <file>EzViewer_zh_CN.qm</file>
+        <file>Info.png</file>
+        <file>Left.png</file>
+        <file>Left2.png</file>
+        <file>Open.png</file>
+        <file>Play.png</file>
+        <file>qt_zh_CN.qm</file>
+        <file>Redo.png</file>
+        <file>Right.png</file>
+        <file>Right2.png</file>
+        <file>Setting.png</file>
+        <file>Stop.png</file>
+        <file>Undo.png</file>
+    </qresource>
+</RCC>

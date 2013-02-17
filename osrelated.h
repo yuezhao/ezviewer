@@ -24,12 +24,13 @@
 
 #include "fileassoc.h"
 
-namespace OSRelated
-{
+namespace OSRelated {
+
 using namespace FileAssoc;
 
 int cacheSizeSuggested();
 void moveFile2Trash(const QString &filePath);
+
 }
 
 #endif // OSRELATED_H

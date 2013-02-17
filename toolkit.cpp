@@ -18,25 +18,49 @@
  ***************************************************************************/
 
 #include "toolkit.h"
+#include "config.h"
 
 #include <QStringList>
+#include <QByteArray>
+#include <QImageReader>
 
 namespace ToolKit{
 
+QStringList formatsList()
+{
+    static QStringList formatsList;
+    if(formatsList.isEmpty()){
+        QList<QByteArray> list = QImageReader::supportedImageFormats();
+        for(int i=0; i < list.size(); ++i)
+            formatsList.append(list.at(i));
+    }
+    return formatsList;
+}
+
+QString supportFormats()
+{
+    static QString formats;
+    if(formats.isEmpty()){
+        formats = formatsList().join(" *.");
+        formats.prepend("*.");
+    }
+    return formats;
+}
+
 QString fileSize2Str(qint64 size)
 {
-    const qint64 OneK = 1024;
-    const qint64 OneM = 1024 * 1024;
-    const qint64 OneG = 1024 * 1024 * 1024;
+    const qreal OneK = 1024;
+    const qreal OneM = 1024 * 1024;
+    const qreal OneG = 1024 * 1024 * 1024;
 
     if(size <= OneK)
         return QString("%1 B").arg(size);
     else if ( size <= OneM )
-        return QString("%1 KB").arg(size / qreal(OneK), 0, 'g', 3);
+        return QString("%1 KB").arg(size / OneK, 0, 'f', Config::FileSizePrecision);
     else if ( size <= OneG )
-        return QString("%1 MB").arg(size / qreal(OneM), 0, 'g', 3);
+        return QString("%1 MB").arg(size / OneM, 0, 'f', Config::FileSizePrecision);
     else
-        return QString("%1 GB").arg(size / qreal(OneG), 0, 'g', 3);
+        return QString("%1 GB").arg(size / OneG, 0, 'f', Config::FileSizePrecision);
 }
 
 QStringList getFilesExist(const QStringList &list)

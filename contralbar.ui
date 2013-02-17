@@ -56,7 +56,7 @@
        </property>
        <property name="icon">
         <iconset resource="res.qrc">
-         <normaloff>:/res/Setting.png</normaloff>:/res/Setting.png</iconset>
+         <normaloff>:/Setting.png</normaloff>:/Setting.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -94,7 +94,7 @@
        </property>
        <property name="icon">
         <iconset resource="res.qrc">
-         <normaloff>:/res/Open.png</normaloff>:/res/Open.png</iconset>
+         <normaloff>:/Open.png</normaloff>:/Open.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -154,7 +154,7 @@
        </property>
        <property name="icon">
         <iconset resource="res.qrc">
-         <normaloff>:/res/Left.png</normaloff>:/res/Left.png</iconset>
+         <normaloff>:/Left.png</normaloff>:/Left.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -192,7 +192,7 @@
        </property>
        <property name="icon">
         <iconset resource="res.qrc">
-         <normaloff>:/res/Play.png</normaloff>:/res/Play.png</iconset>
+         <normaloff>:/Play.png</normaloff>:/Play.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -230,7 +230,7 @@
        </property>
        <property name="icon">
         <iconset resource="res.qrc">
-         <normaloff>:/res/Right.png</normaloff>:/res/Right.png</iconset>
+         <normaloff>:/Right.png</normaloff>:/Right.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -268,7 +268,7 @@
        </property>
        <property name="icon">
         <iconset resource="res.qrc">
-         <normaloff>:/res/Undo.png</normaloff>:/res/Undo.png</iconset>
+         <normaloff>:/Undo.png</normaloff>:/Undo.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -306,7 +306,7 @@
        </property>
        <property name="icon">
         <iconset resource="res.qrc">
-         <normaloff>:/res/Redo.png</normaloff>:/res/Redo.png</iconset>
+         <normaloff>:/Redo.png</normaloff>:/Redo.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -344,7 +344,7 @@
        </property>
        <property name="icon">
         <iconset resource="res.qrc">
-         <normaloff>:/res/Delete.png</normaloff>:/res/Delete.png</iconset>
+         <normaloff>:/Delete.png</normaloff>:/Delete.png</iconset>
        </property>
        <property name="iconSize">
         <size>

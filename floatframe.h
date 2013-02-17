@@ -20,28 +20,29 @@
 #ifndef FLOATFRAME_H
 #define FLOATFRAME_H
 
-#include <QFrame>
+#include <QWidget>
 #include <QList>
+#include <QBasicTimer>
 
 
-class FloatFrame : public QFrame
+class FloatFrame : public QWidget
 {
     Q_OBJECT
 public:
     explicit FloatFrame(QWidget *parent = 0);
 
+    void setFillBackground(bool enabled);
+
 signals:
-    void mouseEnter();
-    void mouseLeave();
-    void showContextMenu(const QPoint &pos);
     void mouseDoubleClick();
     void mouseClicked();
-    void siteChange(const QPoint &change);
+    void showContextMenu(const QPoint &pos);
 
 public slots:
     void addWidget(QWidget *w);
     void cancelWidget(QWidget *w);
-    void setHideInterval(int msec);
+    void setHideInterval(int msec) { hideInterval = msec; }
+    void setExpireInterval(int msec) { expireInterval = msec; }
     void set_enabled(bool enabled);
 
 protected slots:
@@ -49,20 +50,20 @@ protected slots:
     void enterEvent( QEvent * event );
     void leaveEvent( QEvent * event );
     void mouseDoubleClickEvent ( QMouseEvent * event );
-    void mousePressEvent ( QMouseEvent * event );
-    void mouseMoveEvent ( QMouseEvent * event );
     void mouseReleaseEvent ( QMouseEvent * event );
+    void timerEvent(QTimerEvent *e);
 
     void hideAll();
+    void showAll();
 
 private:
-    QTimer *hideTimer;
+    QBasicTimer hideTimer, expireTimer;
     int hideInterval;
-    bool enabled_;
+    int expireInterval;
 
+    bool fillBackground;
+    bool _enabled;
     QList<QWidget *> list;
-
-    QPoint startPos;
 };
 
 #endif // FLOATFRAME_H
