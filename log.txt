@@ -70,4 +70,5 @@
 2013.3.1:
 优化：调整打开图片时预读下一张的时机，提高启动时窗口显示完毕的速度。
 
-
+2013.3.15:
+新增：属性中增加Exif信息查看(使用Wang Bin的PhotoKit中的ExifReader类，见http://github.com/wang-bin/PhotoKit 。同时Windows下使用了Wang Bin的libexif-port：https://github.com/wang-bin/libexif-port )。

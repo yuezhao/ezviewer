@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = EzViewer
 DEPENDPATH += .
-INCLUDEPATH += .
+INCLUDEPATH += . libexif-port
 
 HEADERS = global.h \
     config.h \
@@ -15,7 +15,8 @@ HEADERS = global.h \
     toolkit.h \
     imagecache.h \
     osrelated.h \
-    tooltip.h
+    tooltip.h \
+    tools/ExifReader.h
 
 SOURCES = main.cpp \
     imageviewer.cpp \
@@ -29,7 +30,8 @@ SOURCES = main.cpp \
     imagecache.cpp \
     osrelated.cpp \
     tooltip.cpp \
-    config.cpp
+    config.cpp \
+    tools/ExifReader.cpp
 
 TRANSLATIONS += \
     res/EzViewer_zh_CN.ts
@@ -43,6 +45,12 @@ FORMS += \
 
 win32:RC_FILE += \
     win.rc
+
+win32 {
+    LIBS += -L$$PWD/libexif-port/out/bin -lexif
+} else {
+    LIBS += -lexif
+}
 
 OTHER_FILES += $$RC_FILE \
     log.txt \

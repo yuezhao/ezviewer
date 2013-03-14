@@ -23,6 +23,8 @@
 #include "config.h"
 #include "osrelated.h"
 #include "toolkit.h"
+#include "tools/ExifReader.h"
+using namespace PhotoKit;
 
 #include <QApplication>
 #include <QMessageBox>
@@ -344,6 +346,39 @@ QString PicManager::attribute() const
         if(fileInfo.exists() && curCache->frameCount != 1)
             info += "<br>" + tr("Frame Count: %1").arg(curCache->frameCount);
 //        info += "<br>" + tr("Current Scale: %1%").arg(currentScale() * 100, 0, 'g', 4);
+    }
+
+
+    if(fileInfo.exists()){
+        ExifReader exif;
+        exif.loadFile(curPath);
+        if (exif.hasData()) {
+            ExifReader::TagInfo tags = exif.getIFD0Brief();
+            if (exif.hasIFD0()) {
+                QMap<QString, QString>::ConstIterator it;
+                for (it = tags.begin(); it != tags.end(); ++it) {
+                    if (!it.value().trimmed().isEmpty())
+                        info += "<br>" + it.key() + ": " + it.value();
+                }
+            }
+            if (exif.hasIFDExif()) {
+                tags = exif.getExifBrief();
+                QMap<QString, QString>::ConstIterator it;
+                for (it = tags.begin(); it != tags.end(); ++it) {
+                    if (!it.value().trimmed().isEmpty())
+                        info += "<br>" + it.key() + ": " + it.value();
+                }
+            }
+
+            if (exif.hasIFDGPS()) {
+                tags = exif.getGpsBrief();
+                QMap<QString, QString>::ConstIterator it;
+                for (it = tags.begin(); it != tags.end(); ++it) {
+                    if (!it.value().trimmed().isEmpty())
+                        info += "<br>" + it.key() + ": " + it.value();
+                }
+            }
+        }
     }
 
     return info;
