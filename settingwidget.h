@@ -1,6 +1,7 @@
 /****************************************************************************
  * EZ Viewer
  * Copyright (C) 2012 huangezhao. CHINA.
+ * Contact: huangezhao (huangezhao@gmail.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,8 +73,6 @@ private:
     QLabel    *cacheValueLabel;
     QSlider   *cacheValueSlider;
     QDialogButtonBox *buttonBox;
-
-    QColor bgColor;
 };
 
 
@@ -86,7 +85,7 @@ public slots:
     void changeAssociation(bool enabled);
 
 private:
-    SettingWidget sw;
+    SettingWidget settingWidget;
 };
 
 #endif // SETTINGWIDGET_H

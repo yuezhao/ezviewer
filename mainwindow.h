@@ -1,6 +1,7 @@
 /****************************************************************************
  * EZ Viewer
  * Copyright (C) 2012 huangezhao. CHINA.
+ * Contact: huangezhao (huangezhao@gmail.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,6 @@ class QLabel;
 class QMenu;
 class QAction;
 class QPushButton;
-class QFileSystemWatcher;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -77,7 +77,6 @@ protected slots:
 private:
     void readSettings();
     void writeSettings();
-    void watchConfigFile();
 
     void initContextMenu();
     void initButtomBar();
@@ -91,8 +90,6 @@ private:
     QTimer *slideTimer;
     int slideInterval;//msec
     QRect attributeRect;
-
-    QFileSystemWatcher *cfgWatcher;
 
     FloatFrame *buttomFrame;
     FloatFrame *leftFrame;

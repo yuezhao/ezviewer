@@ -1,6 +1,7 @@
 /****************************************************************************
  * EZ Viewer
  * Copyright (C) 2012 huangezhao. CHINA.
+ * Contact: huangezhao (huangezhao@gmail.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,6 @@
 #include "config.h"
 #include "global.h"
 #include "toolkit.h"
-#include "osrelated.h"
 #include "tooltip.h"
 
 #include <QtGui>
@@ -39,7 +39,7 @@ const int ATTRIBUTE_RECT_HEIGHT = 100;
 
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), cfgWatcher(new QFileSystemWatcher(this))
+    QMainWindow(parent)
 {
     WasMaximized = false;
     slideInterval = 4000;
@@ -63,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     resize(Config::WindowFitSize);
     readSettings();
-    watchConfigFile();
+    Config::insertConfigWatcher(this, SLOT(applyConfig()));
 
     imageChanged();
     setWindowIcon(QIcon(":/appIcon"));
@@ -72,8 +72,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    cfgWatcher->removePaths(cfgWatcher->files());
-    SafeDelete(cfgWatcher);
+    Config::cancelConfigWatcher(this);
     writeSettings();
     event->accept();
 }
@@ -121,57 +120,32 @@ void MainWindow::openFile()
     QString fileName =
             QFileDialog::getOpenFileName(
                 this, tr("Open File"), defaultDir,
-                tr("Images (%1);;All Files (*)").arg(ToolKit::supportFormats()));
+                tr("Images (%1);;All Files (*)").arg(Config::supportFormats()));
     if (!fileName.isEmpty())
         viewer->openFile(fileName);
-}
-
-void MainWindow::watchConfigFile()
-{
-    Config::makesureConfigFileExist();
-    cfgWatcher->addPath(Config::ConfigFilePath());
-    connect(cfgWatcher, SIGNAL(fileChanged(QString)), SLOT(applyConfig()));
 }
 
 void MainWindow::readSettings()
 {
     applyConfig();    ///
-    restoreGeometry(Config::value(Config::GeometryKey).toByteArray());
+    restoreGeometry(Config::lastGeometry());
 }
 
 void MainWindow::applyConfig()
 {
-    QSettings settings(Config::ConfigFilePath(), QSettings::IniFormat);
-    int antialiasMode = settings.value(Config::AntialiasModeKey, 0).toInt();
-    bool enableBgColor = settings.value(Config::EnableBgColorKey, true).toBool();
-    QString colorStr = settings.value(Config::BgColorKey, Config::BgGreen).toString();
-    int timerInterval = settings.value(Config::TimerIntervalKey, 4).toInt();
-    bool enablePreReading = settings.value(Config::EnablePreReadingKey, true).toBool();
-    int  cacheValue = settings.value(Config::CacheValueKey, -1).toInt();
-
-    if(antialiasMode < 0 || antialiasMode > 2) // 3 modes
-        antialiasMode = 0;
-    QColor bgColor(colorStr);
-    if(!bgColor.isValid())
-        bgColor.setNamedColor(Config::BgGreen);
-    if(timerInterval < 1 || timerInterval > 1000)
-        timerInterval = 4;
-    if(cacheValue < 0 || cacheValue > 5)
-        cacheValue = OSRelated::cacheSizeSuggested();
-
-    viewer->changeAntialiasMode(antialiasMode);
-    if(enableBgColor)
-        viewer->changeBgColor(bgColor);
+    viewer->changeAntialiasMode(Config::antialiasMode());
+    if(Config::enableBgColor())
+        viewer->changeBgColor(Config::bgColor());
     else
         viewer->changeBgColor(QColor());
-    changeTimerInterval(timerInterval);
-    viewer->setCacheNumber(cacheValue);
-    viewer->setPreReadingEnabled(enablePreReading);
+    changeTimerInterval(Config::timerInterval());
+    viewer->setCacheNumber(Config::cacheValue());
+    viewer->setPreReadingEnabled(Config::enablePreReading());
 }
 
 void MainWindow::writeSettings()
 {
-    Config::setValue(Config::GeometryKey, saveGeometry());
+    Config::setLastGeometry(saveGeometry());
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -215,17 +189,12 @@ void MainWindow::changeFullScreen()
 {
 //    setWindowState( windowState() ^ Qt::WindowFullScreen );
     if(isFullScreen()){
-//        statusBar()->show();
         if(WasMaximized)
             showMaximized();
         else
             showNormal();
-
-//        updateGeometry();
-//        move(pos());
     }else{
         WasMaximized = isMaximized();    //! only for windows?
-//        statusBar()->hide();
         showFullScreen();
     }
 }
@@ -441,7 +410,7 @@ void MainWindow::parseCmd(QStringList args)
     if(!args.empty()){
         viewer->openFiles(args);
     }else{
-        if(Config::value(Config::DialogKey, true).toBool()) // show dialog while launch.
+        if(Config::showDialog()) // show dialog while launch.
             openFile();
     }
 }
@@ -623,5 +592,5 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         break;
     }
 
-//    qApp->processEvents(QEventLoop::ExcludeUserInputEvents); //add:20121006
+    qApp->processEvents(QEventLoop::ExcludeUserInputEvents); //add:20121006
 }

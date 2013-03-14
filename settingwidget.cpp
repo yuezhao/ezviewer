@@ -1,6 +1,7 @@
 /****************************************************************************
  * EZ Viewer
  * Copyright (C) 2012 huangezhao. CHINA.
+ * Contact: huangezhao (huangezhao@gmail.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,6 @@
 #include "config.h"
 #include "global.h"
 #include "osrelated.h"
-#include "toolkit.h"
 
 #include <QtGui>
 
@@ -77,58 +77,39 @@ SettingWidget::~SettingWidget()
 
 void SettingWidget::initUIvalue()
 {
-    QSettings settings(Config::ConfigFilePath(), QSettings::IniFormat);
-    bool showDialog = settings.value(Config::DialogKey, true).toBool();
-    int antialiasMode = settings.value(Config::AntialiasModeKey, 0).toInt();
-    bool enableBgColor = settings.value(Config::EnableBgColorKey, true).toBool();
-    QString colorStr = settings.value(Config::BgColorKey, Config::BgGreen).toString();
-    int timerInterval = settings.value(Config::TimerIntervalKey, 4).toInt();
-    bool enablePreReading = settings.value(Config::EnablePreReadingKey, true).toBool();
-    int  cacheValue = settings.value(Config::CacheValueKey, -1).toInt();
-
-    if(antialiasMode < 0 || antialiasMode > 2)
-        antialiasMode = 0;
-    bgColor.setNamedColor(colorStr);
-    if(!bgColor.isValid())
-        bgColor.setNamedColor(Config::BgGreen);
-    if(timerInterval < 1 || timerInterval > 1000)
-        timerInterval = 4;
-    if(cacheValue < 0 || cacheValue > 5)
-        cacheValue = OSRelated::cacheSizeSuggested();
-
-    showDialogCheckBox->setChecked(showDialog);
-    antialiasModeCombo->setCurrentIndex(antialiasMode);
-    timerSpinBox->setValue(timerInterval);
-    preReadingCheckBox->setChecked(enablePreReading);
-    cacheValueLabel->setText(QString::number(cacheValue));
-    cacheValueSlider->setValue(cacheValue);
+    showDialogCheckBox->setChecked(Config::showDialog());
+    antialiasModeCombo->setCurrentIndex(Config::antialiasMode());
+    timerSpinBox->setValue(Config::timerInterval());
+    preReadingCheckBox->setChecked(Config::enablePreReading());
+    cacheValueLabel->setText(QString::number(Config::cacheValue()));
+    cacheValueSlider->setValue(Config::cacheValue());
 
     QPixmap pix(25, 25);
-    pix.fill(bgColor);
+    pix.fill(Config::bgColor());
     colorButton->setIcon(QIcon(pix));
-    colorEdit->setText(bgColor.name());
-    colorCheckBox->setChecked(enableBgColor);
-    colorLabel->setEnabled(enableBgColor);
-    colorButton->setEnabled(enableBgColor);
-    colorEdit->setEnabled(enableBgColor);
+    colorEdit->setText(Config::bgColor().name());
+    bool enabledBgColor = Config::enableBgColor();
+    colorCheckBox->setChecked(enabledBgColor);
+    colorLabel->setEnabled(enabledBgColor);
+    colorButton->setEnabled(enabledBgColor);
+    colorEdit->setEnabled(enabledBgColor);
 }
 
 void SettingWidget::showDialogChange(int state)
 {
-    Config::setValue(Config::DialogKey, state == Qt::Checked);
+    Config::setShowDialog(state == Qt::Checked);
 }
 
 void SettingWidget::antialiasModeChange(int index)
 {
     if(index == -1) return;
-
-    Config::setValue(Config::AntialiasModeKey, index);
+    Config::setAntialiasMode(index);
 }
 
 void SettingWidget::bgColorEnable(int state)
 {
     bool enableBgColor = (state == Qt::Checked);
-    Config::setValue(Config::EnableBgColorKey, enableBgColor);
+    Config::setEnableBgColor(enableBgColor);
 
     colorLabel->setEnabled(enableBgColor);
     colorButton->setEnabled(enableBgColor);
@@ -137,37 +118,36 @@ void SettingWidget::bgColorEnable(int state)
 
 void SettingWidget::setColor()
 {
-    QColor color = QColorDialog::getColor(bgColor, this);
+    QColor color = QColorDialog::getColor(Config::bgColor(), this);
     if (color.isValid()) {
-        bgColor = color;
         QPixmap pix(25, 25);
-        pix.fill(bgColor);
+        pix.fill(color);
         colorButton->setIcon(QIcon(pix));
-        colorEdit->setText(bgColor.name());
-        Config::setValue(Config::BgColorKey, bgColor.name());
+        colorEdit->setText(color.name());
+        Config::setBgColor(color);
     }
 }
 
 void SettingWidget::timerIntervalChange(int val)
 {
-    Config::setValue(Config::TimerIntervalKey, val);
+    Config::setTimerInterval(val);
 }
 
 void SettingWidget::preReadingChanged(int state)
 {
-    Config::setValue(Config::EnablePreReadingKey, state == Qt::Checked);
+    Config::setEnablePreReading(state == Qt::Checked);
 }
 
 void SettingWidget::cacheValueChanged(int val)
 {
-    Config::setValue(Config::CacheValueKey, val);
-
+    Config::setCacheValue(val);
     cacheValueLabel->setText(QString::number(val));
 }
 
 void SettingWidget::restoreDefaults()
 {
     Config::clearConfig();
+    qApp->processEvents();  /// make sure the value of Config refreshed.
     initUIvalue();
 }
 
@@ -180,12 +160,12 @@ void SettingWidget::restoreDefaults()
 
 SettingsDialog::SettingsDialog(QWidget *parent)
     : QDialog(parent, Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint),
-      sw(this)
+      settingWidget(this)
 {
-    connect(&sw, SIGNAL(clickClose()), SLOT(close()));
+    connect(&settingWidget, SIGNAL(clickClose()), SLOT(close()));
 
     QTabWidget *tab = new QTabWidget(this);
-    tab->addTab(&sw, tr("Common"));
+    tab->addTab(&settingWidget, tr("Common"));
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(tab);
@@ -201,7 +181,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
         QGridLayout *gl = new QGridLayout;
 
         const int CountOfColumn = 3;
-        QStringList formatList = ToolKit::formatsList();
+        QStringList formatList = Config::formatsList();
         QCheckBox *cb;
         for(int i = 0, size = formatList.size(); i < size; ++i){
             cb = new QCheckBox(formatList.at(i));

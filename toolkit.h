@@ -1,6 +1,7 @@
 /****************************************************************************
  * EZ Viewer
  * Copyright (C) 2012 huangezhao. CHINA.
+ * Contact: huangezhao (huangezhao@gmail.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +32,6 @@
 
 
 namespace ToolKit{
-
-QString supportFormats();
-QStringList formatsList();
 
 QString fileSize2Str(qint64 size);
 

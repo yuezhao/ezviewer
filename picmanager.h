@@ -1,6 +1,7 @@
 /****************************************************************************
  * EZ Viewer
  * Copyright (C) 2012 huangezhao. CHINA.
+ * Contact: huangezhao (huangezhao@gmail.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,6 +105,8 @@ private:
     QString getPathAtIndex(int index) const;
     void preReadingPic(const QString &filePath) const;
     void preReadingPic(int index) const;
+
+    QTimer preReadingTimer;
 
     enum LIST_MODE {
         FileNameListMode,

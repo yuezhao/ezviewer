@@ -1,6 +1,7 @@
 /****************************************************************************
  * EZ Viewer
  * Copyright (C) 2012 huangezhao. CHINA.
+ * Contact: huangezhao (huangezhao@gmail.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,32 +21,10 @@
 #include "toolkit.h"
 #include "config.h"
 
-#include <QStringList>
 #include <QByteArray>
-#include <QImageReader>
+
 
 namespace ToolKit{
-
-QStringList formatsList()
-{
-    static QStringList formatsList;
-    if(formatsList.isEmpty()){
-        QList<QByteArray> list = QImageReader::supportedImageFormats();
-        for(int i=0; i < list.size(); ++i)
-            formatsList.append(list.at(i));
-    }
-    return formatsList;
-}
-
-QString supportFormats()
-{
-    static QString formats;
-    if(formats.isEmpty()){
-        formats = formatsList().join(" *.");
-        formats.prepend("*.");
-    }
-    return formats;
-}
 
 QString fileSize2Str(qint64 size)
 {

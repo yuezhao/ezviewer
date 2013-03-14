@@ -1,6 +1,7 @@
 /****************************************************************************
  * EZ Viewer
  * Copyright (C) 2012 huangezhao. CHINA.
+ * Contact: huangezhao (huangezhao@gmail.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +56,7 @@ void ImageCache::freeCache()
     }
 
     if(prThread){
-        prThread->quit();
+//        prThread->quit(); // this will cause crash.
         prThread->deleteLater();
     }
 }
@@ -154,7 +155,9 @@ void ImageCache::cacheSizeAdjusted()
     while(list.size() > total){
         ImageCache *ic = list.last();
         list.removeLast();
-        while(!ic->isReady) {} ///
+//!        while(!ic->isReady) { // if in using by pre-reading ?
+//!            // do nothing
+//!        }
         delete ic;
     }
 }
@@ -178,7 +181,7 @@ void ImageCache::setPreReadingEnabled(bool enabled)
         }
     }else{
         if(prThread){
-            prThread->quit();
+//            prThread->quit(); // this will cause crash.
             prThread->deleteLater();
             prThread = NULL;
             cacheSizeAdjusted();

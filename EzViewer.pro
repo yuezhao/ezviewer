@@ -28,17 +28,18 @@ SOURCES = main.cpp \
     toolkit.cpp \
     imagecache.cpp \
     osrelated.cpp \
-    tooltip.cpp
+    tooltip.cpp \
+    config.cpp
 
 TRANSLATIONS += \
     res/EzViewer_zh_CN.ts
 
+RESOURCES += \
+    res/res.qrc
+
 FORMS += \
     settingwidget.ui \
     contralbar.ui
-
-RESOURCES += \
-    res/res.qrc
 
 win32:RC_FILE += \
     win.rc

@@ -1,6 +1,7 @@
 /****************************************************************************
  * EZ Viewer
  * Copyright (C) 2012 huangezhao. CHINA.
+ * Contact: huangezhao (huangezhao@gmail.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,7 +166,7 @@ void ImageViewer::zoomIn(qreal factor)
 
     ToolTip::showText(mapToGlobal(rect().center()),
                       QString("<font size='7'><b>%1%</b></font>").arg(scale * 100, 0, 'g', 4),
-                      true, 0.8, 800);
+                      true, 0.7, 800);
 }
 
 void ImageViewer::rotatePixmap(bool isLeft)

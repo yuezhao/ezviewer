@@ -1,6 +1,7 @@
 /****************************************************************************
  * EZ Viewer
  * Copyright (C) 2013 huangezhao. CHINA.
+ * Contact: huangezhao (huangezhao@gmail.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +22,7 @@
 #define CONFIG_H
 
 #include <QCoreApplication>
+#include <QColor>
 #include <QDir>
 #include <QPointF>
 #include <QSize>
@@ -28,75 +30,103 @@
 #include <QVariant>
 
 
-namespace Config {
+class QFileSystemWatcher;
 
-const QString ConfigFileName = "EzViewer.ini";
-
-inline QString ConfigFilePath()
+class Config : public QObject
 {
-    return qApp->applicationDirPath() + "/" + ConfigFileName;
-           //QDir::homePath()+"/Application Data/"+qApp->applicationName()+".ini"
+    Q_OBJECT
+public:
+signals:
+    void configChanged();
+
+public:
+    const static qreal ScaleMax = 20.0;
+    const static qreal ScaleMin = 0.1;
+    const static QPointF OriginPoint;
+    const static QSize SizeAdjusted;
+
+    const static QSize WindowMinSize;
+    const static QSize WindowFitSize;
+    const static QString BgGreen;
+
+    const static int AutoScrollInterval = 25;    //20
+    const static int FileSizePrecision = 2;
+    const static QDir::SortFlags DirSortFlag;
+
+
+    /**
+     * if config has been changed, the @method of @receiver will be invoked.
+     */
+    static void insertConfigWatcher(const QObject *receiver, const char *method);
+    static void cancelConfigWatcher(const QObject *receiver);
+
+    static void clearConfig();
+
+    static QString supportFormats() { return instance()->mFormats; }
+    static QStringList formatsList() { return instance()->mFormatsList; }
+
+
+    static bool showDialog()    { return instance()->mShowDialog; }
+    static int  antialiasMode() { return instance()->mAntialiasMode; }
+    static bool enableBgColor() { return instance()->mEnableBgColor; }
+    static QColor bgColor()     { return instance()->mBgColor; }
+    static int  timerInterval() { return instance()->mTimerInterval; }
+    static bool enablePreReading() { return instance()->mEnablePreReading; }
+    static int  cacheValue()    { return instance()->mCacheValue; }
+    static QByteArray lastGeometry(){ return instance()->mLastGeometry; }
+
+    static void setShowDialog(bool enabled);
+    static void setAntialiasMode(int mode);
+    static void setEnableBgColor(bool enabled);
+    static void setBgColor(const QColor &color);
+    static void setTimerInterval(int interval);
+    static void setEnablePreReading(bool enabled);
+    static void setCacheValue(int value);
+    static void setLastGeometry(const QByteArray &geometry);
+
+private slots:
+    void initConfigValue();
+
+private:
+    static QString ConfigFilePath();
+    static void setValue(const QString &key, const QVariant &value);
+
+    static Config *instance();
+
+
+    Config();
+    void watchConfigFile();
+
+    static Config *sInstance;
+
+    QFileSystemWatcher *cfgWatcher;
+
+    bool mShowDialog;
+    int mAntialiasMode;
+    bool mEnableBgColor;
+    QColor mBgColor;
+    int mTimerInterval;
+    bool mEnablePreReading;
+    int mCacheValue;
+    QByteArray mLastGeometry;
+
+    QStringList mFormatsList;
+    QString mFormats;
+};
+
+
+
+inline Config *Config::instance()
+{
+    if(!sInstance)
+        sInstance = new Config();
+    return sInstance;
 }
 
-const QString GeometryKey = "geometry";
-
-const QString StartupGroup = "Startup";
-const QString SizeModeKey = StartupGroup + "/SizeMode";
-const QString DialogKey = StartupGroup + "/ShowDialog";
-
-const QString EffectGroup = "Effect";
-const QString AntialiasModeKey = EffectGroup + "/Antialiasing";
-const QString EnableBgColorKey = EffectGroup + "/EnableBgColor";
-const QString BgColorKey = EffectGroup + "/BgColor";
-
-const QString AutoPlayGroup = "AutoPlay";
-const QString TimerIntervalKey = AutoPlayGroup + "/TimerInterval";
-
-const QString AdvancedGroup = "Advanced";
-const QString EnablePreReadingKey = AdvancedGroup + "/PreReading";
-const QString CacheValueKey = AdvancedGroup + "/CacheValue";
-
-const QString FormGroup = "Form";
-const QString UseTitleBarKey = FormGroup + "/UseTitleBar";
-
-
-const qreal ScaleMax = 20.0;
-const qreal ScaleMin = 0.1;
-const QPointF OriginPoint(0.0, 0.0);
-const QSize SizeAdjusted(0, 1);
-
-const QSize WindowMinSize(280, 200);
-const QSize WindowFitSize(500, 400);
-const QString BgGreen = "#C7EDCC";
-
-const int AutoScrollInterval = 25;    //20
-const QDir::SortFlags DirSortFlag = QDir::Name | QDir::IgnoreCase;
-const int FileSizePrecision = 2;
-
-
-inline void makesureConfigFileExist()
-{
-    if(!QFile::exists(ConfigFilePath()))
-        QFile(ConfigFilePath()).open(QIODevice::WriteOnly); // create config file
-}
-
-inline void setValue(const QString &key, const QVariant &value)
+inline void Config::setValue(const QString &key, const QVariant &value)
 {
     QSettings settings(ConfigFilePath(), QSettings::IniFormat);
     settings.setValue(key, value);
-}
-
-inline void clearConfig()
-{
-    QSettings(ConfigFilePath(), QSettings::IniFormat).clear();
-}
-
-inline QVariant	value(const QString &key, const QVariant &defaultValue = QVariant())
-{
-    QSettings settings(ConfigFilePath(), QSettings::IniFormat);
-    return settings.value(key, defaultValue);
-}
-
 }
 
 #endif // CONFIG_H

@@ -1,6 +1,7 @@
 /****************************************************************************
  * EZ Viewer
  * Copyright (C) 2012 huangezhao. CHINA.
+ * Contact: huangezhao (huangezhao@gmail.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,9 @@ PicManager::PicManager(QWidget *parent)
             SLOT(directoryChanged()));
     connect(&fsWatcher, SIGNAL(fileChanged(QString)),
             SLOT(fileChanged(QString)));
+
+    preReadingTimer.setSingleShot(true);
+    connect(&preReadingTimer, SIGNAL(timeout()), SLOT(preReadingNextPic()));
 }
 
 PicManager::~PicManager()
@@ -52,7 +56,7 @@ void PicManager::updateFileNameList(const QString &curfile)
     if(!curDir.endsWith('/'))
         curDir.append('/');
 
-    list = QDir(curDir, ToolKit::supportFormats(), Config::DirSortFlag, QDir::Files)
+    list = QDir(curDir, Config::supportFormats(), Config::DirSortFlag, QDir::Files)
             .entryList();
     currentIndex = list.indexOf(fileInfo.fileName());
 }
@@ -111,6 +115,8 @@ QString PicManager::getPathAtIndex(int index) const
 
 void PicManager::readFile(const QString &fullPath)
 {
+    preReadingTimer.stop(); // 如果预读还未开始则取消
+
     QFileInfo fileInfo(fullPath);
     if(curPath == fileInfo.absoluteFilePath() )//! if the image needs refresh?
         return;
@@ -163,8 +169,9 @@ void PicManager::openFile(const QString &file)
     updateFileNameList(file);
     // make sure if file is no a picture, this will show error message.
     readFile(file); //readFile(list.at(currentIndex));
-///    QTimer::singleShot(50, this, SLOT(preReadingNextPic()));
-    preReadingNextPic(); ///
+//    QTimer::singleShot(1000, this, SLOT(preReadingNextPic()));
+//    preReadingNextPic(); ///
+    preReadingTimer.start(2000);
 
     fsWatcher.addPath(curDir);
     if(!QFileInfo(curDir).isRoot())// watch the parent dir, will get notice when rename current dir.
@@ -192,7 +199,8 @@ void PicManager::openFiles(const QStringList &fileList)
     currentIndex = 0;
     readFile(currentIndex);
 //    QTimer::singleShot(0, this, SLOT(preReadingNextPic()));
-    preReadingNextPic(); ///
+//    preReadingNextPic(); ///
+    preReadingTimer.start(2000);
 
     fsWatcher.addPaths(list);       //放到另一个线程中？？？
 
