@@ -56,18 +56,19 @@ ImageViewer::ImageViewer(QWidget *parent)
 
 void ImageViewer::changeAntialiasMode(int mode)
 {
-    if(mode < 0 || mode > 2) return;
+    if(mode < 0 || mode > 2 || antialiasMode == mode) return;
 
     antialiasMode = mode;
     updateImageArea();
 }
 
+// If color is invalid, means no background color enabled.
 void ImageViewer::changeBgColor(const QColor &color)
 {
-//    if(color.isValid()){
+    if(bgColor != color){
         bgColor = color;
         update();
-//    }
+    }
 }
 
 void ImageViewer::updatePixmap(const QImage &im)
@@ -244,6 +245,8 @@ void ImageViewer::paintEvent(QPaintEvent *e)
 
     painter.restore();  ///
 
+
+    // draw scroll bar
     if(/*!justPressed && */ speed != QPoint(0, 0)){
         const QColor LINE_COLOR(0, 0, 0, 80);
         painter.setBrush(LINE_COLOR);
@@ -255,14 +258,14 @@ void ImageViewer::paintEvent(QPaintEvent *e)
         int rectW = rect().width(), rectH = rect().height();
         qreal scaleW = image.width() * scale; //! qreal
         qreal scaleH = image.height() * scale;
-        if(scaleW > rectW){
+        if(scaleW > rectW){     // draw horizontal scroll bar
             QRectF rectangle(-(topLeft + shift).x() / scaleW * rectW,
                             rectH - LINE_WIDTH - MARGE,
                             rectW / scaleW * rectW,
                             LINE_WIDTH);
             painter.drawRoundedRect(rectangle, RADIUS, RADIUS);
         }
-        if(scaleH > rectH){
+        if(scaleH > rectH){     // draw vertical scroll bar
             QRectF rectangle(rectW - LINE_WIDTH - MARGE,
                             -(topLeft + shift).y() / scaleH * rectH,
                             LINE_WIDTH,
@@ -270,11 +273,6 @@ void ImageViewer::paintEvent(QPaintEvent *e)
             painter.drawRoundedRect(rectangle, RADIUS, RADIUS);
         }
     }
-}
-
-void ImageViewer::contextMenuEvent( QContextMenuEvent * event )
-{
-    emit showContextMenu(event->globalPos());
 }
 
 void ImageViewer::resizeEvent(QResizeEvent *e)
@@ -315,11 +313,6 @@ void ImageViewer::wheelEvent(QWheelEvent *e)
     updateShift();
 }
 
-void ImageViewer::mouseDoubleClickEvent ( QMouseEvent * event )
-{
-    if(event->button() & Qt::LeftButton)
-        emit mouseDoubleClick();
-}
 
 void ImageViewer::mousePressEvent ( QMouseEvent * event )
 {

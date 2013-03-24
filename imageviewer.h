@@ -46,8 +46,6 @@ public:
     int AntialiasMode() const               { return antialiasMode; }
 
 signals:
-    void mouseDoubleClick();
-    void showContextMenu(const QPoint &pos);
     void siteChange(const QPoint &change);
 
 public slots:
@@ -65,12 +63,10 @@ public slots:
 protected slots:
     void wheelEvent(QWheelEvent *e);
     void paintEvent(QPaintEvent *e);
-    void mouseDoubleClickEvent ( QMouseEvent * event );
     void mouseMoveEvent ( QMouseEvent * event );
     void mousePressEvent ( QMouseEvent * event );
     void mouseReleaseEvent ( QMouseEvent * event );
     void resizeEvent ( QResizeEvent * event );
-    void contextMenuEvent ( QContextMenuEvent * event );
 
 private slots:
     void myTimerEvent();            // for auto scroll

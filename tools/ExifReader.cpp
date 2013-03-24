@@ -25,16 +25,16 @@
 #include <QtDebug>
 namespace PhotoKit {
 
-//static void retranslateUi() {
-//        qDebug() << QObject::tr("Manufacturer") << QObject::tr("Model") <<QObject::tr("Software")
-//                        << QObject::tr("Copyright") << QObject::tr("Exif Verion") << QObject::tr("F-Number")
-//                        << QObject::tr("Exposure time") << QObject::tr("Exposure mode") <<QObject::tr("Focal length")
-//                        << QObject::tr("Flash") << QObject::tr("ISO Speed Ratings") << QObject::tr("Date and Time (Original)")
-//                        << QObject::tr("Metering mode") << QObject::tr("White balance")
-//                        << QObject::tr("North or South") << QObject::tr("Latitude") << QObject::tr("East or West")
-//                        << QObject::tr("Longitude") << QObject::tr("Altitude refrence") << QObject::tr("Altitude")
-//                        << QObject::tr("Image Direction Refrence") << QObject::tr("Image Direction");
-//}
+static void retranslateUi() {
+        qDebug() << QObject::tr("Manufacturer") << QObject::tr("Model") <<QObject::tr("Software")
+                        << QObject::tr("Copyright") << QObject::tr("Exif Verion") << QObject::tr("F-Number")
+                        << QObject::tr("Exposure time") << QObject::tr("Exposure mode") <<QObject::tr("Focal length")
+                        << QObject::tr("Flash") << QObject::tr("ISO Speed Ratings") << QObject::tr("Date and Time (Original)")
+                        << QObject::tr("Metering mode") << QObject::tr("White balance")
+                        << QObject::tr("North or South") << QObject::tr("Latitude") << QObject::tr("East or West")
+                        << QObject::tr("Longitude") << QObject::tr("Altitude refrence") << QObject::tr("Altitude")
+                        << QObject::tr("Image Direction Refrence") << QObject::tr("Image Direction");
+}
 
 
 typedef struct {
@@ -198,7 +198,7 @@ ExifReader::TagInfo ExifReader::getIFD0Brief() const
 		ExifEntry *entry = exif_content_get_entry(c, (ExifTag)idf0_tags[i].tag);
 		exif_entry_get_value(entry, v.data(), v.size());
 		v.trimmed();
-		info.insert(QObject::tr(idf0_tags[i].name), QString::fromUtf8(v.constData())); //libexif use utf8
+                info.insert(QObject::tr(idf0_tags[i].name), QString::fromUtf8(v.constData())); //libexif use utf8
 		//info.insert(QString::fromUtf8(exif_tag_get_title_in_ifd(entry->tag, exif_entry_get_ifd(entry))), QString::fromUtf8(v.constData()));
 	}
 	return info;
@@ -217,7 +217,7 @@ ExifReader::TagInfo ExifReader::getExifBrief() const
 		ExifEntry *entry = exif_content_get_entry(c, (ExifTag)idf_exif_tags[i].tag);
 		exif_entry_get_value(entry, v.data(), v.size());
 		v.trimmed();
-		info.insert(QObject::tr(idf_exif_tags[i].name),  QString::fromUtf8(v.constData()));
+                info.insert(QObject::tr(idf_exif_tags[i].name),  QString::fromUtf8(v.constData()));
 		//info.insert(QString::fromUtf8(exif_tag_get_title_in_ifd(entry->tag, exif_entry_get_ifd(entry))), QString::fromUtf8(v.constData()));
 	}
 	return info;
@@ -236,7 +236,7 @@ ExifReader::TagInfo ExifReader::getGpsBrief() const
 		ExifEntry *entry = exif_content_get_entry(c, (ExifTag)idf_gps_tags[i].tag);
 		exif_entry_get_value(entry, v.data(), v.size());
 		v.trimmed();
-		info.insert(QObject::tr(idf_gps_tags[i].name),  QString::fromUtf8(v.constData()));
+                info.insert(QObject::tr(idf_gps_tags[i].name),  QString::fromUtf8(v.constData()));
 		//crash
 		//info.insert(QString::fromUtf8(exif_tag_get_title_in_ifd(entry->tag, exif_entry_get_ifd(entry))), QString::fromUtf8(v.constData()));
 	}

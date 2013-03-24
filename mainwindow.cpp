@@ -26,6 +26,7 @@
 #include "settingwidget.h"
 #include "config.h"
 #include "global.h"
+#include "imagefactory.h"
 #include "toolkit.h"
 #include "tooltip.h"
 
@@ -52,9 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setCentralWidget(viewer);
     viewer->installEventFilter(this);
 
-    connect(viewer, SIGNAL(fileNameChange(QString)), SLOT(imageChanged(QString)));
-    connect(viewer, SIGNAL(mouseDoubleClick()), SLOT(changeFullScreen()));
-    connect(viewer, SIGNAL(showContextMenu(QPoint)), SLOT(showContextMenu(QPoint)));
+    connect(viewer, SIGNAL(imageChanged(QString)), SLOT(imageChanged(QString)));
     connect(viewer, SIGNAL(siteChange(QPoint)), SLOT(moveWindow(QPoint)));
 
     initContextMenu();
@@ -73,7 +72,8 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     Config::cancelConfigWatcher(this);
-    writeSettings();
+    if(!isFullScreen())
+        writeSettings();
     event->accept();
 }
 
@@ -94,7 +94,9 @@ void MainWindow::imageChanged(const QString &title)
     bool hasFile = !title.isEmpty();
     bool hasPicture = viewer->hasPicture();
 
-    setWindowTitle(hasFile ? title : Global::ProjectName());
+    setWindowTitle(hasFile ?
+                       QString("%1 - %2").arg(title).arg(Global::ProjectName())
+                     : Global::ProjectName());
     ToolTip::hideText();
     QWhatsThis::hideText();
 
@@ -139,8 +141,8 @@ void MainWindow::applyConfig()
     else
         viewer->changeBgColor(QColor());
     changeTimerInterval(Config::timerInterval());
-    viewer->setCacheNumber(Config::cacheValue());
-    viewer->setPreReadingEnabled(Config::enablePreReading());
+    ImageFactory::setCacheNumber(Config::cacheValue());
+    ImageFactory::setPreReadingEnabled(Config::enablePreReading());
 }
 
 void MainWindow::writeSettings()
@@ -212,16 +214,36 @@ void MainWindow::showAttribute()
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
-    if (obj == viewer && event->type() == QEvent::ToolTip) {
-        QHelpEvent* helpEvent = static_cast<QHelpEvent*>(event);
-        if (attributeRect.contains(helpEvent->pos())){
-            QString attribute = viewer->attribute();
-            if(!attribute.isEmpty())
-                ToolTip::showText(helpEvent->globalPos(),
-                                  attribute.prepend("<b>").append("</b>"),
-                                  false, 0.8);
+    if (obj == viewer) {
+        switch(event->type()) {
+        case QEvent::ToolTip:
+        {
+            QHelpEvent* e = static_cast<QHelpEvent*>(event);
+            if (attributeRect.contains(e->pos())){
+                QString attribute = viewer->attribute();
+                if(!attribute.isEmpty())
+                    ToolTip::showText(e->globalPos(),
+                                      attribute.prepend("<b>").append("</b>"),
+                                      false, 0.8);
+            }
+            return true;
         }
-        return true;
+        case QEvent::MouseButtonDblClick:
+        {
+            QMouseEvent *e = static_cast<QMouseEvent*>(event);
+            if(e->button() & Qt::LeftButton)
+                changeFullScreen();
+            return true;
+        }
+        case QEvent::ContextMenu:
+        {
+            QContextMenuEvent *e = static_cast<QContextMenuEvent*>(event);
+            showContextMenu(e->globalPos());
+            return true;
+        }
+        default:
+            break;
+        }
     }
     return false;
 }
@@ -576,11 +598,11 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         break;
     case Qt::Key_Space:
     case Qt::Key_Pause:
-        switchGifPause();
+        switchAnimationState();
         e->accept();
         break;
     case Qt::Key_F:
-        nextGifFrame();
+        nextAnimationFrame();
         e->accept();
         break;
     case Qt::Key_P:

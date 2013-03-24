@@ -5,4 +5,3 @@ EzViewer TODO:
 把图片设置为壁纸。
 幻灯片切换时使用动画效果？
 自定义快捷键功能。
- Movie::CacheMode.

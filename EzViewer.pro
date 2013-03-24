@@ -1,36 +1,40 @@
 TEMPLATE = app
 TARGET = EzViewer
-DEPENDPATH += .
-INCLUDEPATH += . libexif-port
+
+QT += svg
+DEPENDPATH += . tools
+INCLUDEPATH += . tools
 
 HEADERS = global.h \
     config.h \
     imageviewer.h \
     mainwindow.h \
+    imagewrapper.h \
+    imagefactory.h \
+    picmanager.h \
     settingwidget.h \
     floatframe.h \
     contralbar.h \
-    fileassoc.h \
-    picmanager.h \
-    toolkit.h \
-    imagecache.h \
-    osrelated.h \
-    tooltip.h \
+    tools/fileassoc.h \
+    tools/osrelated.h \
+    tools/toolkit.h \
+    tools/tooltip.h \
     tools/ExifReader.h
 
 SOURCES = main.cpp \
+    config.cpp \
     imageviewer.cpp \
     mainwindow.cpp \
+    imagewrapper.cpp \
+    imagefactory.cpp \
+    picmanager.cpp \
     settingwidget.cpp \
     floatframe.cpp \
     contralbar.cpp \
-    fileassoc.cpp \
-    picmanager.cpp \
-    toolkit.cpp \
-    imagecache.cpp \
-    osrelated.cpp \
-    tooltip.cpp \
-    config.cpp \
+    tools/fileassoc.cpp \
+    tools/osrelated.cpp \
+    tools/toolkit.cpp \
+    tools/tooltip.cpp \
     tools/ExifReader.cpp
 
 TRANSLATIONS += \
@@ -43,11 +47,12 @@ FORMS += \
     settingwidget.ui \
     contralbar.ui
 
-win32:RC_FILE += \
-    win.rc
-
 win32 {
-    LIBS += -L$$PWD/libexif-port/out/bin -lexif
+    INCLUDEPATH += libexif-port
+    LIBEXIF_OUT = $$PWD/libexif-port/out/bin
+    LIBS += -L$$LIBEXIF_OUT -lexif
+
+    RC_FILE += win.rc
 } else {
     LIBS += -lexif
 }

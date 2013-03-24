@@ -67,8 +67,8 @@ protected slots:
     void rotateRight()      { viewer->rotateRight(); }
     void mirrorHorizontal() { viewer->mirrorHorizontal(); }
     void mirrorVertical()   { viewer->mirrorVertical(); }
-    void switchGifPause()   { viewer->switchGifPause(); }
-    void nextGifFrame()     { viewer->nextGifFrame(); }
+    void switchAnimationState() { viewer->switchAnimationState(); }
+    void nextAnimationFrame()   { viewer->nextAnimationFrame(); }
     void copyToClipboard()  { viewer->copyToClipboard(); }
     void deleteFileAsk()    { viewer->deleteFileAsk(); }
     void deleteFileNoAsk()  { viewer->deleteFileNoAsk(); }

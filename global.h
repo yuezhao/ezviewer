@@ -28,10 +28,12 @@
 namespace Global {
 
 const QString Version = "3.0 beta";
-const QString BuildTime = "2012/2-2012/2";
+const QString BuildTime = "2012/2-2012/3";
 const QString WeiboSite = "www.weibo.com/huangezhao";
-const QString ProjectSite = "code.google.com/p/ezviewer/";
+const QString ProjectSite = "code.google.com/p/ezviewer";
 const QString AuthorBlog = "yuezhaoblog.blogspot.com";
+const QString AuthorEmail = "huangezhao@gmail.com";
+
 
 static inline QString ProjectName()
 { return QObject::tr("EzViewer"); }
@@ -47,11 +49,20 @@ static inline QString AboutInfo()
                        "<br>CopyRight &#169; 2012 by %4</p>" \
                        "<p>Contact Author: &nbsp;&nbsp; <a href='http://%5'>%5</a>" \
                        "<br>Project Home: &nbsp;&nbsp; <a href='http://%6'>%6</a>" \
-                       "<br>Author's Blog: &nbsp;&nbsp; <a href='http://%7'>%7</a></p>")
+                       "<br>Author's Blog: &nbsp;&nbsp; <a href='http://%7'>%7</a>" \
+                       "<br>Send Email: &nbsp;&nbsp; <a href='mailto:%8'>%8</a></p>" )
             .arg(ProjectName()).arg(Version).arg(BuildTime)
             .arg(ProjectAuthor()).arg(WeiboSite).arg(ProjectSite)
-            .arg(AuthorBlog);
+            .arg(AuthorBlog).arg(AuthorEmail);
 }
+
+static inline QString LoadFileErrorInfo()
+{
+    return QObject::tr("Cannot load picture:'%3'" \
+                       "\nYou can help to improve %1 by email the picture to %2")
+            .arg(ProjectName()).arg(AuthorEmail);
+}
+
 }
 
 #endif // GLOBAL_H

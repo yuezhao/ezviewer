@@ -72,3 +72,8 @@
 
 2013.3.15:
 新增：属性中增加Exif信息查看(使用Wang Bin的PhotoKit中的ExifReader类，见http://github.com/wang-bin/PhotoKit 。同时Windows下使用了Wang Bin的libexif-port：https://github.com/wang-bin/libexif-port )。
+
+2013.3.22-2013.3.24:
+重构：拆分ImageCache为ImageWrapper与ImageFactory，将预读、缓存功能合入ImageFactory。ImageWrapper则封装各种图片格式。
+新增：支持Svg动画(采用QImage渲染方式，不支持暂停、步进，不支持矢量放大)。
+修复了一些bug。

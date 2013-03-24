@@ -21,10 +21,9 @@
 #include "picmanager.h"
 
 #include "config.h"
+#include "global.h"
 #include "osrelated.h"
-#include "toolkit.h"
-#include "tools/ExifReader.h"
-using namespace PhotoKit;
+#include "imagefactory.h"
 
 #include <QApplication>
 #include <QMessageBox>
@@ -33,7 +32,7 @@ using namespace PhotoKit;
 
 
 PicManager::PicManager(QWidget *parent)
-    : ImageViewer(parent), curCache(ImageCache::getNullCache()),
+    : ImageViewer(parent), curImage(ImageFactory::getImageWrapper("")),
       listMode(FileNameListMode), currentIndex(-1), fsWatcher(this)
 {
 //    state = NoFileNoPicture;
@@ -42,13 +41,14 @@ PicManager::PicManager(QWidget *parent)
     connect(&fsWatcher, SIGNAL(fileChanged(QString)),
             SLOT(fileChanged(QString)));
 
-    preReadingTimer.setSingleShot(true);
-    connect(&preReadingTimer, SIGNAL(timeout()), SLOT(preReadingNextPic()));
+//    preReadingTimer.setSingleShot(true);
+//    connect(&preReadingTimer, SIGNAL(timeout()), SLOT(preReadingNextPic()));
 }
 
 PicManager::~PicManager()
 {
-    curCache->freeCache();
+    ImageFactory::freeAllCache();
+//    preReadingTimer.stop();
 }
 
 void PicManager::updateFileNameList(const QString &curfile)
@@ -90,8 +90,7 @@ void PicManager::updateFileIndex(int oldIndex)
         currentIndex = 0;
 
     readFile(currentIndex);
-//    QTimer::singleShot(0, this, SLOT(preReadingNextPic()));
-    preReadingNextPic();    ///
+//    preReadingNextPic();    ///
 }
 
 void PicManager::directoryChanged()
@@ -117,7 +116,7 @@ QString PicManager::getPathAtIndex(int index) const
 
 void PicManager::readFile(const QString &fullPath)
 {
-    preReadingTimer.stop(); // 如果预读还未开始则取消
+//    preReadingTimer.stop(); // 如果预读还未开始则取消
 
     QFileInfo fileInfo(fullPath);
     if(curPath == fileInfo.absoluteFilePath() )//! if the image needs refresh?
@@ -126,37 +125,29 @@ void PicManager::readFile(const QString &fullPath)
     curPath = fileInfo.absoluteFilePath();
     curName = fileInfo.fileName();
 
-    if(curCache->movie){
-        curCache->movie->stop();
-        disconnect(curCache->movie, SIGNAL(updated(QRect)));
+    curImage->recycle();
+    curImage = ImageFactory::getImageWrapper(curPath);
+
+    if(curImage->isAnimation()) {
+        connect(curImage, SIGNAL(animationUpdate()), SLOT(updateAnimation()));
+        curImage->startAnimation();
     }
 
-    curCache = ImageCache::getCache(curPath);
-
-    if(curCache->movie){
-        if(curCache->movie->state() == QMovie::NotRunning)
-            curCache->movie->start();
-        connect(curCache->movie, SIGNAL(updated(QRect)), SLOT(updateGifImage()));
-    }
-
-    QString msg = curCache->image.isNull() ? tr("Cannot load picture:\n'%1'.")
-                                      .arg(curPath) : QString::null;
-    loadImage(curCache->image, msg);
+    QString msg = curImage->currentImage().isNull() ?
+                Global::LoadFileErrorInfo().arg(curPath) : QString::null;
+    loadImage(curImage->currentImage(), msg);
 //     state = image.isNull() ? FileNoPicture : FilePicture;
-    emit fileNameChange(curName);
+    emit imageChanged(curName);
 }
 
 void PicManager::noFileToShow()
 {
-    if(curCache->movie){
-        curCache->movie->stop();
-        disconnect(curCache->movie, SIGNAL(updated(QRect)));
-    }
-    curCache = ImageCache::getNullCache();
+    curImage->recycle();
+    curImage = ImageFactory::getImageWrapper(QString::null);
     curPath = curName = QString::null;
 //    state = NoFileNoPicture;
-    loadImage(curCache->image);
-    emit fileNameChange("");    //
+    loadImage(curImage->currentImage());
+    emit imageChanged(QString::null);    //
 }
 
 void PicManager::openFile(const QString &file)
@@ -171,9 +162,7 @@ void PicManager::openFile(const QString &file)
     updateFileNameList(file);
     // make sure if file is no a picture, this will show error message.
     readFile(file); //readFile(list.at(currentIndex));
-//    QTimer::singleShot(1000, this, SLOT(preReadingNextPic()));
-//    preReadingNextPic(); ///
-    preReadingTimer.start(2000);
+//    preReadingTimer.start(2000);
 
     fsWatcher.addPath(curDir);
     if(!QFileInfo(curDir).isRoot())// watch the parent dir, will get notice when rename current dir.
@@ -200,9 +189,7 @@ void PicManager::openFiles(const QStringList &fileList)
     list = fileList;
     currentIndex = 0;
     readFile(currentIndex);
-//    QTimer::singleShot(0, this, SLOT(preReadingNextPic()));
-//    preReadingNextPic(); ///
-    preReadingTimer.start(2000);
+//    preReadingTimer.start(2000);
 
     fsWatcher.addPaths(list);       //放到另一个线程中？？？
 
@@ -217,7 +204,7 @@ bool PicManager::prePic()
     currentIndex = getPreIndex(currentIndex);
     readFile(currentIndex);
 
-    preReadingPrePic();
+//    preReadingPrePic();
     return true;
 }
 
@@ -228,61 +215,23 @@ bool PicManager::nextPic()
     currentIndex = getNextIndex(currentIndex);
     readFile(currentIndex);
 
-    preReadingNextPic();
+//    preReadingNextPic();
     return true;
 }
 
-void PicManager::switchGifPause()
+void PicManager::updateAnimation()
 {
-    QMovie * &movie = curCache->movie;
-    if(movie)
-        switch(movie->state()){
-        case QMovie::Running:
-            movie->setPaused(true);
-            break;
-        case QMovie::Paused:
-            movie->setPaused(false);
-            break;
-        case QMovie::NotRunning:
-            break;
-        }
-}
-
-void PicManager::nextGifFrame()
-{
-    QMovie * &movie = curCache->movie;
-    if(movie)
-        switch(movie->state()){
-        case QMovie::Running:
-            movie->setPaused(true);
-            break;
-        case QMovie::Paused:
-            movie->jumpToNextFrame();
-            break;
-        case QMovie::NotRunning:
-            break;
-        }
-}
-
-void PicManager::setGifPaused(bool paused)
-{
-    if(curCache->movie)
-        curCache->movie->setPaused(paused);
-}
-
-void PicManager::updateGifImage()
-{
-    updatePixmap(curCache->movie->currentImage());
+    updatePixmap(curImage->currentImage());
 }
 
 void PicManager::hideEvent ( QHideEvent * event )
 {
-    setGifPaused(true);
+    setAnimationPaused(true);
 }
 
 void PicManager::showEvent ( QShowEvent * event )
 {
-    setGifPaused(false);
+    setAnimationPaused(false);
 }
 
 void PicManager::deleteFile(bool needAsk)
@@ -299,87 +248,7 @@ void PicManager::deleteFile(bool needAsk)
             return;
     }
 
-    if(curCache->movie) SafeDelete(curCache->movie); //! gif image: must free movie before delete file.
-    curCache->cacheHasChanged();
-
+    curImage->recycle();
     OSRelated::moveFile2Trash(curPath); ///
 }
 
-QString PicManager::attribute() const
-{
-    QString info;
-    QFileInfo fileInfo(curPath);
-
-    if(fileInfo.exists()){
-        const QString timeFormat(tr("yyyy-MM-dd, hh:mm:ss"));
-        qint64 size = fileInfo.size();
-
-        info += tr("File Name: %1").arg(curName);
-        info += "<br>" + tr("File Size: %1 (%2 Bytes)").arg(ToolKit::fileSize2Str(size)).arg(size);
-        info += "<br>" + tr("Created Time: %1")
-                .arg(fileInfo.created().toString(timeFormat));
-    }
-
-    if(!currentImage().isNull()){
-        if(!info.isEmpty())
-            info += QString("<br>");
-
-        if(!curCache->format.isEmpty())
-            info += tr("Image Format: %1").arg(curCache->format);
-        if(currentImage().colorCount() > 0)
-            info += "<br>" + tr("Color Count: %1").arg(currentImage().colorCount());
-        else if(currentImage().depth() >= 16)
-            info += "<br>" + tr("Color Count: True color");
-        info += "<br>" + tr("Depth: %1").arg(currentImage().depth());
-    //    info += "<br>" + tr("BitPlaneCount: %1").arg(image.bitPlaneCount());//the color counts actual used, <= Depth
-
-        int gcd = ToolKit::gcd(currentImage().width(), currentImage().height());
-        QString ratioStr = (gcd == 0) ? "1:1" : QString("%1:%2")
-                                        .arg(currentImage().width() / gcd)
-                                        .arg(currentImage().height() / gcd);
-
-
-        info += "<br>" + tr("Size: %1 x %2 (%3)")
-                .arg(currentImage().width())
-                .arg(currentImage().height())
-                .arg(ratioStr);
-        if(fileInfo.exists() && curCache->frameCount != 1)
-            info += "<br>" + tr("Frame Count: %1").arg(curCache->frameCount);
-//        info += "<br>" + tr("Current Scale: %1%").arg(currentScale() * 100, 0, 'g', 4);
-    }
-
-
-    if(fileInfo.exists()){
-        ExifReader exif;
-        exif.loadFile(curPath);
-        if (exif.hasData()) {
-            ExifReader::TagInfo tags = exif.getIFD0Brief();
-            if (exif.hasIFD0()) {
-                QMap<QString, QString>::ConstIterator it;
-                for (it = tags.begin(); it != tags.end(); ++it) {
-                    if (!it.value().trimmed().isEmpty())
-                        info += "<br>" + it.key() + ": " + it.value();
-                }
-            }
-            if (exif.hasIFDExif()) {
-                tags = exif.getExifBrief();
-                QMap<QString, QString>::ConstIterator it;
-                for (it = tags.begin(); it != tags.end(); ++it) {
-                    if (!it.value().trimmed().isEmpty())
-                        info += "<br>" + it.key() + ": " + it.value();
-                }
-            }
-
-            if (exif.hasIFDGPS()) {
-                tags = exif.getGpsBrief();
-                QMap<QString, QString>::ConstIterator it;
-                for (it = tags.begin(); it != tags.end(); ++it) {
-                    if (!it.value().trimmed().isEmpty())
-                        info += "<br>" + it.key() + ": " + it.value();
-                }
-            }
-        }
-    }
-
-    return info;
-}

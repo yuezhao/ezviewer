@@ -243,6 +243,59 @@
     </message>
 </context>
 <context>
+    <name>ImageWrapper</name>
+    <message>
+        <location filename="../imagecache.cpp" line="332"/>
+        <source>yyyy-MM-dd, hh:mm:ss</source>
+        <translation>yyyy年MM月dd日，hh:mm:ss</translation>
+    </message>
+    <message>
+        <location filename="../imagecache.cpp" line="335"/>
+        <source>File Name: %1</source>
+        <translation>文件名： %1</translation>
+    </message>
+    <message>
+        <location filename="../imagecache.cpp" line="336"/>
+        <source>File Size: %1 (%2 Bytes)</source>
+        <translation>文件大小: %1 (%2 字节)</translation>
+    </message>
+    <message>
+        <location filename="../imagecache.cpp" line="337"/>
+        <source>Created Time: %1</source>
+        <translation>创建时间: %1</translation>
+    </message>
+    <message>
+        <location filename="../imagecache.cpp" line="347"/>
+        <source>Image Format: %1</source>
+        <translation>图像格式： %1</translation>
+    </message>
+    <message>
+        <location filename="../imagecache.cpp" line="349"/>
+        <source>Color Count: %1</source>
+        <translation>颜色数: %1</translation>
+    </message>
+    <message>
+        <location filename="../imagecache.cpp" line="351"/>
+        <source>Color Count: True color</source>
+        <translation>颜色数: 真彩色</translation>
+    </message>
+    <message>
+        <location filename="../imagecache.cpp" line="352"/>
+        <source>Depth: %1</source>
+        <translation>色深: %1</translation>
+    </message>
+    <message>
+        <location filename="../imagecache.cpp" line="360"/>
+        <source>Size: %1 x %2 (%3)</source>
+        <translation>尺寸: %1 x %2 (%3)</translation>
+    </message>
+    <message>
+        <location filename="../imagecache.cpp" line="365"/>
+        <source>Frame Count: %1</source>
+        <translation>帧数： %1</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>Image Viewer</source>
@@ -253,12 +306,12 @@
         <translation type="obsolete">EZ图像查看器</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="122"/>
+        <location filename="../mainwindow.cpp" line="125"/>
         <source>Open File</source>
         <translation>打开文件</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="123"/>
+        <location filename="../mainwindow.cpp" line="126"/>
         <source>Images (%1);;All Files (*)</source>
         <translation>图片文件 (%1);;所有文件 (*)</translation>
     </message>
@@ -267,40 +320,40 @@
         <translation type="obsolete">EZ看图</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="208"/>
+        <location filename="../mainwindow.cpp" line="211"/>
         <source>Property</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="354"/>
+        <location filename="../mainwindow.cpp" line="357"/>
         <source>&amp;Open</source>
         <translation>打开(&amp;O)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="343"/>
+        <location filename="../mainwindow.cpp" line="346"/>
         <source>&amp;Setting</source>
         <translation>设置(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="237"/>
-        <location filename="../mainwindow.cpp" line="239"/>
-        <location filename="../mainwindow.cpp" line="358"/>
+        <location filename="../mainwindow.cpp" line="240"/>
+        <location filename="../mainwindow.cpp" line="242"/>
+        <location filename="../mainwindow.cpp" line="361"/>
         <source>Auto Play</source>
         <translation>自动放映</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="245"/>
-        <location filename="../mainwindow.cpp" line="247"/>
+        <location filename="../mainwindow.cpp" line="248"/>
+        <location filename="../mainwindow.cpp" line="250"/>
         <source>Stop Play</source>
         <translation>停止放映</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="346"/>
+        <location filename="../mainwindow.cpp" line="349"/>
         <source>&amp;About</source>
         <translation>关于(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="349"/>
+        <location filename="../mainwindow.cpp" line="352"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
@@ -309,37 +362,37 @@
         <translation type="obsolete">最小化</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="362"/>
+        <location filename="../mainwindow.cpp" line="365"/>
         <source>Rotate &amp;Left</source>
         <translation>逆时钟旋转90度(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="366"/>
+        <location filename="../mainwindow.cpp" line="369"/>
         <source>Rotate &amp;Right</source>
         <translation>顺时钟旋转90度(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="369"/>
+        <location filename="../mainwindow.cpp" line="372"/>
         <source>Mirrored &amp;Horizontal</source>
         <translation>水平镜像(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="372"/>
+        <location filename="../mainwindow.cpp" line="375"/>
         <source>Mirrored &amp;Vertical</source>
         <translation>竖直镜像(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="375"/>
+        <location filename="../mainwindow.cpp" line="378"/>
         <source>&amp;Copy to clipboard</source>
         <translation>复制到剪贴板(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="379"/>
+        <location filename="../mainwindow.cpp" line="382"/>
         <source>&amp;Property</source>
         <translation>属性(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="384"/>
+        <location filename="../mainwindow.cpp" line="387"/>
         <source>&amp;Delete</source>
         <translation>删除(&amp;D)</translation>
     </message>
@@ -356,7 +409,7 @@
         <translation type="obsolete">文件关联</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="82"/>
+        <location filename="../mainwindow.cpp" line="83"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
@@ -477,61 +530,52 @@
 <context>
     <name>PicManager</name>
     <message>
-        <location filename="../picmanager.cpp" line="142"/>
         <source>Cannot load picture:
 &apos;%1&apos;.</source>
-        <translation>无法载入图像:
+        <translation type="obsolete">无法载入图像:
 &apos;%1’</translation>
     </message>
     <message>
-        <location filename="../picmanager.cpp" line="294"/>
+        <location filename="../picmanager.cpp" line="242"/>
         <source>Delete File</source>
         <translation>删除文件</translation>
     </message>
     <message>
-        <location filename="../picmanager.cpp" line="295"/>
+        <location filename="../picmanager.cpp" line="243"/>
         <source>Are you sure to delete file &apos;%1&apos;?</source>
         <translation>是否确定要删除文件 &apos;%1&apos;?</translation>
     </message>
     <message>
-        <location filename="../picmanager.cpp" line="317"/>
         <source>File Name: %1</source>
-        <translation>文件名： %1</translation>
+        <translation type="obsolete">文件名： %1</translation>
     </message>
     <message>
-        <location filename="../picmanager.cpp" line="318"/>
         <source>File Size: %1 (%2 Bytes)</source>
-        <translation>文件大小: %1 (%2 字节)</translation>
+        <translation type="obsolete">文件大小: %1 (%2 字节)</translation>
     </message>
     <message>
-        <location filename="../picmanager.cpp" line="328"/>
         <source>Image Format: %1</source>
-        <translation>图像格式： %1</translation>
+        <translation type="obsolete">图像格式： %1</translation>
     </message>
     <message>
-        <location filename="../picmanager.cpp" line="330"/>
         <source>Color Count: %1</source>
-        <translation>颜色数: %1</translation>
+        <translation type="obsolete">颜色数: %1</translation>
     </message>
     <message>
-        <location filename="../picmanager.cpp" line="332"/>
         <source>Color Count: True color</source>
-        <translation>颜色数: 真彩色</translation>
+        <translation type="obsolete">颜色数: 真彩色</translation>
     </message>
     <message>
-        <location filename="../picmanager.cpp" line="333"/>
         <source>Depth: %1</source>
-        <translation>色深: %1</translation>
+        <translation type="obsolete">色深: %1</translation>
     </message>
     <message>
-        <location filename="../picmanager.cpp" line="342"/>
         <source>Size: %1 x %2 (%3)</source>
-        <translation>尺寸: %1 x %2 (%3)</translation>
+        <translation type="obsolete">尺寸: %1 x %2 (%3)</translation>
     </message>
     <message>
-        <location filename="../picmanager.cpp" line="347"/>
         <source>Frame Count: %1</source>
-        <translation>帧数： %1</translation>
+        <translation type="obsolete">帧数： %1</translation>
     </message>
     <message>
         <source>Delete Failed</source>
@@ -542,9 +586,8 @@
         <translation type="obsolete">文件 ‘%1’ 删除失败！</translation>
     </message>
     <message>
-        <location filename="../picmanager.cpp" line="314"/>
         <source>yyyy-MM-dd, hh:mm:ss</source>
-        <translation>yyyy年MM月dd日，hh:mm:ss</translation>
+        <translation type="obsolete">yyyy年MM月dd日，hh:mm:ss</translation>
     </message>
     <message>
         <source>File Name: %1&lt;br&gt;</source>
@@ -571,9 +614,8 @@
         <translation type="obsolete">&lt;br&gt;图像格式： %1</translation>
     </message>
     <message>
-        <location filename="../picmanager.cpp" line="319"/>
         <source>Created Time: %1</source>
-        <translation>创建时间: %1</translation>
+        <translation type="obsolete">创建时间: %1</translation>
     </message>
     <message>
         <source>&lt;br&gt;</source>
@@ -611,127 +653,160 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../global.h" line="37"/>
+        <location filename="../global.h" line="39"/>
         <source>EzViewer</source>
         <translation>EZ看图</translation>
     </message>
     <message>
-        <location filename="../global.h" line="40"/>
+        <location filename="../global.h" line="42"/>
         <source>huangezhao</source>
         <translation>三生石</translation>
     </message>
     <message>
-        <location filename="../global.h" line="44"/>
+        <location filename="../global.h" line="46"/>
+        <source>&lt;p align=&apos;center&apos;&gt;%1 - A Simple Image Viewer&lt;/p&gt;&lt;p&gt;Version: &amp;nbsp;&amp;nbsp; v%2&lt;br&gt;Build Time: &amp;nbsp;&amp;nbsp; %3&lt;br&gt;CopyRight &amp;#169; 2012 by %4&lt;/p&gt;&lt;p&gt;Contact Author: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%5&apos;&gt;%5&lt;/a&gt;&lt;br&gt;Project Home: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%6&apos;&gt;%6&lt;/a&gt;&lt;br&gt;Author&apos;s Blog: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%7&apos;&gt;%7&lt;/a&gt;&lt;br&gt;Send Email: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;mailto:%8&apos;&gt;%8&lt;/a&gt;&lt;/p&gt;</source>
+        <translation>&lt;p align=&apos;center&apos;&gt;%1 - 一个简单的图片浏览器&lt;/p&gt;&lt;p&gt;版本: &amp;nbsp;&amp;nbsp; v%2&lt;br&gt;编译时间: &amp;nbsp;&amp;nbsp;  %3&lt;br&gt;CopyRight &amp;#169; 2012 %4&lt;/p&gt;&lt;p&gt;联系作者: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%5&apos;&gt;%5&lt;/a&gt;&lt;br&gt;项目主页: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%6&apos;&gt;%6&lt;/a&gt;&lt;br&gt;作者博客: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%7&apos;&gt;%7&lt;/a&gt;&lt;br&gt;发送邮件: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;mailto:%8&apos;&gt;%8&lt;/a&gt;&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../global.h" line="61"/>
+        <source>Cannot load picture:&apos;%3&apos;
+You can help to improve %1 by email the picture to %2</source>
+        <translation>无法载入图片：&apos;%3&apos;
+如果你愿意帮助改善 %1，可以将这张图片通过邮件发送到 %2</translation>
+    </message>
+    <message>
         <source>&lt;p align=&apos;center&apos;&gt;%1 - A Simple Image Viewer&lt;/p&gt;&lt;p&gt;Version: &amp;nbsp;&amp;nbsp; v%2&lt;br&gt;Build Time: &amp;nbsp;&amp;nbsp; %3&lt;br&gt;CopyRight &amp;#169; 2012 by %4&lt;/p&gt;&lt;p&gt;Contact Author: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%5&apos;&gt;%5&lt;/a&gt;&lt;br&gt;Project Home: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%6&apos;&gt;%6&lt;/a&gt;&lt;br&gt;Author&apos;s Blog: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%7&apos;&gt;%7&lt;/a&gt;&lt;/p&gt;</source>
-        <translation>&lt;p align=&apos;center&apos;&gt;%1 - 一个简单的图片浏览器&lt;/p&gt;&lt;p&gt;版本: &amp;nbsp;&amp;nbsp; v%2&lt;br&gt;编译时间: &amp;nbsp;&amp;nbsp;  %3&lt;br&gt;CopyRight &amp;#169; 2012 %4&lt;/p&gt;&lt;p&gt;联系作者: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%5&apos;&gt;%5&lt;/a&gt;&lt;br&gt;项目主页: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%6&apos;&gt;%6&lt;/a&gt;&lt;br&gt;作者博客: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%7&apos;&gt;%7&lt;/a&gt;&lt;/p&gt;</translation>
+        <translation type="obsolete">&lt;p align=&apos;center&apos;&gt;%1 - 一个简单的图片浏览器&lt;/p&gt;&lt;p&gt;版本: &amp;nbsp;&amp;nbsp; v%2&lt;br&gt;编译时间: &amp;nbsp;&amp;nbsp;  %3&lt;br&gt;CopyRight &amp;#169; 2012 %4&lt;/p&gt;&lt;p&gt;联系作者: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%5&apos;&gt;%5&lt;/a&gt;&lt;br&gt;项目主页: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%6&apos;&gt;%6&lt;/a&gt;&lt;br&gt;作者博客: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%7&apos;&gt;%7&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p align=&apos;center&apos;&gt;%1 - A Simple Image Viewer&lt;/p&gt;&lt;p&gt;Version: &amp;nbsp;&amp;nbsp; v%2&lt;br&gt;Build Time: &amp;nbsp;&amp;nbsp; %3&lt;br&gt;CopyRight &amp;#169; 2012 by %4&lt;/p&gt;&lt;p&gt;Contact Author: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%5&apos;&gt;%5&lt;/a&gt;&lt;br&gt;Project Home: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%6&apos;&gt;%6&lt;/a&gt;&lt;/p&gt;</source>
         <translation type="obsolete">&lt;p align=&apos;center&apos;&gt;%1 - 一个简单的图片浏览器&lt;/p&gt;&lt;p&gt;版本: &amp;nbsp;&amp;nbsp; v%2&lt;br&gt;编译时间: &amp;nbsp;&amp;nbsp;  %3&lt;br&gt;CopyRight &amp;#169; 2012 %4&lt;/p&gt;&lt;p&gt;联系作者: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%5&apos;&gt;%5&lt;/a&gt;&lt;br&gt;项目主页: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%6&apos;&gt;%6&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../osrelated.cpp" line="93"/>
-        <location filename="../osrelated.cpp" line="100"/>
+        <location filename="../tools/osrelated.cpp" line="93"/>
+        <location filename="../tools/osrelated.cpp" line="100"/>
         <source>Delete Failed</source>
         <translation>删除失败</translation>
     </message>
     <message>
-        <location filename="../osrelated.cpp" line="94"/>
-        <location filename="../osrelated.cpp" line="101"/>
+        <location filename="../tools/osrelated.cpp" line="94"/>
+        <location filename="../tools/osrelated.cpp" line="101"/>
         <source>Delete file &apos;%1&apos; failed!</source>
         <translation>文件 ‘%1’ 删除失败！</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="29"/>
         <source>Manufacturer</source>
-        <translation type="obsolete">相机厂商</translation>
+        <translation>相机厂商</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="29"/>
         <source>Model</source>
-        <translation type="obsolete">相机型号</translation>
+        <translation>相机型号</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="29"/>
         <source>Software</source>
-        <translation type="obsolete">软件</translation>
+        <translation>软件</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="30"/>
         <source>Copyright</source>
-        <translation type="obsolete">版权</translation>
+        <translation>版权</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="30"/>
         <source>Exif Verion</source>
-        <translation type="obsolete">Exif 版本</translation>
+        <translation>Exif 版本</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="30"/>
         <source>F-Number</source>
-        <translation type="obsolete">光圈</translation>
+        <translation>光圈</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="31"/>
         <source>Exposure time</source>
-        <translation type="obsolete">曝光时间</translation>
+        <translation>曝光时间</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="31"/>
         <source>Exposure mode</source>
-        <translation type="obsolete">曝光模式</translation>
+        <translation>曝光模式</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="31"/>
         <source>Focal length</source>
-        <translation type="obsolete">焦距</translation>
+        <translation>焦距</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="32"/>
         <source>Flash</source>
-        <translation type="obsolete">闪光灯</translation>
+        <translation>闪光灯</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="32"/>
         <source>ISO Speed Ratings</source>
-        <translation type="obsolete">ISO 速度</translation>
+        <translation>ISO 速度</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="32"/>
         <source>Date and Time (Original)</source>
-        <translation type="obsolete">原始日期时间</translation>
+        <translation>原始日期时间</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="33"/>
         <source>Metering mode</source>
-        <translation type="obsolete">测光模式</translation>
+        <translation>测光模式</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="33"/>
         <source>White balance</source>
-        <translation type="obsolete">白平衡</translation>
+        <translation>白平衡</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="34"/>
         <location filename="../tools/ExifReader.cpp" line="247"/>
         <source>North or South</source>
         <translation>南北半球</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="34"/>
         <source>Latitude</source>
-        <translation type="obsolete">纬度</translation>
+        <translation>纬度</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="34"/>
         <location filename="../tools/ExifReader.cpp" line="245"/>
         <source>East or West</source>
         <translation>东西半球</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="35"/>
         <source>Longitude</source>
-        <translation type="obsolete">经度</translation>
+        <translation>经度</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="35"/>
         <location filename="../tools/ExifReader.cpp" line="251"/>
         <source>Altitude refrence</source>
         <translation>海拔参考</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="35"/>
         <source>Altitude</source>
-        <translation type="obsolete">海拔(m)</translation>
+        <translation>海拔(m)</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="36"/>
         <location filename="../tools/ExifReader.cpp" line="249"/>
         <source>Image Direction Refrence</source>
         <translation>图片方向参考</translation>
     </message>
     <message>
+        <location filename="../tools/ExifReader.cpp" line="36"/>
         <source>Image Direction</source>
-        <translation type="obsolete">图片方向</translation>
+        <translation>图片方向</translation>
     </message>
 </context>
 <context>

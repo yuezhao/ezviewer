@@ -26,7 +26,7 @@
 #include <QFileSystemWatcher>
 
 #include "imageviewer.h"
-#include "imagecache.h"
+#include "imagewrapper.h"
 
 
 class PicManager : public ImageViewer
@@ -36,20 +36,15 @@ public:
     PicManager(QWidget *parent = 0);
     ~PicManager();
 
-    const QImage  & currentImage() const { return curCache->image; }
+    bool  isAnimation() const { return curImage->isAnimation(); }
     const QString & fileName() const { return curName; }
     const QString & filePath() const { return curPath; }
-    bool  hasPicture() const { return !currentImage().isNull(); } /// need virtual??
+    bool  hasPicture() const { return !curImage->currentImage().isNull(); } /// need virtual??
     bool  hasFile() const            { return !curPath.isEmpty(); }
-    bool  isAnimation() const        { return curCache->movie; }
-    QString attribute() const;
-
-    void setCacheNumber(int val) { ImageCache::setCacheNumber(val); }
-    void setPreReadingEnabled(bool enabled)
-    { ImageCache::setPreReadingEnabled(enabled); }
+    QString attribute() const { return curImage->attribute(); }
 
 signals:
-    void fileNameChange(const QString &fileName);
+    void imageChanged(const QString &fileName);
 
 public slots:
     void openFile(const QString &file);
@@ -57,19 +52,19 @@ public slots:
     bool prePic();
     bool nextPic();
 
-    void deleteFileAsk() { deleteFile(true); }
-    void deleteFileNoAsk() { deleteFile(false); }
+    void deleteFileAsk()    { deleteFile(true); }
+    void deleteFileNoAsk()  { deleteFile(false); }
 
-    void switchGifPause();
-    void nextGifFrame();
-    void setGifPaused(bool paused);
+    void switchAnimationState() { curImage->switchAnimationPaused(); }
+    void nextAnimationFrame()   { curImage->nextAnimationFrame(); }
+    void setAnimationPaused(bool paused) { curImage->setAnimationPaused(paused); }
 
 protected slots:
-    void updateGifImage();      /// updateAnimationImage()? updateImage()?
+    void updateAnimation();
     void directoryChanged();
     void fileChanged(const QString &filePath);
-    void preReadingPrePic() const;
-    void preReadingNextPic() const;
+//    void preReadingPrePic() const;
+//    void preReadingNextPic() const;
 
     void hideEvent ( QHideEvent * event );
     void showEvent ( QShowEvent * event );
@@ -96,17 +91,14 @@ private:
     void updateFileIndex(int oldIndex);
     void noFileToShow();
 
-    ImageCache *curCache;
+    ImageWrapper *curImage;
     QString curPath;
     QString curName;
 
     int getPreIndex(int curIndex) const;
     int getNextIndex(int curIndex) const;
     QString getPathAtIndex(int index) const;
-    void preReadingPic(const QString &filePath) const;
-    void preReadingPic(int index) const;
-
-    QTimer preReadingTimer;
+//    void preReadingPic(int index) const;
 
     enum LIST_MODE {
         FileNameListMode,
@@ -118,15 +110,11 @@ private:
     QFileSystemWatcher fsWatcher;
 };
 
-inline void PicManager::preReadingPic(const QString &filePath) const
-{
-    curCache->preReading(filePath);
-}
 
-inline void PicManager::preReadingPic(int index) const
-{
-    preReadingPic(getPathAtIndex(index));
-}
+//inline void PicManager::preReadingPic(int index) const
+//{
+//    PreReadingThread::preReading(getPathAtIndex(index));
+//}
 
 inline int PicManager::getPreIndex(int curIndex) const {
     //arrive the head of file list or source file is deleted.
@@ -138,16 +126,16 @@ inline int PicManager::getNextIndex(int curIndex) const {
     return (curIndex + 1 == list.size()) ? 0 : curIndex + 1;
 }
 
-inline void PicManager::preReadingPrePic() const {
-    if(ImageCache::preReadingEnabled() && list.size() > 1){ // pre-reading previous one
-        preReadingPic(getPreIndex(currentIndex));
-    }
-}
+//inline void PicManager::preReadingPrePic() const {
+//    if(PreReadingThread::preReadingEnabled() && list.size() > 1){ // pre-reading previous one
+//        PreReadingThread::preReading(getPreIndex(currentIndex));
+//    }
+//}
 
-inline void PicManager::preReadingNextPic() const{
-    if(ImageCache::preReadingEnabled() && list.size() > 1){ // pre-reading next one
-        preReadingPic(getNextIndex(currentIndex));
-    }
-}
+//inline void PicManager::preReadingNextPic() const{
+//    if(PreReadingThread::preReadingEnabled() && list.size() > 1){ // pre-reading next one
+//        PreReadingThread::preReading(getNextIndex(currentIndex));
+//    }
+//}
 
 #endif // PICMANAGER_H
