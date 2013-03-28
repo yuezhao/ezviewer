@@ -28,15 +28,20 @@
 class Cache
 {
 public:
-    bool isValid() const { return isReady && hashCode > HASH_INVALID; }
+    enum { HASH_INVALID = 0 };
+
+    Cache() : hashCode(HASH_INVALID), isReady(false) {}
+
+    bool isValid()     const { return hashCode > HASH_INVALID && isReady; }
+    uint getHashCode() const { return hashCode; }
+    bool getReady()    const { return isReady; }
+
+    void setHashCode(uint hash) { hashCode = hash; }
+    void setReady(bool ready)   { isReady = ready; }
 
 protected:
-    const static uint HASH_INVALID = 0;
-
-    Cache() : hashCode(0), isReady(false) {}
-
     uint hashCode;
-    bool isReady;
+    volatile bool isReady;  /// important! or it may go into dead loop.
 
 private: // do not copy object
     Cache(const Cache &r);
@@ -46,60 +51,56 @@ private: // do not copy object
 
 class QMovie;
 class QSvgRenderer;
-class ImageWrapper : public QObject, private Cache
+class ImageWrapper : public QObject, public Cache
 {
     Q_OBJECT
 public:
+    ImageWrapper() : Cache(), imageFrames(0), formatFlag(REGULAR_FLAG),
+        movie(NULL), svgRender(NULL)  {}
+    ~ImageWrapper()  { recycle(); }
+
     QImage  currentImage() const;
     QString format() const { return isValid() ? imageFormat : QString::null; }
     int     frameCount() const { return isValid() ? imageFrames : 0; }
-    QString attribute() const;
+    QString attribute();
 
-    bool isAnimation() const { return isValid() ? formatFlag & ANIMATION_MASK : false; }
+    bool isAnimation() const { return isValid() && (formatFlag & ANIMATION_MASK); }
     void startAnimation();
     void nextAnimationFrame();
     void setAnimationPaused(bool paused);
     void switchAnimationPaused();
 
+    void load(const QString &filePath, bool isPreReading = false);
     void recycle();
 
 signals:
-    void animationUpdate();
-//   void cacheNeedReading(ImageCache *ic, const QString &filePath);
+    void animationUpdated();    // image size will not changed.
+    void frameUpdated();        // image size may changed.
 
 private slots:
     void updateSvgImage();
 
 private:
-    friend class ImageFactory;
-
-    ImageWrapper() : Cache(), formatFlag(REGULAR_FLAG),
-        movie(NULL), svgRender(NULL), imageFrames(0) {}
-    ~ImageWrapper() { recycle(); }
+    static bool isAnimationFromat(const QString &format);
 
     enum ImageFormatFlag {
         REGULAR_FLAG = 0x0,
         MOVIE_FLAG = 0x1,
         SVG_FLAG = 0x2,
 
-        ANIMATION_MASK = 0xff,
+        ANIMATION_MASK = 0xf,
     };
 
-    uint formatFlag;
-
+    QImage  image;
+    QString imagePath;
+    QString imageFormat;
+    int     imageFrames;
+    int     currentFrame; // for ico format
+    QString imageAttribute;
+    uint    formatFlag;
     QMovie *movie;
     QSvgRenderer *svgRender;
-    QImage  image;
-    QString imageFormat;
-    int imageFrames;
     //QIcon *icon;
-    QString imagePath;
-
-    static bool isAnimationFromat(const QString &format);
-
-    void readFile(const QString &filePath);
-//    void callPreReadingThread(const QString &filePath)
-//    {  emit cacheNeedReading(this, filePath); }
 };
 
 

@@ -75,5 +75,11 @@
 
 2013.3.22-2013.3.24:
 重构：拆分ImageCache为ImageWrapper与ImageFactory，将预读、缓存功能合入ImageFactory。ImageWrapper则封装各种图片格式。
-新增：支持Svg动画(采用QImage渲染方式，不支持暂停、步进，不支持矢量放大)。
-修复了一些bug。
+新增：支持Svg动画(采用QSvgRenderer的QImage渲染方式，不支持暂停、步进，不支持无损矢量缩放)。
+其他部分代码重构。修复了一些bug。
+
+2013.3.26-2013.3.28:
+重构：使用QThreadPool和QRunnable代替之前的自定义QThread进行预读。
+继续重构ImageWrapper和ImageFactory。一些bug的修正。
+新增：对于含多个帧的ico文件，按F键可以循环切换各个帧。
+优化：改用QtConcurrent::run实现设置对话框快速显示。

@@ -40,8 +40,8 @@ signals:
     void configChanged();
 
 public:
-    const static qreal ScaleMax = 20.0;
-    const static qreal ScaleMin = 0.1;
+    const static qreal ScaleMax;
+    const static qreal ScaleMin;
     const static QPointF OriginPoint;
     const static QSize SizeAdjusted;
 

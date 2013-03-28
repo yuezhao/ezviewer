@@ -23,6 +23,7 @@
 
 #include <QWidget>
 #include <QDialog>
+#include <QFuture>
 
 
 namespace Ui {
@@ -76,16 +77,25 @@ private:
 };
 
 
+class QGridLayout;
 class SettingsDialog : public QDialog {
     Q_OBJECT
 public:
     explicit SettingsDialog(QWidget *parent = 0);
 
 public slots:
+    virtual void done(int);
+
+private slots:
     void changeAssociation(bool enabled);
 
 private:
+    void checkFileAssociation();
+
     SettingWidget settingWidget;
+    QGridLayout *gridLayout;
+
+    QFuture<void> future;
 };
 
 #endif // SETTINGWIDGET_H

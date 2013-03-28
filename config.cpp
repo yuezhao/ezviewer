@@ -24,7 +24,8 @@
 #include <QFileSystemWatcher>
 #include <QImageReader>
 
-
+const qreal Config::ScaleMax = 20.0;
+const qreal Config::ScaleMin = 0.1;
 const QPointF Config::OriginPoint(0.0, 0.0);
 const QSize Config::SizeAdjusted(0, 1);
 const QSize Config::WindowMinSize(280, 200);
@@ -77,7 +78,8 @@ void Config::initConfigValue()
     mEnableBgColor = settings.value(EnableBgColorKey, true).toBool();
     QString colorStr = settings.value(BgColorKey, BgGreen).toString();
     mTimerInterval = settings.value(TimerIntervalKey, 4).toInt();
-    mEnablePreReading = settings.value(EnablePreReadingKey, true).toBool();
+    mEnablePreReading = settings.value(
+                EnablePreReadingKey, OSRelated::preReadingSuggested()).toBool();
     mCacheValue = settings.value(CacheValueKey, -1).toInt();
     mLastGeometry = settings.value(GeometryKey).toByteArray();
 

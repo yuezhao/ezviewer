@@ -24,6 +24,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QThread>
 
 #ifdef Q_WS_WIN
 #define _WIN32_WINNT  0x0500    //! for memory size
@@ -66,6 +67,11 @@ int cacheSizeSuggested()
         return 1;
     else
         return 2;
+}
+
+bool preReadingSuggested()
+{
+    return QThread::idealThreadCount() > 1;
 }
 
 void moveFile2Trash(const QString &filePath)

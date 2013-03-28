@@ -30,6 +30,8 @@ namespace OSRelated {
 using namespace FileAssoc;
 
 int cacheSizeSuggested();
+bool preReadingSuggested();
+
 void moveFile2Trash(const QString &filePath);
 
 }

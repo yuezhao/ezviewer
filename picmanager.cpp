@@ -23,7 +23,6 @@
 #include "config.h"
 #include "global.h"
 #include "osrelated.h"
-#include "imagefactory.h"
 
 #include <QApplication>
 #include <QMessageBox>
@@ -32,7 +31,7 @@
 
 
 PicManager::PicManager(QWidget *parent)
-    : ImageViewer(parent), curImage(ImageFactory::getImageWrapper("")),
+    : ImageViewer(parent), curImage(ImageFactory::getImageWrapper(QString::null)),
       listMode(FileNameListMode), currentIndex(-1), fsWatcher(this)
 {
 //    state = NoFileNoPicture;
@@ -40,15 +39,11 @@ PicManager::PicManager(QWidget *parent)
             SLOT(directoryChanged()));
     connect(&fsWatcher, SIGNAL(fileChanged(QString)),
             SLOT(fileChanged(QString)));
-
-//    preReadingTimer.setSingleShot(true);
-//    connect(&preReadingTimer, SIGNAL(timeout()), SLOT(preReadingNextPic()));
 }
 
 PicManager::~PicManager()
 {
     ImageFactory::freeAllCache();
-//    preReadingTimer.stop();
 }
 
 void PicManager::updateFileNameList(const QString &curfile)
@@ -90,7 +85,7 @@ void PicManager::updateFileIndex(int oldIndex)
         currentIndex = 0;
 
     readFile(currentIndex);
-//    preReadingNextPic();    ///
+    preReadingNextPic();    ///
 }
 
 void PicManager::directoryChanged()
@@ -116,8 +111,6 @@ QString PicManager::getPathAtIndex(int index) const
 
 void PicManager::readFile(const QString &fullPath)
 {
-//    preReadingTimer.stop(); // 如果预读还未开始则取消
-
     QFileInfo fileInfo(fullPath);
     if(curPath == fileInfo.absoluteFilePath() )//! if the image needs refresh?
         return;
@@ -129,13 +122,16 @@ void PicManager::readFile(const QString &fullPath)
     curImage = ImageFactory::getImageWrapper(curPath);
 
     if(curImage->isAnimation()) {
-        connect(curImage, SIGNAL(animationUpdate()), SLOT(updateAnimation()));
+        connect(curImage, SIGNAL(animationUpdated()), SLOT(updateAnimation()));
         curImage->startAnimation();
+    } else if (curImage->frameCount() > 1){ // like ico format
+        connect(curImage, SIGNAL(frameUpdated()), SLOT(updateImage()));
     }
 
-    QString msg = curImage->currentImage().isNull() ?
-                Global::LoadFileErrorInfo().arg(curPath) : QString::null;
-    loadImage(curImage->currentImage(), msg);
+    QImage image = curImage->currentImage();
+    QString errorMsg = image.isNull() ? Global::LoadFileErrorInfo().arg(curPath)
+                                 : QString::null;
+    loadImage(image, errorMsg);
 //     state = image.isNull() ? FileNoPicture : FilePicture;
     emit imageChanged(curName);
 }
@@ -146,7 +142,7 @@ void PicManager::noFileToShow()
     curImage = ImageFactory::getImageWrapper(QString::null);
     curPath = curName = QString::null;
 //    state = NoFileNoPicture;
-    loadImage(curImage->currentImage());
+    loadImage(QImage());
     emit imageChanged(QString::null);    //
 }
 
@@ -162,7 +158,7 @@ void PicManager::openFile(const QString &file)
     updateFileNameList(file);
     // make sure if file is no a picture, this will show error message.
     readFile(file); //readFile(list.at(currentIndex));
-//    preReadingTimer.start(2000);
+    preReadingNextPic();
 
     fsWatcher.addPath(curDir);
     if(!QFileInfo(curDir).isRoot())// watch the parent dir, will get notice when rename current dir.
@@ -189,9 +185,9 @@ void PicManager::openFiles(const QStringList &fileList)
     list = fileList;
     currentIndex = 0;
     readFile(currentIndex);
-//    preReadingTimer.start(2000);
+    preReadingNextPic();
 
-    fsWatcher.addPaths(list);       //放到另一个线程中？？？
+    fsWatcher.addPaths(list);       // run in background thread ?
 
     QApplication::restoreOverrideCursor();
 }
@@ -204,7 +200,7 @@ bool PicManager::prePic()
     currentIndex = getPreIndex(currentIndex);
     readFile(currentIndex);
 
-//    preReadingPrePic();
+    preReadingPrePic();
     return true;
 }
 
@@ -215,13 +211,18 @@ bool PicManager::nextPic()
     currentIndex = getNextIndex(currentIndex);
     readFile(currentIndex);
 
-//    preReadingNextPic();
+    preReadingNextPic();
     return true;
 }
 
 void PicManager::updateAnimation()
 {
     updatePixmap(curImage->currentImage());
+}
+
+void PicManager::updateImage()
+{
+    loadImage(curImage->currentImage());
 }
 
 void PicManager::hideEvent ( QHideEvent * event )

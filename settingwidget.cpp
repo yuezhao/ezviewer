@@ -25,7 +25,12 @@
 #include "global.h"
 #include "osrelated.h"
 
-#include <QtGui>
+#include <QCheckBox>
+#include <QCloseEvent>
+#include <QColorDialog>
+#include <QGridLayout>
+#include <QTabWidget>
+#include <QtConcurrentRun>
 
 
 SettingWidget::SettingWidget(QWidget *parent) :
@@ -162,10 +167,26 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     : QDialog(parent, Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint),
       settingWidget(this)
 {
-    connect(&settingWidget, SIGNAL(clickClose()), SLOT(close()));
-
     QTabWidget *tab = new QTabWidget(this);
     tab->addTab(&settingWidget, tr("Common"));
+
+    if(OSRelated::isSupportAssociation()){
+        gridLayout = new QGridLayout;
+
+        const int CountOfColumn = 3;
+        QStringList formatList = Config::formatsList();
+        QCheckBox *cb;
+        for(int i = 0, size = formatList.size(); i < size; ++i){
+            cb = new QCheckBox(formatList.at(i));
+            gridLayout->addWidget(cb, i / CountOfColumn, i % CountOfColumn);
+        }
+
+        QWidget *assocWidget = new QWidget(this);
+        assocWidget->setLayout(gridLayout);
+        tab->addTab(assocWidget, tr("File Association"));
+
+        future = QtConcurrent::run(this, &SettingsDialog::checkFileAssociation);
+    }
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(tab);
@@ -173,29 +194,20 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
     setWindowTitle(Global::ProjectName());
 
+    connect(&settingWidget, SIGNAL(clickClose()), SLOT(close()));
+}
 
-    show();
-    qApp->processEvents();
-
-    if(OSRelated::isSupportAssociation()){
-        QGridLayout *gl = new QGridLayout;
-
-        const int CountOfColumn = 3;
-        QStringList formatList = Config::formatsList();
-        QCheckBox *cb;
-        for(int i = 0, size = formatList.size(); i < size; ++i){
-            cb = new QCheckBox(formatList.at(i));
+void SettingsDialog::checkFileAssociation()
+{
+    int size = gridLayout->count();
+    QCheckBox *cb;
+    for(int i = 0; i < size; ++i){
+        cb = dynamic_cast<QCheckBox*>(gridLayout->itemAt(i)->widget());
+        if (cb) {
             //! before connect(). otherwise it will launch the function changeAssociation(bool).
-            cb->setChecked(OSRelated::checkAssociation(formatList.at(i)));
-            connect(cb, SIGNAL(toggled(bool)),
-                    SLOT(changeAssociation(bool)));
-
-            gl->addWidget(cb, i / CountOfColumn, i % CountOfColumn);
+            cb->setChecked(OSRelated::checkAssociation(cb->text()));
+            connect(cb, SIGNAL(toggled(bool)), SLOT(changeAssociation(bool)));
         }
-
-        QWidget *assocWidget = new QWidget(this);
-        assocWidget->setLayout(gl);
-        tab->addTab(assocWidget, tr("File Association"));
     }
 }
 
@@ -212,4 +224,12 @@ void SettingsDialog::changeAssociation(bool enabled)
             OSRelated::clearAssociation(ext);
         }
     }
+}
+
+void SettingsDialog::done(int r)
+{
+    if (OSRelated::isSupportAssociation() && !future.isFinished())
+        future.waitForFinished();
+
+    QDialog::done(r);
 }

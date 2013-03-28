@@ -4,6 +4,9 @@
 #include "imagewrapper.h"
 #include "toolkit.h"
 
+#include <QRunnable>
+#include <QThreadPool>
+
 
 /* list:
  * first one hold curCache for PicManager,
@@ -12,29 +15,40 @@
  */
 QList<ImageWrapper *> ImageFactory::list;
 int ImageFactory::CacheNumber = 0;
-ImageFactory *ImageFactory::prThread = NULL;
+
+
+class Runnable : public QRunnable
+{
+public:
+    Runnable(ImageWrapper * iw, const QString &filePath)
+        : image(iw), path(filePath) {}
+
+    void run() {
+        if (image)
+            image->load(path, true);
+    }
+
+private:
+    ImageWrapper *image;
+    QString path;
+};
 
 
 ImageWrapper * ImageFactory::newOrReuseImage()
 {
     int total = 1 + (Config::enablePreReading() ? 1 : 0) + CacheNumber;
     qDebug("cache num is %d, total is %d, now has %d",
-           ImageFactory::CacheNumber, total, list.size());
+           CacheNumber, total, list.size());
 
     ImageWrapper *image;
     if(list.size() < total){
         image = new ImageWrapper();
-        qDebug("new a cache");
-//        if(prThread){
-//            QObject::connect(ic, SIGNAL(cacheNeedReading(ImageCache*,QString)),
-//                    prThread, SLOT(preReading(ImageCache*,QString)));
-//        }
     }else{
         image = list.at(total - 1);
         list.removeAt(total - 1);
-        image->isReady = false;
         image->recycle();
-        qDebug("reuse a cache");
+        image->setReady(false);
+        image->setHashCode(ImageWrapper::HASH_INVALID);
     }
 
     return image;
@@ -43,62 +57,79 @@ ImageWrapper * ImageFactory::newOrReuseImage()
 ImageWrapper * ImageFactory::findImageByHash(uint hash)
 {
     foreach(ImageWrapper *image, list){
-        if(image->hashCode == hash){
+        if(image->getHashCode() == hash){
             list.removeOne(image);
+            waitForImageReady(image);
             return image;
         }
     }
     return NULL;
 }
 
+void ImageFactory::waitForImageReady(ImageWrapper *image)
+{
+    while(!image->getReady()){
+        // wait for pre-reading in another thread
+    }
+}
 
 ImageWrapper * ImageFactory::getImageWrapper(const QString &filePath)
 {
     uint hash = filePath.isEmpty() ? ImageWrapper::HASH_INVALID :
                                      ToolKit::getFileHash(filePath);
     ImageWrapper *image;
-    if(image = findImageByHash(hash)){
-        if (hash == ImageWrapper::HASH_INVALID)
-            image->isReady = true;
-        else
-            while(!image->isReady) { /// wait for pre-reading in another thread
-    ///            qApp->processEvents();
-            }
-
-        // TODO: update first frame of svg animation format here (if it has been shown before).
+    if((image = findImageByHash(hash))){
         list.prepend(image);
+        // TODO: update first frame of svg animation format here (if it has been shown before).
         return image;
     }
 
     image = newOrReuseImage();
-    image->hashCode = hash;
-    if (hash == ImageWrapper::HASH_INVALID)
-        image->isReady = true;
-    else
-        image->readFile(filePath);
-
     list.prepend(image);
+    image->setHashCode(hash);
+    if (hash == ImageWrapper::HASH_INVALID) {
+        image->setReady(true);
+    } else {
+        image->load(filePath);
+    }
+
     return image;
 }
 
 
+void ImageFactory::preReading(const QString &filePath)
+{
+    if(!Config::enablePreReading())
+        return;
+
+    uint hash = ToolKit::getFileHash(filePath);
+    ImageWrapper *image;
+    if((image = findImageByHash(hash))){
+        list.insert(1, image);  /// assert(list.size());
+        return;
+    }
+
+    image = newOrReuseImage();
+    list.insert(1, image);  /// assert(list.size());
+    image->setHashCode(hash);
+    if (hash == ImageWrapper::HASH_INVALID) {
+        image->setReady(true);
+    } else {
+        QThreadPool::globalInstance()->start(new Runnable(image, filePath));
+    }
+}
+
 void ImageFactory::freeAllCache()
 {
+    QThreadPool::globalInstance()->waitForDone();
+
     foreach(ImageWrapper *image, list)
         freeImage(image);
-
-//    if(prThread){
-////        prThread->quit(); // this will cause crash.
-//        prThread->deleteLater();
-//    }
 }
 
 void ImageFactory::freeImage(ImageWrapper *image)
 {
-    qDebug("delete cache");
-    while(!image->isReady){
-        // waiting pre-reading thread.
-    }
+    waitForImageReady(image);
     delete image;
 }
 
@@ -117,45 +148,10 @@ void ImageFactory::setCacheNumber(int val)
 
     CacheNumber = val;
     cacheSizeAdjusted();
-    qDebug("after cache size adjust");
 }
 
-
-
-void ImageFactory::preReading(const QString &filePath)
+void ImageFactory::setPreReadingEnabled(bool /*enabled*/)
 {
-    if(!prThread)
-        return;
-
-//    uint hash = ToolKit::getFileHash(filePath);
-//    if(ImageCache *ic = findCache(hash)){
-//        list.insert(1, ic);  /// assert(list.size());
-//        return;
-//    }
-
-//    ImageCache *cache = newCache();
-//    cache->hashCode = hash;
-//    list.insert(1, cache);  /// assert(list.size());
-
-//    cache->callPreReadingThread(filePath);
-}
-
-void ImageFactory::setPreReadingEnabled(bool enabled)
-{
-//    if(enabled){
-//        if(!prThread){
-//            prThread = new PreReadingThread;
-//            foreach(ImageCache *ic, list)
-//                QObject::connect(ic, SIGNAL(cacheNeedReading(ImageCache*,QString)),
-//                                 prThread, SLOT(preReading(ImageCache*,QString)));
-//        }
-//    }else{
-//        if(prThread){
-////            prThread->quit(); // this will cause crash.
-//            prThread->deleteLater();
-//            prThread = NULL;
-            cacheSizeAdjusted();
-//        }
-//    }
+    cacheSizeAdjusted();
 }
 

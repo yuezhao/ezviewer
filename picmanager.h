@@ -27,6 +27,7 @@
 
 #include "imageviewer.h"
 #include "imagewrapper.h"
+#include "imagefactory.h"
 
 
 class PicManager : public ImageViewer
@@ -61,10 +62,9 @@ public slots:
 
 protected slots:
     void updateAnimation();
+    void updateImage();
     void directoryChanged();
     void fileChanged(const QString &filePath);
-//    void preReadingPrePic() const;
-//    void preReadingNextPic() const;
 
     void hideEvent ( QHideEvent * event );
     void showEvent ( QShowEvent * event );
@@ -98,7 +98,11 @@ private:
     int getPreIndex(int curIndex) const;
     int getNextIndex(int curIndex) const;
     QString getPathAtIndex(int index) const;
-//    void preReadingPic(int index) const;
+
+    void preReadingPic(int index) const;
+    void preReadingPrePic() const;
+    void preReadingNextPic() const;
+
 
     enum LIST_MODE {
         FileNameListMode,
@@ -111,31 +115,36 @@ private:
 };
 
 
-//inline void PicManager::preReadingPic(int index) const
-//{
-//    PreReadingThread::preReading(getPathAtIndex(index));
-//}
 
-inline int PicManager::getPreIndex(int curIndex) const {
+inline int PicManager::getPreIndex(int curIndex) const
+{
     //arrive the head of file list or source file is deleted.
     return (curIndex - 1 < 0) ? list.size() - 1 : curIndex - 1;
 }
 
-inline int PicManager::getNextIndex(int curIndex) const {
+inline int PicManager::getNextIndex(int curIndex) const
+{
     //arrive the end of the file list
     return (curIndex + 1 == list.size()) ? 0 : curIndex + 1;
 }
 
-//inline void PicManager::preReadingPrePic() const {
-//    if(PreReadingThread::preReadingEnabled() && list.size() > 1){ // pre-reading previous one
-//        PreReadingThread::preReading(getPreIndex(currentIndex));
-//    }
-//}
+inline void PicManager::preReadingPic(int index) const
+{
+    ImageFactory::preReading(getPathAtIndex(index));
+}
 
-//inline void PicManager::preReadingNextPic() const{
-//    if(PreReadingThread::preReadingEnabled() && list.size() > 1){ // pre-reading next one
-//        PreReadingThread::preReading(getNextIndex(currentIndex));
-//    }
-//}
+inline void PicManager::preReadingPrePic() const
+{
+    if(list.size() > 1){
+        preReadingPic(getPreIndex(currentIndex));
+    }
+}
+
+inline void PicManager::preReadingNextPic() const
+{
+    if(list.size() > 1){
+        preReadingPic(getNextIndex(currentIndex));
+    }
+}
 
 #endif // PICMANAGER_H

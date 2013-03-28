@@ -18,8 +18,7 @@ HEADERS = global.h \
     tools/fileassoc.h \
     tools/osrelated.h \
     tools/toolkit.h \
-    tools/tooltip.h \
-    tools/ExifReader.h
+    tools/tooltip.h
 
 SOURCES = main.cpp \
     config.cpp \
@@ -34,29 +33,35 @@ SOURCES = main.cpp \
     tools/fileassoc.cpp \
     tools/osrelated.cpp \
     tools/toolkit.cpp \
-    tools/tooltip.cpp \
-    tools/ExifReader.cpp
+    tools/tooltip.cpp
 
-TRANSLATIONS += \
-    res/EzViewer_zh_CN.ts
+TRANSLATIONS += res/EzViewer_zh_CN.ts
 
-RESOURCES += \
-    res/res.qrc
+RESOURCES += res/res.qrc
 
-FORMS += \
-    settingwidget.ui \
-    contralbar.ui
+FORMS += contralbar.ui \
+    settingwidget.ui
 
-win32 {
-    INCLUDEPATH += libexif-port
-    LIBEXIF_OUT = $$PWD/libexif-port/out/bin
-    LIBS += -L$$LIBEXIF_OUT -lexif
-
-    RC_FILE += win.rc
-} else {
-    LIBS += -lexif
-}
+win32:RC_FILE += win.rc
 
 OTHER_FILES += $$RC_FILE \
     log.txt \
     TODO.txt
+
+
+
+# if you don't need reading exif infornation, append '#' at next line to cancel it.
+DEFINES += USE_EXIF
+LIBEXIF_OUT = $$PWD/libexif-port/out/bin
+
+contains(DEFINES, USE_EXIF) {
+    HEADERS += tools/ExifReader.h
+    SOURCES += tools/ExifReader.cpp
+
+    win32 {
+        INCLUDEPATH += libexif-port
+        LIBS += -L$$LIBEXIF_OUT -lexif
+    } else {
+        LIBS += -lexif
+    }
+}

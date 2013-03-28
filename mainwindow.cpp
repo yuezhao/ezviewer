@@ -20,13 +20,11 @@
 
 #include "mainwindow.h"
 
-
 #include "contralbar.h"
 #include "floatframe.h"
 #include "settingwidget.h"
 #include "config.h"
 #include "global.h"
-#include "imagefactory.h"
 #include "toolkit.h"
 #include "tooltip.h"
 
