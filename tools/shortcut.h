@@ -1,6 +1,6 @@
 /****************************************************************************
  * EZ Viewer
- * Copyright (C) 2012 huangezhao. CHINA.
+ * Copyright (C) 2013 huangezhao. CHINA.
  * Contact: huangezhao (huangezhao@gmail.com)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,34 +18,44 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ***************************************************************************/
 
-#include <QApplication>
-#include <QTranslator>
-#include <QLocale>
+#ifndef SHORTCUT_H
+#define SHORTCUT_H
 
-#include "mainwindow.h"
+#include <QKeySequence>
+#include <QString>
 
 
-int main(int argc, char *argv[])
+class Shortcut
 {
-    QApplication app(argc, argv);
+public:
+    Shortcut(QString description) : text(description) {}
 
-    QString lang_country = QLocale::system().name();
-    QTranslator qt_ts;
-    if(qt_ts.load(QString(":/qt_%1").arg(lang_country)))
-        app.installTranslator( &qt_ts );
-    else if(qt_ts.load(QString("lang/qt_%1").arg(lang_country)))
-        app.installTranslator( &qt_ts );
-    QTranslator app_ts;
-    if(app_ts.load(QString(":/EzViewer_%1").arg(lang_country)))
-        app.installTranslator( &app_ts );
-    else if(app_ts.load(QString("lang/EzViewer_%1").arg(lang_country)))
-        app.installTranslator( &app_ts );
+    QString toString() const { return text; }
 
-    // TODO: pre-reading picture in here
-    MainWindow m;
-    m.show();
-    app.processEvents(QEventLoop::ExcludeUserInputEvents);
-    m.parseCmd(app.arguments());
+    virtual void run() = 0;
 
-    return app.exec();
-}
+protected:
+    QString text;
+};
+
+
+template <typename T, typename ReturnType = void>
+class ShortcutImpl : public Shortcut
+{
+public:
+    typedef ReturnType (T::*FuncType)();
+
+    ShortcutImpl(QString description, T *obj, FuncType f)
+        : Shortcut(description), object(obj), function(f) {}
+
+    virtual void run() {
+        if (object)
+            (object->*function)();
+    }
+private:
+    T *object;
+    FuncType function;
+};
+
+
+#endif // SHORTCUT_H

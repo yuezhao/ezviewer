@@ -18,16 +18,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ***************************************************************************/
 
-#ifndef SETTINGWIDGET_H
-#define SETTINGWIDGET_H
+#ifndef COMMONSETTING_H
+#define COMMONSETTING_H
 
 #include <QWidget>
-#include <QDialog>
-#include <QFuture>
 
 
 namespace Ui {
-    class SettingWidget;
+    class CommonSetting;
 }
 
 class QCheckBox;
@@ -37,13 +35,14 @@ class QLineEdit;
 class QLabel;
 class QSpinBox;
 class QSlider;
-class SettingWidget : public QWidget
+class QPushButton;
+class CommonSetting : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit SettingWidget(QWidget *parent = 0);
-    ~SettingWidget();
+    explicit CommonSetting(QWidget *parent = 0);
+    ~CommonSetting();
 
 signals:
     void clickClose();
@@ -61,7 +60,7 @@ protected slots:
     void cacheValueChanged(int val);
 
 private:
-    Ui::SettingWidget *ui;
+    Ui::CommonSetting *ui;
 
     QCheckBox *showDialogCheckBox;
     QComboBox *antialiasModeCombo;
@@ -77,25 +76,4 @@ private:
 };
 
 
-class QGridLayout;
-class SettingsDialog : public QDialog {
-    Q_OBJECT
-public:
-    explicit SettingsDialog(QWidget *parent = 0);
-
-public slots:
-    virtual void done(int);
-
-private slots:
-    void changeAssociation(bool enabled);
-
-private:
-    void checkFileAssociation();
-
-    SettingWidget settingWidget;
-    QGridLayout *gridLayout;
-
-    QFuture<void> future;
-};
-
-#endif // SETTINGWIDGET_H
+#endif // COMMONSETTING_H

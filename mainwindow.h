@@ -23,6 +23,7 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <QMap>
 
 #include "picmanager.h"
 
@@ -32,6 +33,8 @@ class QLabel;
 class QMenu;
 class QAction;
 class QPushButton;
+class Shortcut;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -81,6 +84,7 @@ private:
     void initContextMenu();
     void initButtomBar();
     void initSwitchFrame(); // init left and right float frame
+    void initShortCutTable();
 
     void changeTimerInterval(int sec) { slideTimer->setInterval(sec * 1000); }
 
@@ -90,6 +94,9 @@ private:
     QTimer *slideTimer;
     int slideInterval;//msec
     QRect attributeRect;
+
+    QList<Shortcut*> shortCutTable;
+    QMap<QString, Shortcut*> shortCutMap;
 
     FloatFrame *buttomFrame;
     FloatFrame *leftFrame;

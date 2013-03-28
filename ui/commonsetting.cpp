@@ -18,24 +18,18 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ***************************************************************************/
 
-#include "settingwidget.h"
-#include "ui_settingwidget.h"
+#include "commonsetting.h"
+#include "ui_commonsetting.h"
 
 #include "config.h"
-#include "global.h"
-#include "osrelated.h"
 
 #include <QCheckBox>
-#include <QCloseEvent>
 #include <QColorDialog>
-#include <QGridLayout>
-#include <QTabWidget>
-#include <QtConcurrentRun>
 
 
-SettingWidget::SettingWidget(QWidget *parent) :
+CommonSetting::CommonSetting(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::SettingWidget)
+    ui(new Ui::CommonSetting)
 {
     ui->setupUi(this);
     ui->ui_groupBox->hide();
@@ -75,12 +69,12 @@ SettingWidget::SettingWidget(QWidget *parent) :
     connect(button, SIGNAL(clicked()), SLOT(restoreDefaults()));
 }
 
-SettingWidget::~SettingWidget()
+CommonSetting::~CommonSetting()
 {
     delete ui;
 }
 
-void SettingWidget::initUIvalue()
+void CommonSetting::initUIvalue()
 {
     showDialogCheckBox->setChecked(Config::showDialog());
     antialiasModeCombo->setCurrentIndex(Config::antialiasMode());
@@ -100,18 +94,18 @@ void SettingWidget::initUIvalue()
     colorEdit->setEnabled(enabledBgColor);
 }
 
-void SettingWidget::showDialogChange(int state)
+void CommonSetting::showDialogChange(int state)
 {
     Config::setShowDialog(state == Qt::Checked);
 }
 
-void SettingWidget::antialiasModeChange(int index)
+void CommonSetting::antialiasModeChange(int index)
 {
     if(index == -1) return;
     Config::setAntialiasMode(index);
 }
 
-void SettingWidget::bgColorEnable(int state)
+void CommonSetting::bgColorEnable(int state)
 {
     bool enableBgColor = (state == Qt::Checked);
     Config::setEnableBgColor(enableBgColor);
@@ -121,7 +115,7 @@ void SettingWidget::bgColorEnable(int state)
     colorEdit->setEnabled(enableBgColor);
 }
 
-void SettingWidget::setColor()
+void CommonSetting::setColor()
 {
     QColor color = QColorDialog::getColor(Config::bgColor(), this);
     if (color.isValid()) {
@@ -133,103 +127,26 @@ void SettingWidget::setColor()
     }
 }
 
-void SettingWidget::timerIntervalChange(int val)
+void CommonSetting::timerIntervalChange(int val)
 {
     Config::setTimerInterval(val);
 }
 
-void SettingWidget::preReadingChanged(int state)
+void CommonSetting::preReadingChanged(int state)
 {
     Config::setEnablePreReading(state == Qt::Checked);
 }
 
-void SettingWidget::cacheValueChanged(int val)
+void CommonSetting::cacheValueChanged(int val)
 {
     Config::setCacheValue(val);
     cacheValueLabel->setText(QString::number(val));
 }
 
-void SettingWidget::restoreDefaults()
+void CommonSetting::restoreDefaults()
 {
     Config::clearConfig();
     qApp->processEvents();  /// make sure the value of Config refreshed.
     initUIvalue();
 }
 
-
-/**********************************************************************
- *
- *  class SettingsDialog
- *
- **********************************************************************/
-
-SettingsDialog::SettingsDialog(QWidget *parent)
-    : QDialog(parent, Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint),
-      settingWidget(this)
-{
-    QTabWidget *tab = new QTabWidget(this);
-    tab->addTab(&settingWidget, tr("Common"));
-
-    if(OSRelated::isSupportAssociation()){
-        gridLayout = new QGridLayout;
-
-        const int CountOfColumn = 3;
-        QStringList formatList = Config::formatsList();
-        QCheckBox *cb;
-        for(int i = 0, size = formatList.size(); i < size; ++i){
-            cb = new QCheckBox(formatList.at(i));
-            gridLayout->addWidget(cb, i / CountOfColumn, i % CountOfColumn);
-        }
-
-        QWidget *assocWidget = new QWidget(this);
-        assocWidget->setLayout(gridLayout);
-        tab->addTab(assocWidget, tr("File Association"));
-
-        future = QtConcurrent::run(this, &SettingsDialog::checkFileAssociation);
-    }
-
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->addWidget(tab);
-    setLayout(layout);
-
-    setWindowTitle(Global::ProjectName());
-
-    connect(&settingWidget, SIGNAL(clickClose()), SLOT(close()));
-}
-
-void SettingsDialog::checkFileAssociation()
-{
-    int size = gridLayout->count();
-    QCheckBox *cb;
-    for(int i = 0; i < size; ++i){
-        cb = dynamic_cast<QCheckBox*>(gridLayout->itemAt(i)->widget());
-        if (cb) {
-            //! before connect(). otherwise it will launch the function changeAssociation(bool).
-            cb->setChecked(OSRelated::checkAssociation(cb->text()));
-            connect(cb, SIGNAL(toggled(bool)), SLOT(changeAssociation(bool)));
-        }
-    }
-}
-
-void SettingsDialog::changeAssociation(bool enabled)
-{
-    QCheckBox *cb = dynamic_cast<QCheckBox*>(sender());
-    if(cb == NULL) return;
-
-    QString ext(cb->text());
-    if(OSRelated::isSupportAssociation()){
-        if(enabled){
-            OSRelated::setAssociation(ext);
-        }else{
-            OSRelated::clearAssociation(ext);
-        }
-    }
-}
-
-void SettingsDialog::done(int r)
-{
-    if (OSRelated::isSupportAssociation() && !future.isFinished())
-        future.waitForFinished();
-
-    QDialog::done(r);
-}

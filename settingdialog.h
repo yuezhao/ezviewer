@@ -1,6 +1,6 @@
 /****************************************************************************
  * EZ Viewer
- * Copyright (C) 2012 huangezhao. CHINA.
+ * Copyright (C) 2013 huangezhao. CHINA.
  * Contact: huangezhao (huangezhao@gmail.com)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,34 +18,38 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ***************************************************************************/
 
-#include <QApplication>
-#include <QTranslator>
-#include <QLocale>
+#ifndef SETTINGDIALOG_H
+#define SETTINGDIALOG_H
 
-#include "mainwindow.h"
+#include <QDialog>
+#include <QFuture>
 
 
-int main(int argc, char *argv[])
-{
-    QApplication app(argc, argv);
+class QGridLayout;
+class CommonSetting;
+class ShortcutSetting;
 
-    QString lang_country = QLocale::system().name();
-    QTranslator qt_ts;
-    if(qt_ts.load(QString(":/qt_%1").arg(lang_country)))
-        app.installTranslator( &qt_ts );
-    else if(qt_ts.load(QString("lang/qt_%1").arg(lang_country)))
-        app.installTranslator( &qt_ts );
-    QTranslator app_ts;
-    if(app_ts.load(QString(":/EzViewer_%1").arg(lang_country)))
-        app.installTranslator( &app_ts );
-    else if(app_ts.load(QString("lang/EzViewer_%1").arg(lang_country)))
-        app.installTranslator( &app_ts );
+class SettingsDialog : public QDialog {
+    Q_OBJECT
+public:
+    explicit SettingsDialog(QWidget *parent = 0);
 
-    // TODO: pre-reading picture in here
-    MainWindow m;
-    m.show();
-    app.processEvents(QEventLoop::ExcludeUserInputEvents);
-    m.parseCmd(app.arguments());
+public slots:
+    virtual void done(int);
 
-    return app.exec();
-}
+private slots:
+    void changeAssociation(bool enabled);
+
+private:
+    void checkFileAssociation();
+
+    CommonSetting *commonSetting;
+    QGridLayout *gridLayout;
+    ShortcutSetting *shortcutSetting;
+
+    volatile bool willExit;
+    QFuture<void> future;
+};
+
+
+#endif // SETTINGDIALOG_H

@@ -20,13 +20,14 @@
 
 #include "mainwindow.h"
 
-#include "contralbar.h"
-#include "floatframe.h"
-#include "settingwidget.h"
 #include "config.h"
 #include "global.h"
+#include "contralbar.h"
+#include "floatframe.h"
 #include "toolkit.h"
 #include "tooltip.h"
+#include "shortcut.h"
+#include "settingdialog.h"
 
 #include <QtGui>
 
@@ -57,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initContextMenu();
     initButtomBar();
     initSwitchFrame();
+    initShortCutTable();
 
     resize(Config::WindowFitSize);
     readSettings();
@@ -455,162 +457,172 @@ void MainWindow::showContextMenu(const QPoint &pos)
     contextMenu->popup(pos);
 }
 
+void MainWindow::initShortCutTable()
+{
+    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("openFile"),
+                     this, &MainWindow::openFile));
+    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("changeFullScreen"),
+                     this, &MainWindow::changeFullScreen));
+    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("switchSlideShow"),
+                     this, &MainWindow::switchSlideShow));
+    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("showAttribute"),
+                     this, &MainWindow::showAttribute));
+    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("setting"),
+                     this, &MainWindow::setting));
+    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("about"),
+                     this, &MainWindow::about));
+    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("nextPic"),
+                     this, &MainWindow::nextPic));
+    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("prePic"),
+                     this, &MainWindow::prePic));
+    shortCutTable.append(new ShortcutImpl<MainWindow, bool>(tr("close"),
+                     this, &MainWindow::close));
+    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("rotateLeft"),
+                     this, &MainWindow::rotateLeft));
+    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("rotateRight"),
+                     this, &MainWindow::rotateRight));
+    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("mirrorHorizontal"),
+                     this, &MainWindow::mirrorHorizontal));
+    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("mirrorVertical"),
+                     this, &MainWindow::mirrorVertical));
+    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("switchAnimationState"),
+                     this, &MainWindow::switchAnimationState));
+    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("nextAnimationFrame"),
+                     this, &MainWindow::nextAnimationFrame));
+    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("copyToClipboard"),
+                     this, &MainWindow::copyToClipboard));
+    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("deleteFileAsk"),
+                     this, &MainWindow::deleteFileAsk));
+
+    shortCutMap.insert(QKeySequence(QKeySequence::Open).toString(), shortCutTable.at(0));
+    shortCutMap.insert("J", shortCutTable.at(6));
+    shortCutMap.insert("K", shortCutTable.at(7));
+}
+
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
-//    const int CommandCount = 18;
-//    QStringList CommandList;
-//    CommandList << "openFile" << "changeFullScreen" << "switchSlideShow"
-//                << "showAttribute" << "setting" << "about"
-//                << "nextPic" << "prePic" << "closeWindow"
-//                << "rotateLeft" << "rotateRight" << "mirrorHorizontal"
-//                << "mirrorVertical" << "switchGifPause" << "nextGifFrame"
-//                << "copyToClipboard" << "deleteFile" << "closeAllWindows";
+    QKeySequence keys(e->modifiers() + e->key());
+    qDebug("key press: %s", qPrintable(keys.toString()));
+    if (shortCutMap.contains(keys.toString()))
+        shortCutMap.value(keys.toString())->run();
 
-//    void (MainWindow::*Func[CommandCount])() = {   //函数指针数组
-//                &MainWindow::openFile,       &MainWindow::changeFullScreen,
-//                &MainWindow::switchSlideShow,      &MainWindow::showAttribute,
-//                &MainWindow::setting,        &MainWindow::about,
-//                &MainWindow::nextPic,        &MainWindow::prePic,
-//                &MainWindow::closeWindow,          &MainWindow::rotateLeft,
-//                &MainWindow::rotateRight,    &MainWindow::mirrorHorizontal,
-//                &MainWindow::mirrorVertical, &MainWindow::switchGifPause,
-//                &MainWindow::nextGifFrame,   &MainWindow::copyToClipboard,
-//                &MainWindow::deleteFile,     &MainWindow::closeAllWindows
-//    };
-
-    //(this->*Func[i])(end);  //执行相应指令对应的函数
-
-
-//    qDebug() << "key code : " << QString::number(e->key(), 16);
-//    qDebug() << "key text: " << e->text();
-//    if(e->modifiers() & Qt::NoModifier)
-//        qDebug() << "Qt::NoModifier";
-//    if(e->modifiers() & Qt::ShiftModifier)
-//        qDebug() << "Qt::ShiftModifier";
-//    if(e->modifiers() & Qt::ControlModifier)
-//        qDebug() << "Qt::ControlModifier";
-//    if(e->modifiers() & Qt::AltModifier)
-//        qDebug() << "Qt::AltModifier";
-//    if(e->modifiers() & Qt::MetaModifier)
-//        qDebug() << "Qt::MetaModifier";
-
-    switch(e->key()){
-    case Qt::Key_Right:
-    case Qt::Key_Down:
-    case Qt::Key_PageDown:
-    case Qt::Key_J:
-        nextPic();
-        e->accept();
-        break;
-    case Qt::Key_Left:
-    case Qt::Key_Up:
-    case Qt::Key_PageUp:
-    case Qt::Key_K:
-        prePic();
-        e->accept();
-        break;
-    case Qt::Key_O:
-    case Qt::Key_N:
-        if(!slideTimer->isActive())
-            openFile();
-        e->accept();
-        break;
-    case Qt::Key_Escape:
-    case Qt::Key_Q:
-        close();        //! !
-        e->accept();
-        break;
-    case Qt::Key_Equal:
-    case Qt::Key_Plus:
-        switch(e->modifiers()){
-        case Qt::ShiftModifier:
-            viewer->zoomIn(0.05);
-            break;
-        case Qt::ControlModifier:
-            viewer->zoomIn(0.2);
-            break;
-        default:
-            viewer->zoomIn(0.1);
-            break;
-        }
-        e->accept();
-        break;
-    case Qt::Key_Minus:
-    case Qt::Key_Underscore:
-        switch(e->modifiers()){
-        case Qt::ShiftModifier:
-            viewer->zoomIn(-0.05);
-            break;
-        case Qt::ControlModifier:
-            viewer->zoomIn(-0.2);
-            break;
-        default:
-            viewer->zoomIn(-0.1);
-            break;
-        }
-        e->accept();
-        break;
-    case Qt::Key_Return:
-        changeFullScreen();
-        e->accept();
-        break;
-    case Qt::Key_L:
-        rotateLeft();
-        e->accept();
-        break;
-    case Qt::Key_R:
-        rotateRight();
-        e->accept();
-        break;
-    case Qt::Key_H:
-        mirrorHorizontal();
-        e->accept();
-        break;
-    case Qt::Key_V:
-        mirrorVertical();
-        e->accept();
-        break;
-    case Qt::Key_I:
-        showAttribute();
-        e->accept();
-        break;
-    case Qt::Key_Delete:
-    case Qt::Key_D:
-        if(slideTimer->isActive())
-            break;
-        if(e->modifiers() == Qt::ControlModifier)
-            deleteFileNoAsk();
-        else
-            deleteFileAsk();
-        e->accept();
-        break;
-    case Qt::Key_C:
-        if(e->modifiers() == Qt::ControlModifier){
-            copyToClipboard();
-            e->accept();
-        }
-        break;
-    case Qt::Key_S:
-        setting();
-        e->accept();
-        break;
-    case Qt::Key_Space:
-    case Qt::Key_Pause:
-        switchAnimationState();
-        e->accept();
-        break;
-    case Qt::Key_F:
-        nextAnimationFrame();
-        e->accept();
-        break;
-    case Qt::Key_P:
-        switchSlideShow();
-        e->accept();
-        break;
-    default:
-        QWidget::keyPressEvent(e);
-        break;
-    }
+//    switch(e->key()){
+//    case Qt::Key_Right:
+//    case Qt::Key_Down:
+//    case Qt::Key_PageDown:
+//    case Qt::Key_J:
+//        nextPic();
+//        e->accept();
+//        break;
+//    case Qt::Key_Left:
+//    case Qt::Key_Up:
+//    case Qt::Key_PageUp:
+//    case Qt::Key_K:
+//        prePic();
+//        e->accept();
+//        break;
+//    case Qt::Key_O:
+//    case Qt::Key_N:
+//        if(!slideTimer->isActive())
+//            openFile();
+//        e->accept();
+//        break;
+//    case Qt::Key_Escape:
+//    case Qt::Key_Q:
+//        close();        //! !
+//        e->accept();
+//        break;
+//    case Qt::Key_Equal:
+//    case Qt::Key_Plus:
+//        switch(e->modifiers()){
+//        case Qt::ShiftModifier:
+//            viewer->zoomIn(0.05);
+//            break;
+//        case Qt::ControlModifier:
+//            viewer->zoomIn(0.2);
+//            break;
+//        default:
+//            viewer->zoomIn(0.1);
+//            break;
+//        }
+//        e->accept();
+//        break;
+//    case Qt::Key_Minus:
+//    case Qt::Key_Underscore:
+//        switch(e->modifiers()){
+//        case Qt::ShiftModifier:
+//            viewer->zoomIn(-0.05);
+//            break;
+//        case Qt::ControlModifier:
+//            viewer->zoomIn(-0.2);
+//            break;
+//        default:
+//            viewer->zoomIn(-0.1);
+//            break;
+//        }
+//        e->accept();
+//        break;
+//    case Qt::Key_Return:
+//        changeFullScreen();
+//        e->accept();
+//        break;
+//    case Qt::Key_L:
+//        rotateLeft();
+//        e->accept();
+//        break;
+//    case Qt::Key_R:
+//        rotateRight();
+//        e->accept();
+//        break;
+//    case Qt::Key_H:
+//        mirrorHorizontal();
+//        e->accept();
+//        break;
+//    case Qt::Key_V:
+//        mirrorVertical();
+//        e->accept();
+//        break;
+//    case Qt::Key_I:
+//        showAttribute();
+//        e->accept();
+//        break;
+//    case Qt::Key_Delete:
+//    case Qt::Key_D:
+//        if(slideTimer->isActive())
+//            break;
+//        if(e->modifiers() == Qt::ControlModifier)
+//            deleteFileNoAsk();
+//        else
+//            deleteFileAsk();
+//        e->accept();
+//        break;
+//    case Qt::Key_C:
+//        if(e->modifiers() == Qt::ControlModifier){
+//            copyToClipboard();
+//            e->accept();
+//        }
+//        break;
+//    case Qt::Key_S:
+//        setting();
+//        e->accept();
+//        break;
+//    case Qt::Key_Space:
+//    case Qt::Key_Pause:
+//        switchAnimationState();
+//        e->accept();
+//        break;
+//    case Qt::Key_F:
+//        nextAnimationFrame();
+//        e->accept();
+//        break;
+//    case Qt::Key_P:
+//        switchSlideShow();
+//        e->accept();
+//        break;
+//    default:
+//        QWidget::keyPressEvent(e);
+//        break;
+//    }
 
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents); //add:20121006
 }

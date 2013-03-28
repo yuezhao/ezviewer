@@ -1,6 +1,6 @@
 /****************************************************************************
  * EZ Viewer
- * Copyright (C) 2012 huangezhao. CHINA.
+ * Copyright (C) 2013 huangezhao. CHINA.
  * Contact: huangezhao (huangezhao@gmail.com)
  *
  * This program is free software; you can redistribute it and/or modify
