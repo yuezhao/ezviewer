@@ -18,44 +18,37 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ***************************************************************************/
 
-#ifndef SHORTCUT_H
-#define SHORTCUT_H
-
-#include <QKeySequence>
-#include <QString>
+#include "actionmanager.h"
 
 
-class Shortcut
+QMap<QString, Action*> ActionManager::actionMap;
+QMap<QString, QString> ActionManager::shortcutMap;
+
+
+void ActionManager::unregisterAllFunction()
 {
-public:
-    Shortcut(QString description) : text(description) {}
-
-    QString toString() const { return text; }
-
-    virtual void run() = 0;
-
-protected:
-    QString text;
-};
-
-
-template <typename T, typename ReturnType = void>
-class ShortcutImpl : public Shortcut
-{
-public:
-    typedef ReturnType (T::*FuncType)();
-
-    ShortcutImpl(QString description, T *obj, FuncType f)
-        : Shortcut(description), object(obj), function(f) {}
-
-    virtual void run() {
-        if (object)
-            (object->*function)();
+    QMapIterator<QString, Action*> i(actionMap);
+    while (i.hasNext()) {
+        i.next();
+        delete i.value();
     }
-private:
-    T *object;
-    FuncType function;
-};
+}
 
+bool ActionManager::bindShortcut(const QString &keySequence,
+                                 const QString &actionScript)
+{
+    if (shortcutMap.contains(keySequence))
+        return false;
+    shortcutMap.insert(keySequence, actionScript);
+    return true;
+}
 
-#endif // SHORTCUT_H
+bool ActionManager::run(const QString &keySequence)
+{
+    if (shortcutMap.contains(keySequence)) {
+        QString script = shortcutMap.value(keySequence);
+        if (actionMap.contains(script))
+            return actionMap.value(script)->run();
+    }
+    return false;
+}

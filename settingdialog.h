@@ -27,7 +27,6 @@
 
 class QGridLayout;
 class CommonSetting;
-class ShortcutSetting;
 
 class SettingsDialog : public QDialog {
     Q_OBJECT
@@ -45,7 +44,6 @@ private:
 
     CommonSetting *commonSetting;
     QGridLayout *gridLayout;
-    ShortcutSetting *shortcutSetting;
 
     volatile bool willExit;
     QFuture<void> future;

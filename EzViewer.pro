@@ -16,12 +16,12 @@ HEADERS = global.h \
     settingdialog.h \
     ui/contralbar.h \
     ui/commonsetting.h \
-    ui/shortcutsetting.h \
     tools/fileassoc.h \
     tools/osrelated.h \
     tools/toolkit.h \
     tools/tooltip.h \
-    tools/shortcut.h
+    tools/action.h \
+    tools/actionmanager.h
 
 SOURCES = main.cpp \
     config.cpp \
@@ -34,19 +34,18 @@ SOURCES = main.cpp \
     settingdialog.cpp \
     ui/contralbar.cpp \
     ui/commonsetting.cpp \
-    ui/shortcutsetting.cpp \
     tools/fileassoc.cpp \
     tools/osrelated.cpp \
     tools/toolkit.cpp \
-    tools/tooltip.cpp
+    tools/tooltip.cpp \
+    tools/actionmanager.cpp
 
 TRANSLATIONS += res/EzViewer_zh_CN.ts
 
 RESOURCES += res/res.qrc
 
 FORMS += ui/contralbar.ui \
-    ui/commonsetting.ui \
-    ui/shortcutsetting.ui
+    ui/commonsetting.ui
 
 win32:RC_FILE += win.rc
 

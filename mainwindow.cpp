@@ -26,11 +26,13 @@
 #include "floatframe.h"
 #include "toolkit.h"
 #include "tooltip.h"
-#include "shortcut.h"
+#include "actionmanager.h"
 #include "settingdialog.h"
 
 #include <QtGui>
 
+#define SPLIT(x) &x, #x
+#define GET_SCRIPT(x) #x
 
 const int SWITCH_FRAME_WIDTH = 90;
 const int BUTTOM_FRAME_HEIGHT = 60;
@@ -41,16 +43,16 @@ const int ATTRIBUTE_RECT_HEIGHT = 100;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    viewer = new PicManager(this);
+    setCentralWidget(viewer);
+    viewer->installEventFilter(this);
+
     WasMaximized = false;
     slideInterval = 4000;
     slideTimer = new QTimer(this);
     slideTimer->setInterval(slideInterval);
     //! if file numbers is 0 or 1, stop timer???......................
-    connect(slideTimer, SIGNAL(timeout()), SLOT(nextPic()));
-
-    viewer = new PicManager(this);
-    setCentralWidget(viewer);
-    viewer->installEventFilter(this);
+    connect(slideTimer, SIGNAL(timeout()), viewer, SLOT(nextPic()));
 
     connect(viewer, SIGNAL(imageChanged(QString)), SLOT(imageChanged(QString)));
     connect(viewer, SIGNAL(siteChange(QPoint)), SLOT(moveWindow(QPoint)));
@@ -58,7 +60,8 @@ MainWindow::MainWindow(QWidget *parent) :
     initContextMenu();
     initButtomBar();
     initSwitchFrame();
-    initShortCutTable();
+
+    registerAllFunction();
 
     resize(Config::WindowFitSize);
     readSettings();
@@ -71,6 +74,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    ActionManager::unregisterAllFunction();
     Config::cancelConfigWatcher(this);
     if(!isFullScreen())
         writeSettings();
@@ -315,12 +319,12 @@ void MainWindow::initButtomBar()
 
     connect(settingButton, SIGNAL(clicked()), SLOT(setting()));
     connect(openButton, SIGNAL(clicked()), SLOT(openFile()));
-    connect(preButton, SIGNAL(clicked()), SLOT(prePic()));
+    connect(preButton, SIGNAL(clicked()), viewer, SLOT(prePic()));
     connect(playButton, SIGNAL(clicked()), SLOT(switchSlideShow()));
-    connect(nextButton, SIGNAL(clicked()), SLOT(nextPic()));
-    connect(rotateLeftButton, SIGNAL(clicked()), SLOT(rotateLeft()));
-    connect(rotateRightButton, SIGNAL(clicked()), SLOT(rotateRight()));
-    connect(deleteButton, SIGNAL(clicked()), SLOT(deleteFileAsk()));
+    connect(nextButton, SIGNAL(clicked()), viewer, SLOT(nextPic()));
+    connect(rotateLeftButton, SIGNAL(clicked()), viewer, SLOT(rotateLeft()));
+    connect(rotateRightButton, SIGNAL(clicked()), viewer, SLOT(rotateRight()));
+    connect(deleteButton, SIGNAL(clicked()), viewer, SLOT(deleteFileAsk()));
 }
 
 void MainWindow::initSwitchFrame()
@@ -329,7 +333,7 @@ void MainWindow::initSwitchFrame()
     leftFrame->setFillBackground(false);
     leftFrame->setHideInterval(400);
     connect(leftFrame, SIGNAL(showContextMenu(QPoint)), SLOT(showContextMenu(QPoint)));
-    connect(leftFrame, SIGNAL(mouseClicked()), SLOT(prePic()));
+    connect(leftFrame, SIGNAL(mouseClicked()), viewer, SLOT(prePic()));
 
     QLabel *lb = new QLabel(leftFrame);
     lb->setPixmap(QPixmap(":/Left2.png"));
@@ -345,7 +349,7 @@ void MainWindow::initSwitchFrame()
     rightFrame->setFillBackground(false);
     rightFrame->setHideInterval(400);
     connect(rightFrame, SIGNAL(showContextMenu(QPoint)), SLOT(showContextMenu(QPoint)));
-    connect(rightFrame, SIGNAL(mouseClicked()), SLOT(nextPic()));
+    connect(rightFrame, SIGNAL(mouseClicked()), viewer, SLOT(nextPic()));
 
     lb = new QLabel(rightFrame);
     lb->setPixmap(QPixmap(":/Right2.png"));
@@ -382,20 +386,20 @@ void MainWindow::initContextMenu()
 
     rotateLeftAction = new QAction(QIcon(":/Undo.png"),
                                    tr("Rotate &Left"), this);
-    connect(rotateLeftAction, SIGNAL(triggered()), SLOT(rotateLeft()));
+    connect(rotateLeftAction, SIGNAL(triggered()), viewer, SLOT(rotateLeft()));
 
     rotateRightAction = new QAction(QIcon(":/Redo.png"),
                                     tr("Rotate &Right"), this);
-    connect(rotateRightAction, SIGNAL(triggered()), SLOT(rotateRight()));
+    connect(rotateRightAction, SIGNAL(triggered()), viewer, SLOT(rotateRight()));
 
     mirrorHAction = new QAction(tr("Mirrored &Horizontal"), this);
-    connect(mirrorHAction, SIGNAL(triggered()), SLOT(mirrorHorizontal()));
+    connect(mirrorHAction, SIGNAL(triggered()), viewer, SLOT(mirrorHorizontal()));
 
     mirrorVAction = new QAction(tr("Mirrored &Vertical"), this);
-    connect(mirrorVAction, SIGNAL(triggered()), SLOT(mirrorVertical()));
+    connect(mirrorVAction, SIGNAL(triggered()), viewer, SLOT(mirrorVertical()));
 
     copyAction = new QAction(tr("&Copy to clipboard"), this);
-    connect(copyAction, SIGNAL(triggered()), SLOT(copyToClipboard()));
+    connect(copyAction, SIGNAL(triggered()), viewer, SLOT(copyToClipboard()));
 
     attributeAction = new QAction(QIcon(":/Info.png"),
                                   tr("&Property"), this);
@@ -404,7 +408,7 @@ void MainWindow::initContextMenu()
     deleteAction = new QAction(QIcon(":/Delete.png"),
 //                st->standardIcon(QStyle::SP_DialogCloseButton),
                 tr("&Delete"), this);
-    connect(deleteAction, SIGNAL(triggered()), SLOT(deleteFileAsk()));
+    connect(deleteAction, SIGNAL(triggered()), viewer, SLOT(deleteFileAsk()));
 
     contextMenu = new QMenu(this);
     contextMenu->addAction(openAction);
@@ -457,172 +461,130 @@ void MainWindow::showContextMenu(const QPoint &pos)
     contextMenu->popup(pos);
 }
 
-void MainWindow::initShortCutTable()
+void MainWindow::registerAllFunction()
 {
-    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("openFile"),
-                     this, &MainWindow::openFile));
-    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("changeFullScreen"),
-                     this, &MainWindow::changeFullScreen));
-    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("switchSlideShow"),
-                     this, &MainWindow::switchSlideShow));
-    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("showAttribute"),
-                     this, &MainWindow::showAttribute));
-    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("setting"),
-                     this, &MainWindow::setting));
-    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("about"),
-                     this, &MainWindow::about));
-    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("nextPic"),
-                     this, &MainWindow::nextPic));
-    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("prePic"),
-                     this, &MainWindow::prePic));
-    shortCutTable.append(new ShortcutImpl<MainWindow, bool>(tr("close"),
-                     this, &MainWindow::close));
-    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("rotateLeft"),
-                     this, &MainWindow::rotateLeft));
-    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("rotateRight"),
-                     this, &MainWindow::rotateRight));
-    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("mirrorHorizontal"),
-                     this, &MainWindow::mirrorHorizontal));
-    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("mirrorVertical"),
-                     this, &MainWindow::mirrorVertical));
-    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("switchAnimationState"),
-                     this, &MainWindow::switchAnimationState));
-    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("nextAnimationFrame"),
-                     this, &MainWindow::nextAnimationFrame));
-    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("copyToClipboard"),
-                     this, &MainWindow::copyToClipboard));
-    shortCutTable.append(new ShortcutImpl<MainWindow>(tr("deleteFileAsk"),
-                     this, &MainWindow::deleteFileAsk));
+    ActionManager::registerFunction(tr("Open"),
+                                    this, SPLIT(MainWindow::openFile));
+    ActionManager::registerFunction(tr("Switch Full Screen"),
+                                    this, SPLIT(MainWindow::changeFullScreen));
+    ActionManager::registerFunction(tr("Auto Play/Stop"),
+                                    this, SPLIT(MainWindow::switchSlideShow));
+    ActionManager::registerFunction(tr("Property"),
+                                    this, SPLIT(MainWindow::showAttribute));
+    ActionManager::registerFunction(tr("Setting"),
+                                    this, SPLIT(MainWindow::setting));
+    ActionManager::registerFunction(tr("About"),
+                                    this, SPLIT(MainWindow::about));
+    ActionManager::registerFunction(tr("Next Picture"),
+                                    viewer, SPLIT(PicManager::nextPic));
+    ActionManager::registerFunction(tr("Previous Picture"),
+                                    viewer, SPLIT(PicManager::prePic));
+    ActionManager::registerFunction(tr("Close"),
+                                    this, SPLIT(MainWindow::close));
+    ActionManager::registerFunction(tr("Rotate Left"),
+                                    viewer, SPLIT(PicManager::rotateLeft));
+    ActionManager::registerFunction(tr("Rotate Right"),
+                                    viewer, SPLIT(PicManager::rotateRight));
+    ActionManager::registerFunction(tr("Mirrored Horizontal"),
+                                    viewer, SPLIT(PicManager::mirrorHorizontal));
+    ActionManager::registerFunction(tr("Mirrored Vertical"),
+                                    viewer, SPLIT(PicManager::mirrorVertical));
+    ActionManager::registerFunction(tr("Animation Play/Stop"),
+                                    viewer, SPLIT(PicManager::switchAnimationState));
+    ActionManager::registerFunction(tr("Step/Frame"),
+                                    viewer, SPLIT(PicManager::nextAnimationFrame));
+    ActionManager::registerFunction(tr("Copy to clipboard"),
+                                    viewer, SPLIT(PicManager::copyToClipboard));
+    ActionManager::registerFunction(tr("Delete"),
+                                    viewer, SPLIT(PicManager::deleteFileAsk));
+    ActionManager::registerFunction(tr("Delete Without Notification"),
+                                    viewer, SPLIT(PicManager::deleteFileNoAsk));
 
-    shortCutMap.insert(QKeySequence(QKeySequence::Open).toString(), shortCutTable.at(0));
-    shortCutMap.insert("J", shortCutTable.at(6));
-    shortCutMap.insert("K", shortCutTable.at(7));
+    ActionManager::bindShortcut("O", GET_SCRIPT(MainWindow::openFile));
+    ActionManager::bindShortcut("N", GET_SCRIPT(MainWindow::openFile));
+    ActionManager::bindShortcut("Right", GET_SCRIPT(PicManager::nextPic));
+    ActionManager::bindShortcut("J", GET_SCRIPT(PicManager::nextPic));
+    ActionManager::bindShortcut("Down", GET_SCRIPT(PicManager::nextPic));
+    ActionManager::bindShortcut("PgDown", GET_SCRIPT(PicManager::nextPic));
+    ActionManager::bindShortcut("Left", GET_SCRIPT(PicManager::prePic));
+    ActionManager::bindShortcut("K", GET_SCRIPT(PicManager::prePic));
+    ActionManager::bindShortcut("Up", GET_SCRIPT(PicManager::prePic));
+    ActionManager::bindShortcut("PgUp", GET_SCRIPT(PicManager::prePic));
+    ActionManager::bindShortcut("Q", GET_SCRIPT(MainWindow::close));
+    ActionManager::bindShortcut("Esc", GET_SCRIPT(MainWindow::close));
+    ActionManager::bindShortcut("Return", GET_SCRIPT(MainWindow::changeFullScreen));
+    ActionManager::bindShortcut("L", GET_SCRIPT(PicManager::rotateLeft));
+    ActionManager::bindShortcut("R", GET_SCRIPT(PicManager::rotateRight));
+    ActionManager::bindShortcut("H", GET_SCRIPT(PicManager::mirrorHorizontal));
+    ActionManager::bindShortcut("V", GET_SCRIPT(PicManager::mirrorVertical));
+    ActionManager::bindShortcut("I", GET_SCRIPT(MainWindow::showAttribute));
+    ActionManager::bindShortcut("S", GET_SCRIPT(MainWindow::setting));
+    ActionManager::bindShortcut("Space", GET_SCRIPT(PicManager::switchAnimationState));
+    ActionManager::bindShortcut("Pause", GET_SCRIPT(PicManager::switchAnimationState));
+    ActionManager::bindShortcut("F", GET_SCRIPT(PicManager::nextAnimationFrame));
+    ActionManager::bindShortcut("P", GET_SCRIPT(MainWindow::switchSlideShow));
+    ActionManager::bindShortcut(QKeySequence(QKeySequence::Copy).toString(),
+                           GET_SCRIPT(PicManager::copyToClipboard));
+    ActionManager::bindShortcut("Del", GET_SCRIPT(PicManager::deleteFileAsk));
+    ActionManager::bindShortcut("D", GET_SCRIPT(PicManager::deleteFileAsk));
+    ActionManager::bindShortcut("Ctrl+Del", GET_SCRIPT(PicManager::deleteFileNoAsk));
+    ActionManager::bindShortcut("Ctrl+D", GET_SCRIPT(PicManager::deleteFileNoAsk));
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
     QKeySequence keys(e->modifiers() + e->key());
     qDebug("key press: %s", qPrintable(keys.toString()));
-    if (shortCutMap.contains(keys.toString()))
-        shortCutMap.value(keys.toString())->run();
 
-//    switch(e->key()){
-//    case Qt::Key_Right:
-//    case Qt::Key_Down:
-//    case Qt::Key_PageDown:
-//    case Qt::Key_J:
-//        nextPic();
-//        e->accept();
-//        break;
-//    case Qt::Key_Left:
-//    case Qt::Key_Up:
-//    case Qt::Key_PageUp:
-//    case Qt::Key_K:
-//        prePic();
-//        e->accept();
-//        break;
-//    case Qt::Key_O:
-//    case Qt::Key_N:
-//        if(!slideTimer->isActive())
-//            openFile();
-//        e->accept();
-//        break;
-//    case Qt::Key_Escape:
-//    case Qt::Key_Q:
-//        close();        //! !
-//        e->accept();
-//        break;
-//    case Qt::Key_Equal:
-//    case Qt::Key_Plus:
-//        switch(e->modifiers()){
-//        case Qt::ShiftModifier:
-//            viewer->zoomIn(0.05);
-//            break;
-//        case Qt::ControlModifier:
-//            viewer->zoomIn(0.2);
-//            break;
-//        default:
-//            viewer->zoomIn(0.1);
-//            break;
-//        }
-//        e->accept();
-//        break;
-//    case Qt::Key_Minus:
-//    case Qt::Key_Underscore:
-//        switch(e->modifiers()){
-//        case Qt::ShiftModifier:
-//            viewer->zoomIn(-0.05);
-//            break;
-//        case Qt::ControlModifier:
-//            viewer->zoomIn(-0.2);
-//            break;
-//        default:
-//            viewer->zoomIn(-0.1);
-//            break;
-//        }
-//        e->accept();
-//        break;
-//    case Qt::Key_Return:
-//        changeFullScreen();
-//        e->accept();
-//        break;
-//    case Qt::Key_L:
-//        rotateLeft();
-//        e->accept();
-//        break;
-//    case Qt::Key_R:
-//        rotateRight();
-//        e->accept();
-//        break;
-//    case Qt::Key_H:
-//        mirrorHorizontal();
-//        e->accept();
-//        break;
-//    case Qt::Key_V:
-//        mirrorVertical();
-//        e->accept();
-//        break;
-//    case Qt::Key_I:
-//        showAttribute();
-//        e->accept();
-//        break;
-//    case Qt::Key_Delete:
-//    case Qt::Key_D:
-//        if(slideTimer->isActive())
-//            break;
-//        if(e->modifiers() == Qt::ControlModifier)
-//            deleteFileNoAsk();
-//        else
-//            deleteFileAsk();
-//        e->accept();
-//        break;
-//    case Qt::Key_C:
-//        if(e->modifiers() == Qt::ControlModifier){
-//            copyToClipboard();
-//            e->accept();
-//        }
-//        break;
-//    case Qt::Key_S:
-//        setting();
-//        e->accept();
-//        break;
-//    case Qt::Key_Space:
-//    case Qt::Key_Pause:
-//        switchAnimationState();
-//        e->accept();
-//        break;
-//    case Qt::Key_F:
-//        nextAnimationFrame();
-//        e->accept();
-//        break;
-//    case Qt::Key_P:
-//        switchSlideShow();
-//        e->accept();
-//        break;
-//    default:
-//        QWidget::keyPressEvent(e);
-//        break;
-//    }
+    if (slideTimer->isActive()) {
+        QString action = ActionManager::getMatchAction(keys.toString());
+        if (action == GET_SCRIPT(MainWindow::openFile)
+                || action == GET_SCRIPT(PicManager::deleteFileNoAsk)
+                || action == GET_SCRIPT(PicManager::deleteFileAsk) )
+            return;
+    }
+
+    if(ActionManager::run(keys.toString())) {
+        e->accept();
+        qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+        return;
+    }
+
+    switch(e->key()){
+    case Qt::Key_Equal:
+    case Qt::Key_Plus:
+        switch(e->modifiers()){
+        case Qt::ShiftModifier:
+            viewer->zoomIn(0.05);
+            break;
+        case Qt::ControlModifier:
+            viewer->zoomIn(0.2);
+            break;
+        default:
+            viewer->zoomIn(0.1);
+            break;
+        }
+        e->accept();
+        break;
+    case Qt::Key_Minus:
+    case Qt::Key_Underscore:
+        switch(e->modifiers()){
+        case Qt::ShiftModifier:
+            viewer->zoomIn(-0.05);
+            break;
+        case Qt::ControlModifier:
+            viewer->zoomIn(-0.2);
+            break;
+        default:
+            viewer->zoomIn(-0.1);
+            break;
+        }
+        e->accept();
+        break;
+    default:
+        QWidget::keyPressEvent(e);
+        break;
+    }
 
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents); //add:20121006
 }

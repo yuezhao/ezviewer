@@ -23,7 +23,6 @@
 
 #include <QMainWindow>
 #include <QTimer>
-#include <QMap>
 
 #include "picmanager.h"
 
@@ -33,7 +32,6 @@ class QLabel;
 class QMenu;
 class QAction;
 class QPushButton;
-class Shortcut;
 
 class MainWindow : public QMainWindow
 {
@@ -64,19 +62,6 @@ protected slots:
     void setting();
     void about();
 
-    void nextPic()          { viewer->nextPic(); }
-    void prePic()           { viewer->prePic(); }
-    void rotateLeft()       { viewer->rotateLeft(); }
-    void rotateRight()      { viewer->rotateRight(); }
-    void mirrorHorizontal() { viewer->mirrorHorizontal(); }
-    void mirrorVertical()   { viewer->mirrorVertical(); }
-    void switchAnimationState() { viewer->switchAnimationState(); }
-    void nextAnimationFrame()   { viewer->nextAnimationFrame(); }
-    void copyToClipboard()  { viewer->copyToClipboard(); }
-    void deleteFileAsk()    { viewer->deleteFileAsk(); }
-    void deleteFileNoAsk()  { viewer->deleteFileNoAsk(); }
-//    void closeWindow()      { close(); }
-
 private:
     void readSettings();
     void writeSettings();
@@ -84,7 +69,7 @@ private:
     void initContextMenu();
     void initButtomBar();
     void initSwitchFrame(); // init left and right float frame
-    void initShortCutTable();
+    void registerAllFunction();
 
     void changeTimerInterval(int sec) { slideTimer->setInterval(sec * 1000); }
 
@@ -94,9 +79,6 @@ private:
     QTimer *slideTimer;
     int slideInterval;//msec
     QRect attributeRect;
-
-    QList<Shortcut*> shortCutTable;
-    QMap<QString, Shortcut*> shortCutMap;
 
     FloatFrame *buttomFrame;
     FloatFrame *leftFrame;

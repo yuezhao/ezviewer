@@ -18,25 +18,48 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ***************************************************************************/
 
-#ifndef SHORTCUTSETTING_H
-#define SHORTCUTSETTING_H
+#ifndef ACTION_H
+#define ACTION_H
 
-#include <QWidget>
+#include <QKeySequence>
+#include <QString>
 
-namespace Ui {
-    class ShortcutSetting;
-}
 
-class ShortcutSetting : public QWidget
+class Action
 {
-    Q_OBJECT
-
 public:
-    explicit ShortcutSetting(QWidget *parent = 0);
-    ~ShortcutSetting();
+    Action(const QString &description) : mDescription(description) {}
 
-private:
-    Ui::ShortcutSetting *ui;
+    QString description() const { return mDescription; }
+
+    virtual bool run() = 0;
+
+protected:
+    QString mDescription;   // for use reading
 };
 
-#endif // SHORTCUTSETTING_H
+
+template <typename T, typename ReturnType = void>
+class ActionImpl : public Action
+{
+public:
+    typedef ReturnType (T::*FuncType)();
+
+    ActionImpl(const QString &description, T *obj, FuncType f)
+        : Action(description), object(obj), function(f)
+    {}
+
+    virtual bool run() {
+        if (object && function) {
+            (object->*function)();
+            return true;
+        }
+        return false;
+    }
+private:
+    T *object;
+    FuncType function;
+};
+
+
+#endif // ACTION_H

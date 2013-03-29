@@ -23,7 +23,6 @@
 #include "global.h"
 #include "commonsetting.h"
 #include "osrelated.h"
-#include "shortcutsetting.h"
 
 #include <QCheckBox>
 #include <QGridLayout>
@@ -34,7 +33,7 @@
 SettingsDialog::SettingsDialog(QWidget *parent)
     : QDialog(parent, Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint),
       commonSetting(new CommonSetting(this)),
-      shortcutSetting(new ShortcutSetting(this)),
+//      shortcutSetting(new ShortcutSetting(this)),
       willExit(false)
 {
     QTabWidget *tab = new QTabWidget(this);
@@ -58,7 +57,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
         future = QtConcurrent::run(this, &SettingsDialog::checkFileAssociation);
     }
 
-    tab->addTab(shortcutSetting, tr("Shortcut"));
+//    tab->addTab(shortcutSetting, tr("Shortcut"));
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(tab);
