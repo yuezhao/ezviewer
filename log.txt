@@ -83,3 +83,9 @@
 继续重构ImageWrapper和ImageFactory。一些bug的修正。
 新增：对于含多个帧的ico文件，按F键可以循环切换各个帧。
 优化：改用QtConcurrent::run实现设置对话框快速显示。
+
+2013.3.29-2013.3.31:
+优化：设置中文件关联增加一个“全选”和“全不选”功能。
+新增：自定义快捷键功能。
+裁剪：使用QXmlPutGet读写xml文件，以保存自定义快捷键配置。 (作者 Emanuel Eichhammer, 网址： http://www.workslikeclockwork.com/index.php/components/xml-classes-for-qt/ )
+修正：Config的析构函数没有调用的bug。

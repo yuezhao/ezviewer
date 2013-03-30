@@ -20,6 +20,8 @@
 
 #include "config.h"
 #include "osrelated.h"
+#include "actionmanager.h"
+#include "qxmlputget.h"
 
 #include <QFileSystemWatcher>
 #include <QImageReader>
@@ -32,11 +34,14 @@ const QSize Config::WindowMinSize(280, 200);
 const QSize Config::WindowFitSize(500, 400);
 const QString Config::BgGreen = "#C7EDCC";
 const QDir::SortFlags Config::DirSortFlag = QDir::Name | QDir::IgnoreCase;
+const int Config::AutoScrollInterval = 25;    //20
+const int Config::FileSizePrecision = 2;
 
 Config *Config::sInstance = NULL;
 
 
 const QString ConfigFileName = "EzViewer.ini";
+const QString ShortcutFileName = "shortcut.xml";
 
 const QString GeometryKey = "geometry";
 const QString StartupGroup = "Startup";
@@ -54,11 +59,17 @@ const QString CacheValueKey = AdvancedGroup + "/CacheValue";
 const QString FormGroup = "Form";
 const QString UseTitleBarKey = FormGroup + "/UseTitleBar";
 
+const QString RootKey = "root";
+const QString ShortcutKey = "shortcut";
+const QString KeySequenceKey = "keys";
+const QString ActionKey = "action";
+
 
 Config::Config()
-    : cfgWatcher(new QFileSystemWatcher(this))
+    : QObject(qApp), cfgWatcher(new QFileSystemWatcher(this))
 {
     initConfigValue();
+    loadAllShortcut();
 
     QList<QByteArray> list = QImageReader::supportedImageFormats();
     for(int i=0; i < list.size(); ++i)
@@ -67,7 +78,35 @@ Config::Config()
     mFormats = mFormatsList.join(" *.");
     mFormats.prepend("*.");
 
-    watchConfigFile();
+    watchConfigFile(ConfigFilePath());
+    watchConfigFile(ShortcutFilePath());
+}
+
+QString Config::ConfigFilePath()
+{
+    return qApp->applicationDirPath() + "/" + ConfigFileName;
+}
+
+QString Config::ShortcutFilePath()
+{
+    return qApp->applicationDirPath() + "/" + ShortcutFileName;
+}
+
+void Config::watchConfigFile(const QString &filePath)
+{
+    if(!QFile::exists(filePath))
+        QFile(filePath).open(QIODevice::WriteOnly); // create config file
+
+    cfgWatcher->addPath(filePath);
+    connect(cfgWatcher, SIGNAL(fileChanged(QString)), SLOT(fileChanged(QString)));
+}
+
+void Config::fileChanged(const QString &filePath)
+{
+    if (filePath == ConfigFilePath())
+        initConfigValue();
+    else if (filePath == ShortcutFilePath())
+        loadAllShortcut();
 }
 
 void Config::initConfigValue()
@@ -96,22 +135,7 @@ void Config::initConfigValue()
     emit configChanged();
 }
 
-void Config::watchConfigFile()
-{
-    if(!QFile::exists(ConfigFilePath()))
-        QFile(ConfigFilePath()).open(QIODevice::WriteOnly); // create config file
-
-    cfgWatcher->addPath(ConfigFilePath());
-    connect(cfgWatcher, SIGNAL(fileChanged(QString)), SLOT(initConfigValue()));
-}
-
-QString Config::ConfigFilePath()
-{
-    return qApp->applicationDirPath() + "/" + ConfigFileName;
-           //QDir::homePath()+"/Application Data/"+qApp->applicationName()+".ini"
-}
-
-void Config::clearConfig()
+void Config::restoreDefaultsConfig()
 {
     QSettings(ConfigFilePath(), QSettings::IniFormat).clear();
 }
@@ -165,3 +189,71 @@ void Config::setLastGeometry(const QByteArray &geometry)
 {
     setValue(GeometryKey, geometry);
 }
+
+
+
+void Config::addShortcut(const QString &keySequence, const QString &actionScript)
+{
+    if (ActionManager::bindShortcut(keySequence, actionScript))
+        saveAllShortcut();
+}
+
+void Config::addShortcut(const QStringList &keySequences, const QString &actionScript)
+{
+    ActionManager::bindShortcut(keySequences, actionScript);
+    saveAllShortcut();
+}
+
+void Config::removeShortcut(const QString &keySequence)
+{
+    if (ActionManager::unbindShortcut(keySequence))
+        saveAllShortcut();
+}
+
+void Config::removeShortcut(const QStringList &keySequences)
+{
+    ActionManager::unbindShortcut(keySequences);
+    saveAllShortcut();
+}
+
+void Config::saveAllShortcut()
+{
+    QXmlPut xmlPut(RootKey);
+
+    QMap<QString, QString> shortcuts = ActionManager::getAllShortcut();
+    QMap<QString, QString>::const_iterator it = shortcuts.constBegin();
+    while (it != shortcuts.constEnd()) {
+        xmlPut.descend(ShortcutKey);
+        xmlPut.putString(KeySequenceKey, it.key());
+        xmlPut.putString(ActionKey, it.value());
+        xmlPut.rise();
+        ++it;
+    }
+
+    xmlPut.save(ShortcutFilePath());
+}
+
+void Config::loadAllShortcut()
+{
+    ActionManager::unbindAllShortcut(); ///
+
+    QXmlGet xmlGet;
+    xmlGet.load(ShortcutFilePath());
+
+    QString key, action;
+    while (xmlGet.findNext(ShortcutKey)) {
+        xmlGet.descend();
+        if (xmlGet.find(KeySequenceKey))
+            key = xmlGet.getString();
+        if (xmlGet.find(ActionKey))
+            action = xmlGet.getString();
+        xmlGet.rise();
+
+        if (!key.isEmpty() && !action.isEmpty())
+            ActionManager::bindShortcut(key, action);
+
+        key.clear();
+        action.clear();
+    }
+}
+

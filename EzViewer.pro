@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = EzViewer
 
-QT += svg
+QT += svg xml
 DEPENDPATH += . tools ui
 INCLUDEPATH += . tools ui
 
@@ -15,6 +15,7 @@ HEADERS = global.h \
     settingdialog.h \
     ui/contralbar.h \
     ui/commonsetting.h \
+    ui/shortcutsetting.h \
     tools/floatframe.h \
     tools/fileassoc.h \
     tools/osrelated.h \
@@ -22,7 +23,7 @@ HEADERS = global.h \
     tools/tooltip.h \
     tools/action.h \
     tools/actionmanager.h \
-    ui/shortcutsetting.h
+    tools/qxmlputget.h
 
 SOURCES = main.cpp \
     config.cpp \
@@ -34,13 +35,14 @@ SOURCES = main.cpp \
     settingdialog.cpp \
     ui/contralbar.cpp \
     ui/commonsetting.cpp \
+    ui/shortcutsetting.cpp \
     tools/floatframe.cpp \
     tools/fileassoc.cpp \
     tools/osrelated.cpp \
     tools/toolkit.cpp \
     tools/tooltip.cpp \
     tools/actionmanager.cpp \
-    ui/shortcutsetting.cpp
+    tools/qxmlputget.cpp
 
 TRANSLATIONS += res/EzViewer_zh_CN.ts
 

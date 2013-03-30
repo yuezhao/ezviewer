@@ -24,14 +24,17 @@
 QMap<QString, Action*> ActionManager::actionMap;
 QMap<QString, QString> ActionManager::shortcutMap;
 
+ActionManager ActionManager::ensure_destructor_invoke_while_quit;
 
-void ActionManager::unregisterAllFunction()
+
+ActionManager::~ActionManager()
 {
     QMapIterator<QString, Action*> i(actionMap);
     while (i.hasNext()) {
         i.next();
         delete i.value();
     }
+    actionMap.clear();
 }
 
 bool ActionManager::bindShortcut(const QString &keySequence,
@@ -40,7 +43,6 @@ bool ActionManager::bindShortcut(const QString &keySequence,
     if (shortcutMap.contains(keySequence))
         return false;
     shortcutMap.insert(keySequence, actionScript);
-    /////////////////////
     return true;
 }
 
@@ -54,7 +56,6 @@ bool ActionManager::unbindShortcut(const QString &keySequence)
 {
     if (shortcutMap.contains(keySequence)) {
         shortcutMap.remove(keySequence);
-        //////////////////////
         return true;
     }
     return false;

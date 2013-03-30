@@ -27,8 +27,9 @@
 
 namespace Global {
 
-const QString Version = "3.0 beta";
-const QString BuildTime = "2012/2-2012/3";
+const QString Version = "3.0";
+const QString CopyRightYear = "2012/2-2012/3";
+const QString BuildTime = __TIME__ " " __DATE__;
 const QString WeiboSite = "www.weibo.com/huangezhao";
 const QString ProjectSite = "code.google.com/p/ezviewer";
 const QString AuthorBlog = "yuezhaoblog.blogspot.com";
@@ -44,14 +45,14 @@ static inline QString ProjectAuthor()
 static inline QString AboutInfo()
 {
     return QObject::tr("<p align='center'>%1 - A Simple Image Viewer</p>" \
-                       "<p>Version: &nbsp;&nbsp; v%2"
-                       "<br>Build Time: &nbsp;&nbsp; %3"  \
-                       "<br>CopyRight &#169; 2012 by %4</p>" \
-                       "<p>Contact Author: &nbsp;&nbsp; <a href='http://%5'>%5</a>" \
-                       "<br>Project Home: &nbsp;&nbsp; <a href='http://%6'>%6</a>" \
-                       "<br>Author's Blog: &nbsp;&nbsp; <a href='http://%7'>%7</a>" \
-                       "<br>Send Email: &nbsp;&nbsp; <a href='mailto:%8'>%8</a></p>" )
-            .arg(ProjectName()).arg(Version).arg(BuildTime)
+                       "<p>Version: v%2"
+                       "<br>Build Time: %3"  \
+                       "<br>CopyRight &#169; %4 by %5</p>" \
+                       "<p>Contact Author: <a href='http://%6'>%6</a>" \
+                       "<br>Project Home: <a href='http://%7'>%7</a>" \
+                       "<br>Author's Blog: <a href='http://%8'>%8</a>" \
+                       "<br>Send Email: <a href='mailto:%9'>%9</a></p>" )
+            .arg(ProjectName()).arg(Version).arg(BuildTime).arg(CopyRightYear)
             .arg(ProjectAuthor()).arg(WeiboSite).arg(ProjectSite)
             .arg(AuthorBlog).arg(AuthorEmail);
 }

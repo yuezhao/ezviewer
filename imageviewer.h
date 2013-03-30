@@ -33,27 +33,25 @@ class ImageViewer : public QWidget
 public:
     ImageViewer(QWidget *parent = 0);
 
-    //use repaint()
+    // use repaint()
     void loadImage(const QImage &im,
                    const QString &msg_if_no_image = QString::null);
-    //use update(), no change member like scale, shift
+    // use update(), no change member like scale, shift
     void updatePixmap(const QImage &image);
 
     bool hasPicture() const                 { return !image.isNull(); }
     bool noPicture()  const                 { return image.isNull(); }
     qreal currentScale() const              { return scale; }
-    const QColor & backgroundColor() const  { return bgColor; }
-    int AntialiasMode() const               { return antialiasMode; }
 
 signals:
     void siteChange(const QPoint &change);
 
 public slots:
     void changeAntialiasMode(int mode);
-    //! if color is invalid, means disabled custom background color.
+    // if color is invalid, means disabled custom background color.
     void changeBgColor(const QColor &color);
 
-    void zoomIn(qreal factor);
+    void zoomIn(double factor);
     void rotateLeft()       { rotatePixmap(true); }
     void rotateRight()      { rotatePixmap(false); }
     void mirrorHorizontal() { mirrored(true, false); }

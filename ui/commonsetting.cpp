@@ -145,7 +145,7 @@ void CommonSetting::cacheValueChanged(int val)
 
 void CommonSetting::restoreDefaults()
 {
-    Config::clearConfig();
+    Config::restoreDefaultsConfig();
     qApp->processEvents();  /// make sure the value of Config refreshed.
     initUIvalue();
 }

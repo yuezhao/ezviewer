@@ -22,6 +22,7 @@
 #include "ui_shortcutsetting.h"
 
 #include "actionmanager.h"
+#include "config.h"
 
 #include <QKeyEvent>
 #include <QLineEdit>
@@ -58,6 +59,7 @@ void ShortcutSetting::setupViews()
     label = ui->label;
 
     lineEdit = ui->lineEdit;
+    lineEdit->setContextMenuPolicy(Qt::NoContextMenu);
     QSize size = QSize(lineEdit->sizeHint().height(),
                        lineEdit->sizeHint().height());
 
@@ -128,7 +130,7 @@ void ShortcutSetting::removeShortcut()
     int currentRow = table->currentRow();
     if (currentRow >= 0) {
         QTableWidgetItem *item = table->item(currentRow, 1);
-        ActionManager::unbindShortcut(item->text().split(SplitFlag));
+        Config::removeShortcut(item->text().split(SplitFlag));
         item->setText(QString::null);
     }
 
@@ -147,13 +149,13 @@ void ShortcutSetting::addShortcut(const QString &keySequence)
         int currentRow = table->currentRow();
         if (currentRow >= 0) {
             QTableWidgetItem *item = table->item(currentRow, 1);
-            ActionManager::bindShortcut(keySequence, actionScripts.at(currentRow));
+            Config::addShortcut(keySequence, actionScripts.at(currentRow));
             item->setText(text);
         }
 
         lineEdit->setText(text);
         button->setVisible(true);
-    }
+    } // else ... // TODO: show which function bind with the key sequence, use tooltip.
 }
 
 bool ShortcutSetting::eventFilter(QObject *obj, QEvent *event)

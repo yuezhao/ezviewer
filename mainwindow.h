@@ -50,9 +50,10 @@ protected slots:
 
     bool eventFilter(QObject *obj, QEvent *event);
 
-    void moveWindow(const QPoint &change) { if(!isFullScreen()) move(pos() + change); }
+    void moveWindow(const QPoint &change)
+    { if(!isFullScreen()) move(pos() + change); }
     void applyConfig();
-    void imageChanged(const QString &title = QString::null);
+    void imageChanged(const QString &fileName = QString::null);
     void showContextMenu(const QPoint &pos);
 
     void openFile();
@@ -69,15 +70,16 @@ private:
     void initContextMenu();
     void initButtomBar();
     void initSwitchFrame(); // init left and right float frame
+
     void registerAllFunction();
 
     void changeTimerInterval(int sec) { slideTimer->setInterval(sec * 1000); }
 
 private:
     PicManager *viewer;
-    bool WasMaximized;
+    bool wasMaximized;
     QTimer *slideTimer;
-    int slideInterval;//msec
+    int slideInterval; // msec
     QRect attributeRect;
 
     FloatFrame *buttomFrame;

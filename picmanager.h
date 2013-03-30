@@ -44,6 +44,10 @@ public:
     bool  hasFile() const            { return !curPath.isEmpty(); }
     QString attribute() const { return curImage->attribute(); }
 
+    void setCacheNumber(int num) { ImageFactory::setCacheNumber(num); }
+    void setPreReadingEnabled(bool enabled)
+    { ImageFactory::setPreReadingEnabled(enabled); }
+
 signals:
     void imageChanged(const QString &fileName);
 

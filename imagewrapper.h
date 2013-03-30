@@ -100,7 +100,6 @@ private:
     uint    formatFlag;
     QMovie *movie;
     QSvgRenderer *svgRender;
-    //QIcon *icon;
 };
 
 

@@ -49,8 +49,8 @@ public:
     const static QSize WindowFitSize;
     const static QString BgGreen;
 
-    const static int AutoScrollInterval = 25;    //20
-    const static int FileSizePrecision = 2;
+    const static int AutoScrollInterval;
+    const static int FileSizePrecision;
     const static QDir::SortFlags DirSortFlag;
 
 
@@ -60,7 +60,7 @@ public:
     static void insertConfigWatcher(const QObject *receiver, const char *method);
     static void cancelConfigWatcher(const QObject *receiver);
 
-    static void clearConfig();
+    static void restoreDefaultsConfig();
 
     static QString supportFormats() { return instance()->mFormats; }
     static QStringList formatsList() { return instance()->mFormatsList; }
@@ -84,18 +84,30 @@ public:
     static void setCacheValue(int value);
     static void setLastGeometry(const QByteArray &geometry);
 
+
+    static void addShortcut(const QString &keySequence, const QString &actionScript);
+    static void addShortcut(const QStringList &keySequences, const QString &actionScript);
+    static void removeShortcut(const QString &keySequence);
+    static void removeShortcut(const QStringList &keySequences);
+
 private slots:
-    void initConfigValue();
+    void fileChanged(const QString &filePath);
 
 private:
     static QString ConfigFilePath();
+    static QString ShortcutFilePath();
     static void setValue(const QString &key, const QVariant &value);
+
+    void initConfigValue();
+    static void loadAllShortcut();
+    static void saveAllShortcut();
 
     static Config *instance();
 
 
     Config();
-    void watchConfigFile();
+
+    void watchConfigFile(const QString &filePath);
 
     static Config *sInstance;
 

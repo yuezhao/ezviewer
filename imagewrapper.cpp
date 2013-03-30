@@ -120,6 +120,7 @@ void ImageWrapper::load(const QString &filePath, bool isPreReading)
             image = QImage();
     }
 
+    qDebug("error string: %s", qPrintable(reader.errorString()));
 
     if (isPreReading) { // will re-create these when animation start.
         SafeDelete(movie);

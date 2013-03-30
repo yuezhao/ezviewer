@@ -50,8 +50,8 @@ private:
 
     CommonSetting *commonSetting;
     QGridLayout *gridLayout;
-    QPushButton *checkAllBotton;
-    QPushButton *uncheckAllBotton;
+    QPushButton *checkAllButton;
+    QPushButton *uncheckAllButton;
     ShortcutSetting *shortcutSetting;
 
     volatile bool willExit;

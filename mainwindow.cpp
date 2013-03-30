@@ -31,8 +31,8 @@
 
 #include <QtGui>
 
-#define SPLIT(x) &x, #x
 #define GET_SCRIPT(x) #x
+#define SPLIT(x) &x, #x
 
 const int SWITCH_FRAME_WIDTH = 90;
 const int BUTTOM_FRAME_HEIGHT = 60;
@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setCentralWidget(viewer);
     viewer->installEventFilter(this);
 
-    WasMaximized = false;
+    wasMaximized = false;
     slideInterval = 4000;
     slideTimer = new QTimer(this);
     slideTimer->setInterval(slideInterval);
@@ -74,7 +74,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    ActionManager::unregisterAllFunction();
     Config::cancelConfigWatcher(this);
     if(!isFullScreen())
         writeSettings();
@@ -93,14 +92,14 @@ void MainWindow::setting()
     dlg.exec();
 }
 
-void MainWindow::imageChanged(const QString &title)
+void MainWindow::imageChanged(const QString &fileName)
 {
-    bool hasFile = !title.isEmpty();
+    bool hasFile = !fileName.isEmpty();
     bool hasPicture = viewer->hasPicture();
 
-    setWindowTitle(hasFile ?
-                       QString("%1 - %2").arg(title).arg(Global::ProjectName())
-                     : Global::ProjectName());
+    setWindowTitle(hasFile
+                   ? QString("%1 - %2").arg(fileName).arg(Global::ProjectName())
+                   : Global::ProjectName());
     ToolTip::hideText();
     QWhatsThis::hideText();
 
@@ -145,8 +144,8 @@ void MainWindow::applyConfig()
     else
         viewer->changeBgColor(QColor());
     changeTimerInterval(Config::timerInterval());
-    ImageFactory::setCacheNumber(Config::cacheValue());
-    ImageFactory::setPreReadingEnabled(Config::enablePreReading());
+    viewer->setCacheNumber(Config::cacheValue());
+    viewer->setPreReadingEnabled(Config::enablePreReading());
 }
 
 void MainWindow::writeSettings()
@@ -195,12 +194,12 @@ void MainWindow::changeFullScreen()
 {
 //    setWindowState( windowState() ^ Qt::WindowFullScreen );
     if(isFullScreen()){
-        if(WasMaximized)
+        if(wasMaximized)
             showMaximized();
         else
             showNormal();
     }else{
-        WasMaximized = isMaximized();    //! only for windows?
+        wasMaximized = isMaximized();    //! only for windows?
         showFullScreen();
     }
 }
@@ -363,8 +362,6 @@ void MainWindow::initSwitchFrame()
 
 void MainWindow::initContextMenu()
 {
-//    QStyle *st = style();
-
     QAction *settingAction = new QAction(QIcon(":/Setting.png"),
                                          tr("&Setting"), this);
     connect(settingAction, SIGNAL(triggered()), SLOT(setting()));
@@ -376,16 +373,14 @@ void MainWindow::initContextMenu()
     connect(closeAction, SIGNAL(triggered()), SLOT(close()));
 
     openAction = new QAction(QIcon(":/Open.png"),
-//                st->standardIcon(QStyle::SP_DialogOpenButton),
+//                style()->standardIcon(QStyle::SP_DialogOpenButton),
                 tr("&Open"), this);
     connect(openAction, SIGNAL(triggered()), SLOT(openFile()));
 
-    slideAction = new QAction(QIcon(":/Play.png"),
-                              tr("Auto Play"), this);
+    slideAction = new QAction(QIcon(":/Play.png"), tr("Auto Play"), this);
     connect(slideAction, SIGNAL(triggered()), SLOT(switchSlideShow()));
 
-    rotateLeftAction = new QAction(QIcon(":/Undo.png"),
-                                   tr("Rotate &Left"), this);
+    rotateLeftAction = new QAction(QIcon(":/Undo.png"), tr("Rotate &Left"), this);
     connect(rotateLeftAction, SIGNAL(triggered()), viewer, SLOT(rotateLeft()));
 
     rotateRightAction = new QAction(QIcon(":/Redo.png"),
@@ -401,12 +396,11 @@ void MainWindow::initContextMenu()
     copyAction = new QAction(tr("&Copy to clipboard"), this);
     connect(copyAction, SIGNAL(triggered()), viewer, SLOT(copyToClipboard()));
 
-    attributeAction = new QAction(QIcon(":/Info.png"),
-                                  tr("&Property"), this);
+    attributeAction = new QAction(QIcon(":/Info.png"), tr("&Property"), this);
     connect(attributeAction, SIGNAL(triggered()), SLOT(showAttribute()));
 
     deleteAction = new QAction(QIcon(":/Delete.png"),
-//                st->standardIcon(QStyle::SP_DialogCloseButton),
+//                style()->standardIcon(QStyle::SP_DialogCloseButton),
                 tr("&Delete"), this);
     connect(deleteAction, SIGNAL(triggered()), viewer, SLOT(deleteFileAsk()));
 
@@ -475,12 +469,13 @@ void MainWindow::registerAllFunction()
                                     this, SPLIT(MainWindow::setting));
     ActionManager::registerFunction(tr("About"),
                                     this, SPLIT(MainWindow::about));
+    ActionManager::registerFunction(tr("Quit"),
+                                    this, SPLIT(MainWindow::close));
+
     ActionManager::registerFunction(tr("Next Picture"),
                                     viewer, SPLIT(PicManager::nextPic));
     ActionManager::registerFunction(tr("Previous Picture"),
                                     viewer, SPLIT(PicManager::prePic));
-    ActionManager::registerFunction(tr("Quit"),
-                                    this, SPLIT(MainWindow::close));
     ActionManager::registerFunction(tr("Rotate Left"),
                                     viewer, SPLIT(PicManager::rotateLeft));
     ActionManager::registerFunction(tr("Rotate Right"),
@@ -500,35 +495,23 @@ void MainWindow::registerAllFunction()
     ActionManager::registerFunction(tr("Delete Without Notification"),
                                     viewer, SPLIT(PicManager::deleteFileNoAsk));
 
-    ActionManager::bindShortcut("O", GET_SCRIPT(MainWindow::openFile));
-    ActionManager::bindShortcut("N", GET_SCRIPT(MainWindow::openFile));
-    ActionManager::bindShortcut("Right", GET_SCRIPT(PicManager::nextPic));
-    ActionManager::bindShortcut("J", GET_SCRIPT(PicManager::nextPic));
-    ActionManager::bindShortcut("Down", GET_SCRIPT(PicManager::nextPic));
-    ActionManager::bindShortcut("PgDown", GET_SCRIPT(PicManager::nextPic));
-    ActionManager::bindShortcut("Left", GET_SCRIPT(PicManager::prePic));
-    ActionManager::bindShortcut("K", GET_SCRIPT(PicManager::prePic));
-    ActionManager::bindShortcut("Up", GET_SCRIPT(PicManager::prePic));
-    ActionManager::bindShortcut("PgUp", GET_SCRIPT(PicManager::prePic));
-    ActionManager::bindShortcut("Q", GET_SCRIPT(MainWindow::close));
-    ActionManager::bindShortcut("Esc", GET_SCRIPT(MainWindow::close));
-    ActionManager::bindShortcut("Return", GET_SCRIPT(MainWindow::changeFullScreen));
-    ActionManager::bindShortcut("L", GET_SCRIPT(PicManager::rotateLeft));
-    ActionManager::bindShortcut("R", GET_SCRIPT(PicManager::rotateRight));
-    ActionManager::bindShortcut("H", GET_SCRIPT(PicManager::mirrorHorizontal));
-    ActionManager::bindShortcut("V", GET_SCRIPT(PicManager::mirrorVertical));
-    ActionManager::bindShortcut("I", GET_SCRIPT(MainWindow::showAttribute));
-    ActionManager::bindShortcut("S", GET_SCRIPT(MainWindow::setting));
-    ActionManager::bindShortcut("Space", GET_SCRIPT(PicManager::switchAnimationState));
-    ActionManager::bindShortcut("Pause", GET_SCRIPT(PicManager::switchAnimationState));
-    ActionManager::bindShortcut("F", GET_SCRIPT(PicManager::nextAnimationFrame));
-    ActionManager::bindShortcut("P", GET_SCRIPT(MainWindow::switchSlideShow));
-    ActionManager::bindShortcut(QKeySequence(QKeySequence::Copy).toString(),
-                           GET_SCRIPT(PicManager::copyToClipboard));
-    ActionManager::bindShortcut("Del", GET_SCRIPT(PicManager::deleteFileAsk));
-    ActionManager::bindShortcut("D", GET_SCRIPT(PicManager::deleteFileAsk));
-    ActionManager::bindShortcut("Ctrl+Del", GET_SCRIPT(PicManager::deleteFileNoAsk));
-    ActionManager::bindShortcut("Ctrl+D", GET_SCRIPT(PicManager::deleteFileNoAsk));
+    ActionManager::registerFunction(tr("Zoom In"),
+                                    viewer, SPLIT(PicManager::zoomIn), 0.1);
+    ActionManager::registerFunction(tr("Zoom In (Slow)"),
+                                    viewer, &PicManager::zoomIn,
+                                    "PicManager::zoomIn0.05", 0.05);
+    ActionManager::registerFunction(tr("Zoom in (Fast)"),
+                                    viewer, &PicManager::zoomIn,
+                                    "PicManager::zoomIn0.2", 0.2);
+    ActionManager::registerFunction(tr("Zoom Out"),
+                                    viewer, &PicManager::zoomIn,
+                                    "PicManager::zoomIn-0.1", -0.1);
+    ActionManager::registerFunction(tr("Zoom Out (Slow)"),
+                                    viewer, &PicManager::zoomIn,
+                                    "PicManager::zoomIn-0.05", -0.05);
+    ActionManager::registerFunction(tr("Zoom Out (Fast)"),
+                                    viewer, &PicManager::zoomIn,
+                                    "PicManager::zoomIn-0.2", -0.2);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e)
@@ -550,41 +533,6 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         return;
     }
 
-    switch(e->key()){
-    case Qt::Key_Equal:
-    case Qt::Key_Plus:
-        switch(e->modifiers()){
-        case Qt::ShiftModifier:
-            viewer->zoomIn(0.05);
-            break;
-        case Qt::ControlModifier:
-            viewer->zoomIn(0.2);
-            break;
-        default:
-            viewer->zoomIn(0.1);
-            break;
-        }
-        e->accept();
-        break;
-    case Qt::Key_Minus:
-    case Qt::Key_Underscore:
-        switch(e->modifiers()){
-        case Qt::ShiftModifier:
-            viewer->zoomIn(-0.05);
-            break;
-        case Qt::ControlModifier:
-            viewer->zoomIn(-0.2);
-            break;
-        default:
-            viewer->zoomIn(-0.1);
-            break;
-        }
-        e->accept();
-        break;
-    default:
-        QWidget::keyPressEvent(e);
-        break;
-    }
-
+    QWidget::keyPressEvent(e);
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents); //add:20121006
 }

@@ -17,12 +17,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "huangezhao@gmail.com"
             VALUE "FileDescription", "A Simple Picture Viewer"
-                        VALUE "FileVersion", "3.0.0.0 beta"
-            VALUE "LegalCopyright", "Copyright (C) 2012 huangezhao."
+                        VALUE "FileVersion", "3.0.0.0"
+            VALUE "LegalCopyright", "Copyright (C) 2013 huangezhao."
             VALUE "InternalName", "EzViewer"
             VALUE "OriginalFilename", "EzViewer.exe"
             VALUE "ProductName", "EzViewer"
-                        VALUE "ProductVersion", "3.0.0.0 beta"
+                        VALUE "ProductVersion", "3.0.0.0"
         END
     END
     BLOCK "VarFileInfo"

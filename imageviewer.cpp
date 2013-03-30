@@ -146,7 +146,7 @@ void ImageViewer::initToFitWidget()//no change the value of rotate
     shift = Config::OriginPoint;
 }
 
-void ImageViewer::zoomIn(qreal factor)
+void ImageViewer::zoomIn(double factor)
 {
     if(noPicture()) return;
 
