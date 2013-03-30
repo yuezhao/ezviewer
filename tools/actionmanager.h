@@ -22,6 +22,7 @@
 #define ACTIONMANAGER_H
 
 #include <QMap>
+#include <QStringList>
 
 #include "action.h"
 
@@ -32,13 +33,19 @@ public:
     template <typename PT, typename T, typename ReturnType>
     static void registerFunction(const QString &description, PT *obj,
                           ReturnType (T::*function)(), const QString &script);
-
     static void unregisterAllFunction();
 
     static bool bindShortcut(const QString &keySequence, const QString &actionScript);
+    static void bindShortcut(const QStringList &keySequences, const QString &actionScript);
+    static bool unbindShortcut(const QString &keySequence);
+    static void unbindShortcut(const QStringList &keySequences);
 
-    // return: action script text.
+    // return: action description list, and if actionScript is not NULL, the action script list will be set.
+    static QStringList getAllActions(QStringList *actionScript = NULL);
+    // return: action script text that this key sequence bind with.
     static QString getMatchAction(const QString &keySequence);
+    // return: all key sequence list that bind with the action script.
+    static QStringList getBindShortcuts(const QString &actionScript);
 
     static bool run(const QString &keySequence);
 
@@ -62,5 +69,6 @@ inline QString ActionManager::getMatchAction(const QString &keySequence)
     return shortcutMap.contains(keySequence) ? shortcutMap.value(keySequence)
                                              : QString::null;
 }
+
 
 #endif // ACTIONMANAGER_H

@@ -439,6 +439,11 @@
         <translation>属性</translation>
     </message>
     <message>
+        <location filename="../mainwindow.cpp" line="375"/>
+        <source>&amp;Quit</source>
+        <translation>退出(&amp;Q)</translation>
+    </message>
+    <message>
         <location filename="../mainwindow.cpp" line="380"/>
         <source>&amp;Open</source>
         <translation>打开(&amp;O)</translation>
@@ -467,10 +472,8 @@
         <translation>关于(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="375"/>
-        <location filename="../mainwindow.cpp" line="482"/>
         <source>Close</source>
-        <translation>关闭</translation>
+        <translation type="obsolete">关闭</translation>
     </message>
     <message>
         <source>Minimize</source>
@@ -517,14 +520,18 @@
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="468"/>
         <source>Switch Full Screen</source>
+        <translation type="obsolete">切换全屏</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="468"/>
+        <source>Full Screen</source>
         <translation>切换全屏</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="470"/>
         <source>Auto Play/Stop</source>
-        <translation>自动播放/停止</translation>
+        <translation>自动放映/停止</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="474"/>
@@ -545,6 +552,11 @@
         <location filename="../mainwindow.cpp" line="480"/>
         <source>Previous Picture</source>
         <translation>上一张图片</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="482"/>
+        <source>Quit</source>
+        <translation>退出</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="484"/>
@@ -568,13 +580,21 @@
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="492"/>
-        <source>Animation Play/Stop</source>
+        <source>Animation Play/Pause</source>
         <translation>动画播放/暂停</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="494"/>
+        <source>Frame Step</source>
+        <translation>帧步进</translation>
+    </message>
+    <message>
+        <source>Animation Play/Stop</source>
+        <translation type="obsolete">动画播放/暂停</translation>
+    </message>
+    <message>
         <source>Step/Frame</source>
-        <translation>步进/下一帧</translation>
+        <translation type="obsolete">步进/下一帧</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="496"/>
@@ -1126,14 +1146,37 @@ You can help to improve %1 by email the picture to %2</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="../settingdialog.cpp" line="40"/>
+        <location filename="../settingdialog.cpp" line="41"/>
         <source>Common</source>
         <translation>常规</translation>
     </message>
     <message>
-        <location filename="../settingdialog.cpp" line="55"/>
+        <location filename="../settingdialog.cpp" line="56"/>
         <source>File Association</source>
         <translation>文件关联</translation>
+    </message>
+    <message>
+        <location filename="../settingdialog.cpp" line="61"/>
+        <source>Shortcut</source>
+        <translation>快捷键</translation>
+    </message>
+</context>
+<context>
+    <name>ShortcutSetting</name>
+    <message>
+        <location filename="../ui/shortcutsetting.ui" line="14"/>
+        <source>Form</source>
+        <translation>窗体</translation>
+    </message>
+    <message>
+        <location filename="../ui/shortcutsetting.cpp" line="39"/>
+        <source>Function</source>
+        <translation>功能</translation>
+    </message>
+    <message>
+        <location filename="../ui/shortcutsetting.cpp" line="39"/>
+        <source>Key Sequence</source>
+        <translation>按键序列</translation>
     </message>
 </context>
 </TS>

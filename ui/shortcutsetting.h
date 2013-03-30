@@ -18,60 +18,52 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ***************************************************************************/
 
-#ifndef COMMONSETTING_H
-#define COMMONSETTING_H
+#ifndef SHORTCUTSETTING_H
+#define SHORTCUTSETTING_H
 
 #include <QWidget>
 
-
 namespace Ui {
-    class CommonSetting;
+    class ShortcutSetting;
 }
 
-class QCheckBox;
-class QComboBox;
-class QLineEdit;
+class QTableWidget;
 class QLabel;
-class QSpinBox;
-class QSlider;
+class QLineEdit;
 class QPushButton;
-class CommonSetting : public QWidget
+class ShortcutSetting : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit CommonSetting(QWidget *parent = 0);
-    ~CommonSetting();
+    explicit ShortcutSetting(QWidget *parent = 0);
+    ~ShortcutSetting();
 
 signals:
     void clickClose();
 
-protected slots:
-    void initUIvalue();
-    void restoreDefaults();
+private slots:
+    void currentItemChanged(int currentRow, int currentColumn,
+                            int previousRow, int previousColumn);
 
-    void showDialogChange(int state);
-    void antialiasModeChange(int index);
-    void bgColorEnable(int state);
-    void setColor();
-    void timerIntervalChange(int val);
-    void preReadingChanged(int state);
-    void cacheValueChanged(int val);
+    void removeShortcut();
+
+    bool eventFilter(QObject *obj, QEvent *event);
 
 private:
-    Ui::CommonSetting *ui;
+    void setupViews();
+    void setupData();
 
-    QCheckBox *showDialogCheckBox;
-    QComboBox *antialiasModeCombo;
-    QSpinBox  *timerSpinBox;
-    QPushButton *colorButton;
-    QLineEdit *colorEdit;
-    QCheckBox *colorCheckBox;
-    QLabel    *colorLabel;
-    QCheckBox *preReadingCheckBox;
-    QLabel    *cacheValueLabel;
-    QSlider   *cacheValueSlider;
+    void addShortcut(const QString &keySequence);
+
+    Ui::ShortcutSetting *ui;
+
+    QTableWidget *table;
+    QLabel *label;
+    QLineEdit *lineEdit;
+    QPushButton *button;
+
+    QStringList actionScripts;
 };
 
-
-#endif // COMMONSETTING_H
+#endif // SHORTCUTSETTING_H

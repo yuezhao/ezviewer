@@ -42,7 +42,6 @@ CommonSetting::CommonSetting(QWidget *parent) :
     colorCheckBox = ui->colorCheckBox;
     colorLabel = ui->colorLabel;
     preReadingCheckBox = ui->preReadingCheckBox;
-    buttonBox = ui->buttonBox;
     cacheValueLabel = ui->cacheValueLabel;
     cacheValueSlider = ui->cacheValueSlider;
 
@@ -62,6 +61,7 @@ CommonSetting::CommonSetting(QWidget *parent) :
     connect(cacheValueSlider, SIGNAL(valueChanged(int)),
             SLOT(cacheValueChanged(int)));
 
+    QDialogButtonBox *buttonBox = ui->buttonBox;
     QPushButton *button = buttonBox->addButton(QDialogButtonBox::Close);
     button->setDefault(true);
     connect(button, SIGNAL(clicked()), SIGNAL(clickClose()));

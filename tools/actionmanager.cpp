@@ -40,7 +40,57 @@ bool ActionManager::bindShortcut(const QString &keySequence,
     if (shortcutMap.contains(keySequence))
         return false;
     shortcutMap.insert(keySequence, actionScript);
+    /////////////////////
     return true;
+}
+
+void ActionManager::bindShortcut(const QStringList &keySequences, const QString &actionScript)
+{
+    foreach (QString key, keySequences)
+        bindShortcut(key, actionScript);
+}
+
+bool ActionManager::unbindShortcut(const QString &keySequence)
+{
+    if (shortcutMap.contains(keySequence)) {
+        shortcutMap.remove(keySequence);
+        //////////////////////
+        return true;
+    }
+    return false;
+}
+
+void ActionManager::unbindShortcut(const QStringList &keySequences)
+{
+    foreach (QString key, keySequences)
+        unbindShortcut(key);
+}
+
+QStringList ActionManager::getAllActions(QStringList *actionScript)
+{
+    QStringList descriptions;
+    if (actionScript)
+        actionScript->clear();
+    QMap<QString, Action*>::const_iterator it = actionMap.constBegin();
+    while (it != actionMap.constEnd()) {
+        descriptions.append(it.value()->description());
+        if (actionScript)
+            actionScript->append(it.key());
+        ++it;
+    }
+    return descriptions;
+}
+
+QStringList ActionManager::getBindShortcuts(const QString &actionScript)
+{
+    QStringList list;
+    QMap<QString, QString>::const_iterator it = shortcutMap.constBegin();
+    while (it != shortcutMap.constEnd()) {
+        if (it.value() == actionScript)
+            list.append(it.key());
+        ++it;
+    }
+    return list;
 }
 
 bool ActionManager::run(const QString &keySequence)
@@ -52,3 +102,4 @@ bool ActionManager::run(const QString &keySequence)
     }
     return false;
 }
+

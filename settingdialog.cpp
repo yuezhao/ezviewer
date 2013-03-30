@@ -23,9 +23,11 @@
 #include "global.h"
 #include "commonsetting.h"
 #include "osrelated.h"
+#include "shortcutsetting.h"
 
 #include <QCheckBox>
 #include <QGridLayout>
+#include <QPushButton>
 #include <QTabWidget>
 #include <QtConcurrentRun>
 
@@ -33,12 +35,31 @@
 SettingsDialog::SettingsDialog(QWidget *parent)
     : QDialog(parent, Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint),
       commonSetting(new CommonSetting(this)),
-//      shortcutSetting(new ShortcutSetting(this)),
+      shortcutSetting(new ShortcutSetting(this)),
       willExit(false)
 {
     QTabWidget *tab = new QTabWidget(this);
     tab->addTab(commonSetting, tr("Common"));
 
+    QWidget *assocWidget = creatAssociationWidget();
+    if (assocWidget)
+        tab->addTab(assocWidget, tr("File Association"));
+
+    tab->addTab(shortcutSetting, tr("Keyboard Shortcuts"));
+
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(tab);
+    setLayout(layout);
+
+    setWindowTitle(Global::ProjectName());
+
+    connect(commonSetting, SIGNAL(clickClose()), SLOT(close()));
+    connect(shortcutSetting, SIGNAL(clickClose()), SLOT(close()));
+}
+
+QWidget *SettingsDialog::creatAssociationWidget()
+{
+    QWidget *assocWidget = NULL;
     if(OSRelated::isSupportAssociation()){
         gridLayout = new QGridLayout;
 
@@ -50,25 +71,35 @@ SettingsDialog::SettingsDialog(QWidget *parent)
             gridLayout->addWidget(cb, i / CountOfColumn, i % CountOfColumn);
         }
 
-        QWidget *assocWidget = new QWidget(this);
-        assocWidget->setLayout(gridLayout);
-        tab->addTab(assocWidget, tr("File Association"));
 
-        future = QtConcurrent::run(this, &SettingsDialog::checkFileAssociation);
+        QHBoxLayout *horizontalLayout = new QHBoxLayout();
+        QSpacerItem *horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        horizontalLayout->addItem(horizontalSpacer);
+
+        checkAllBotton = new QPushButton(tr("Check All"), this);
+        checkAllBotton->setFocusPolicy(Qt::NoFocus);
+        connect(checkAllBotton, SIGNAL(clicked()), SLOT(switchAllAssociation()));
+        horizontalLayout->addWidget(checkAllBotton);
+
+        uncheckAllBotton = new QPushButton(tr("Uncheck All"), this);
+        uncheckAllBotton->setFocusPolicy(Qt::NoFocus);
+        connect(uncheckAllBotton, SIGNAL(clicked()), SLOT(switchAllAssociation()));
+        horizontalLayout->addWidget(uncheckAllBotton);
+
+        gridLayout->addLayout(horizontalLayout, gridLayout->rowCount(),
+                              0, 1, CountOfColumn, Qt::AlignBottom);
+
+
+        assocWidget = new QWidget(this);
+        assocWidget->setLayout(gridLayout);
+
+        future = QtConcurrent::run(this, &SettingsDialog::reviewFileAssociation);
     }
 
-//    tab->addTab(shortcutSetting, tr("Shortcut"));
-
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->addWidget(tab);
-    setLayout(layout);
-
-    setWindowTitle(Global::ProjectName());
-
-    connect(commonSetting, SIGNAL(clickClose()), SLOT(close()));
+    return assocWidget;
 }
 
-void SettingsDialog::checkFileAssociation()
+void SettingsDialog::reviewFileAssociation()
 {
     int size = gridLayout->count();
     QCheckBox *cb;
@@ -83,6 +114,28 @@ void SettingsDialog::checkFileAssociation()
             connect(cb, SIGNAL(toggled(bool)), SLOT(changeAssociation(bool)));
         }
     }
+
+    reviewCheckAllButtonState();
+}
+
+void SettingsDialog::reviewCheckAllButtonState()
+{
+    int size = gridLayout->count();
+    QCheckBox *cb;
+    bool isAllChecked = true;
+    bool isAllUnchecked = true;
+    for(int i = 0; i < size; ++i){
+        cb = dynamic_cast<QCheckBox*>(gridLayout->itemAt(i)->widget());
+        if (cb) {
+            if (cb->isChecked())
+                isAllUnchecked = false;
+            else
+                isAllChecked = false;
+        }
+    }
+
+    checkAllBotton->setEnabled(!isAllChecked);
+    uncheckAllBotton->setEnabled(!isAllUnchecked);
 }
 
 void SettingsDialog::changeAssociation(bool enabled)
@@ -91,13 +144,49 @@ void SettingsDialog::changeAssociation(bool enabled)
     if(cb == NULL) return;
 
     QString ext(cb->text());
-    if(OSRelated::isSupportAssociation()){
-        if(enabled){
-            OSRelated::setAssociation(ext);
-        }else{
-            OSRelated::clearAssociation(ext);
+    if(enabled){
+        OSRelated::setAssociation(ext);
+    }else{
+        OSRelated::clearAssociation(ext);
+    }
+
+    reviewCheckAllButtonState();
+}
+
+void SettingsDialog::switchAllAssociation()
+{
+    QPushButton *button = dynamic_cast<QPushButton*>(sender());
+    if (button == checkAllBotton) {
+        future = QtConcurrent::run(this, &SettingsDialog::changeAllAssociation, true);
+    } else if (button == uncheckAllBotton) {
+        future = QtConcurrent::run(this, &SettingsDialog::changeAllAssociation, false);
+    }
+
+    while (!future.isFinished())
+        qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+}
+
+void SettingsDialog::changeAllAssociation(bool checked)
+{
+    int size = gridLayout->count();
+    QCheckBox *cb;
+    for(int i = 0; i < size; ++i){
+        cb = dynamic_cast<QCheckBox*>(gridLayout->itemAt(i)->widget());
+        if (cb) {
+            if (cb->isChecked() == checked)
+                continue;
+
+            QString ext(cb->text());
+            if(checked){
+                OSRelated::setAssociation(ext);
+            }else{
+                OSRelated::clearAssociation(ext);
+            }
+            cb->setChecked(OSRelated::checkAssociation(cb->text()));
         }
     }
+
+    reviewCheckAllButtonState();
 }
 
 void SettingsDialog::done(int r)

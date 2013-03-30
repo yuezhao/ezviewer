@@ -372,7 +372,7 @@ void MainWindow::initContextMenu()
     QAction *aboutAction = new QAction(tr("&About"), this);
     connect(aboutAction, SIGNAL(triggered()), SLOT(about()));
 
-    QAction *closeAction = new QAction(tr("Close"), this);
+    QAction *closeAction = new QAction(tr("&Quit"), this);
     connect(closeAction, SIGNAL(triggered()), SLOT(close()));
 
     openAction = new QAction(QIcon(":/Open.png"),
@@ -465,7 +465,7 @@ void MainWindow::registerAllFunction()
 {
     ActionManager::registerFunction(tr("Open"),
                                     this, SPLIT(MainWindow::openFile));
-    ActionManager::registerFunction(tr("Switch Full Screen"),
+    ActionManager::registerFunction(tr("Full Screen"),
                                     this, SPLIT(MainWindow::changeFullScreen));
     ActionManager::registerFunction(tr("Auto Play/Stop"),
                                     this, SPLIT(MainWindow::switchSlideShow));
@@ -479,7 +479,7 @@ void MainWindow::registerAllFunction()
                                     viewer, SPLIT(PicManager::nextPic));
     ActionManager::registerFunction(tr("Previous Picture"),
                                     viewer, SPLIT(PicManager::prePic));
-    ActionManager::registerFunction(tr("Close"),
+    ActionManager::registerFunction(tr("Quit"),
                                     this, SPLIT(MainWindow::close));
     ActionManager::registerFunction(tr("Rotate Left"),
                                     viewer, SPLIT(PicManager::rotateLeft));
@@ -489,9 +489,9 @@ void MainWindow::registerAllFunction()
                                     viewer, SPLIT(PicManager::mirrorHorizontal));
     ActionManager::registerFunction(tr("Mirrored Vertical"),
                                     viewer, SPLIT(PicManager::mirrorVertical));
-    ActionManager::registerFunction(tr("Animation Play/Stop"),
+    ActionManager::registerFunction(tr("Animation Play/Pause"),
                                     viewer, SPLIT(PicManager::switchAnimationState));
-    ActionManager::registerFunction(tr("Step/Frame"),
+    ActionManager::registerFunction(tr("Frame Step"),
                                     viewer, SPLIT(PicManager::nextAnimationFrame));
     ActionManager::registerFunction(tr("Copy to clipboard"),
                                     viewer, SPLIT(PicManager::copyToClipboard));

@@ -27,6 +27,7 @@
 
 class QGridLayout;
 class CommonSetting;
+class ShortcutSetting;
 
 class SettingsDialog : public QDialog {
     Q_OBJECT
@@ -38,12 +39,20 @@ public slots:
 
 private slots:
     void changeAssociation(bool enabled);
+    void switchAllAssociation();
 
 private:
-    void checkFileAssociation();
+    QWidget *creatAssociationWidget();
+
+    void reviewFileAssociation();
+    void reviewCheckAllButtonState();
+    void changeAllAssociation(bool checked);
 
     CommonSetting *commonSetting;
     QGridLayout *gridLayout;
+    QPushButton *checkAllBotton;
+    QPushButton *uncheckAllBotton;
+    ShortcutSetting *shortcutSetting;
 
     volatile bool willExit;
     QFuture<void> future;

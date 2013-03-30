@@ -15,5 +15,6 @@
         <file>Setting.png</file>
         <file>Stop.png</file>
         <file>Undo.png</file>
+        <file>Delete2.png</file>
     </qresource>
 </RCC>
