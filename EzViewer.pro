@@ -56,7 +56,9 @@ win32:RC_FILE += win.rc
 
 OTHER_FILES += $$RC_FILE \
     log.txt \
-    TODO.txt
+    TODO.txt \
+    ReadMe.txt \
+    COPYING
 
 
 

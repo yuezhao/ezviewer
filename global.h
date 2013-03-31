@@ -29,7 +29,7 @@ namespace Global {
 
 const QString Version = "3.0";
 const QString CopyRightYear = "2012/2-2012/3";
-const QString BuildTime = __TIME__ " " __DATE__;
+const QString BuildTime = __TIME__ ", " __DATE__;
 const QString WeiboSite = "www.weibo.com/huangezhao";
 const QString ProjectSite = "code.google.com/p/ezviewer";
 const QString AuthorBlog = "yuezhaoblog.blogspot.com";
