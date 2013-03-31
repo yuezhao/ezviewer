@@ -1,43 +1,54 @@
-Ez¿´Í¼
+Ezçœ‹å›¾
 =======
-×÷Õß
-	ÈıÉúÊ¯
 
-EZ¿´Í¼ÊÇÒ»¸ö¼òµ¥´¿´âµÄÍ¼Æ¬ä¯ÀÀÆ÷£¬Ê¹ÓÃQt4±àĞ´£¬¿ªÔ´¿çÆ½Ì¨£¬¹ú¼Ê»¯Ö§³Ö¡£
-Ä¬ÈÏÖ§³Öjpg, bmp, gif(°üÀ¨¶¯»­), png, jpeg, ico, svg(°üÀ¨¶¯»­),  mng(°üÀ¨¶¯»­),
-webp, psd(²¿·ÖÖ§³Ö), pbm, pgm, ppm, tif, tiff, xbm, xpmµÈ¶àÖÖÍ¼Æ¬¸ñÊ½¡£
+	EZçœ‹å›¾æ˜¯ä¸€ä¸ªç®€å•çº¯ç²¹çš„å›¾ç‰‡æµè§ˆå™¨ï¼Œä½¿ç”¨Qt4ç¼–å†™ï¼Œå¼€æºè·¨å¹³å°ï¼Œå›½é™…åŒ–æ”¯æŒã€‚
+	é»˜è®¤æ”¯æŒjpg, bmp, gif(åŒ…æ‹¬åŠ¨ç”»), png, jpeg, ico, svg(åŒ…æ‹¬åŠ¨ç”»),  mng(åŒ…æ‹¬åŠ¨ç”»), webp, psd(éƒ¨åˆ†æ”¯æŒ), pbm, pgm, ppm, tif, tiff, xbm, xpmç­‰å¤šç§å›¾ç‰‡æ ¼å¼ã€‚
 
-ÌØµã£º
-	²ÉÓÃÍ³Ò»»æÍ¼»úÖÆ£¬¿ÉÒÔĞı×ª¡¢¾µÏñ¡¢Ëõ·Å¡¢ÍÏ¶¯Í¼Æ¬£¬°üÀ¨¶¯Ì¬Í¼Æ¬(gif, mng, svg);
-	Í¼Æ¬Ëõ·ÅÏÔÊ¾Ê±Ê¹ÓÃ¿¹¾â³İ¹¦ÄÜ;
-	Í¼Æ¬Ëõ·Å´óÓÚ´°ÌåÊ±£¬Êó±ê×ó¼ü¿ìËÙÍÏ¶¯Í¼Æ¬£¬ÊÍ·ÅÊó±êºó»áÒÀ¹ßĞÔ»¬¶¯;
-	Ô¤¶ÁÏÂÒ»ÕÅÍ¼Æ¬£¬ÒÔÌá¸ßÍ¼Æ¬ÇĞ»»Ê±µÄÔØÈëËÙ¶È;
-	»º´æä¯ÀÀ¹ıµÄÍ¼Æ¬£¬ÒÔ¼Ó¿ì·´Ïòä¯ÀÀÊ±µÄËÙ¶È;
-	Í¼Æ¬ÊôĞÔÖĞÖ§³Ö²é¿´ExifĞÅÏ¢;
-	¶ÔÓÚº¬¶à¸öÖ¡µÄÍ¼Æ¬(gif, mng, ico, mng, svgµÈ)£¬°´F¼ü¿ÉÒÔÑ­»·ÇĞ»»¸÷¸öÖ¡;
-	Êó±êÍ£ÔÚ´°¿ÚÓÒÉÏ½ÇÒ»¶¨Ê±¼äºóÏÔÊ¾Í¼Æ¬ÊôĞÔ(ÊÊºÏÈ«ÆÁ¹Û¿´Ê±²é¿´ÊôĞÔ);
-	¿ÉÖ±½Ó´Ó×ÊÔ´¹ÜÀíÆ÷ÍÏ¶¯Ò»¸ö»ò¶à¸öÍ¼Æ¬µ½¿´Í¼Æ÷;
-	×Ô¶¯·ÅÓ³/ÔİÍ£¹¦ÄÜ;
-	Ö§³Ö¸´ÖÆÍ¼Æ¬ÄÚÈİµ½¼ôÌù°å;
-	Ö§³Ö×Ô¶¨Òå¿ì½İ¼ü¡£
+ä½œè€…
+--------------------
+	ä¸‰ç”ŸçŸ³ (huangezhao@gmail.com)
 
-EzViewer is a simple image viewer, programmed by Qt4.
-It's open-source and cross-platform software, with full international support.
-It supports jpg, bmp, gif, png, jpeg, ico, svg, webp, psd(partly),
-pbm, pgm, ppm, tif, tiff, xbm, xpm, and many other image formats.
+ä¸‹è½½å¯æ‰§è¡Œæ–‡ä»¶
+    [v3.0æ­£å¼ç‰ˆï¼Œ2013/3/31](http://goo.gl/n8hvO)
+    
+ç‰¹ç‚¹ï¼š
+--------------------
+	* é‡‡ç”¨ç»Ÿä¸€ç»˜å›¾æœºåˆ¶ï¼Œå¯ä»¥æ—‹è½¬ã€é•œåƒã€ç¼©æ”¾ã€æ‹–åŠ¨å›¾ç‰‡ï¼ŒåŒ…æ‹¬åŠ¨æ€å›¾ç‰‡(gif, mng, svg);
+	* å›¾ç‰‡ç¼©æ”¾æ˜¾ç¤ºæ—¶ä½¿ç”¨æŠ—é”¯é½¿åŠŸèƒ½;
+	* å›¾ç‰‡ç¼©æ”¾å¤§äºçª—ä½“æ—¶ï¼Œé¼ æ ‡å·¦é”®å¿«é€Ÿæ‹–åŠ¨å›¾ç‰‡ï¼Œé‡Šæ”¾é¼ æ ‡åä¼šä¾æƒ¯æ€§æ»‘åŠ¨;
+	* é¢„è¯»ä¸‹ä¸€å¼ å›¾ç‰‡ï¼Œä»¥æé«˜å›¾ç‰‡åˆ‡æ¢æ—¶çš„è½½å…¥é€Ÿåº¦;
+	* ç¼“å­˜æµè§ˆè¿‡çš„å›¾ç‰‡ï¼Œä»¥åŠ å¿«åå‘æµè§ˆæ—¶çš„é€Ÿåº¦;
+	* å›¾ç‰‡å±æ€§ä¸­æ”¯æŒæŸ¥çœ‹Exifä¿¡æ¯;
+	* å¯¹äºå«å¤šä¸ªå¸§çš„å›¾ç‰‡(gif, mng, ico, mng, svgç­‰)ï¼ŒæŒ‰Fé”®å¯ä»¥å¾ªç¯åˆ‡æ¢å„ä¸ªå¸§;
+	* é¼ æ ‡åœåœ¨çª—å£å³ä¸Šè§’ä¸€å®šæ—¶é—´åæ˜¾ç¤ºå›¾ç‰‡å±æ€§(é€‚åˆå…¨å±è§‚çœ‹æ—¶æŸ¥çœ‹å±æ€§);
+	* å¯ç›´æ¥ä»èµ„æºç®¡ç†å™¨æ‹–åŠ¨ä¸€ä¸ªæˆ–å¤šä¸ªå›¾ç‰‡åˆ°çœ‹å›¾å™¨;
+	* è‡ªåŠ¨æ”¾æ˜ /æš‚åœåŠŸèƒ½;
+	* æ”¯æŒå¤åˆ¶å›¾ç‰‡å†…å®¹åˆ°å‰ªè´´æ¿;
+	* æ”¯æŒè‡ªå®šä¹‰å¿«æ·é”®ã€‚
 
+    EzViewer is a simple image viewer, programmed by Qt4.
+    It's open-source and cross-platform software, with full international support.
+    It supports jpg, bmp, gif, png, jpeg, ico, svg, webp, psd(partly), pbm, pgm, ppm, tif, tiff, xbm, xpm, and many other image formats.
+
+Author
+--------------------
+	Yuezhao Huang (huangezhao@gmail.com)
+
+Get the binary
+    [v3.0ï¼Œ2013/3/31](http://goo.gl/n8hvO)
+    
 Features:
-	Unified display mechanism, support rotate, mirror, zoom in/out, drag the image, including animation image.
-	Use anti-aliasing when zoom in/out the pictures.
-	When image scaling larger than the form, the picture will sliding inertially when
-the left mouse button quickly drag a picture and release then.
-	Pre-reading next picture, for improving file change performance.
-	Cache image has viewed, to improve the performance of browser back.
-	Support Exif informance in picture property.
-	Frame step by press F if the image has more than one frame.
-	If the cursor stay on the top-right, will show the image property.
-	Support dragging pictures directly from Windows Explorer to this viewer.
-	Auto play/stop play.
-	Support to copy the image content to the clipboard.
-	Support for shortcut keys.
+--------------------
+	* Unified display mechanism, support rotate, mirror, zoom in/out, drag the image, including animation image.
+	* Use anti-aliasing when zoom in/out the pictures.
+	* When image scaling larger than the form, the picture will sliding inertially when the left mouse button quickly drag a picture and release then.
+	* Pre-reading next picture, for improving file change performance.
+	* Cache image has viewed, to improve the performance of browser back.
+	* Support Exif informance in picture property.
+	* Frame step by press F if the image has more than one frame.
+	* If the cursor stay on the top-right, will show the image property.
+	* Support dragging pictures directly from Windows Explorer to this viewer.
+	* Auto play/stop play.
+	* Support to copy the image content to the clipboard.
+	* Support for shortcut keys.
     
