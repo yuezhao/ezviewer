@@ -1,15 +1,16 @@
 Ez看图
 =======
 
-	EZ看图是一个简单纯粹的图片浏览器，使用Qt4编写，开源跨平台，国际化支持。
-	默认支持jpg, bmp, gif(包括动画), png, jpeg, ico, svg(包括动画),  mng(包括动画), webp, psd(部分支持), pbm, pgm, ppm, tif, tiff, xbm, xpm等多种图片格式。
+EZ看图是一个简单纯粹的图片浏览器，使用Qt4编写，开源跨平台，国际化支持。
+默认支持jpg, bmp, gif(包括动画), png, jpeg, ico, svg(包括动画),  mng(包括动画), webp, psd(部分支持), pbm, pgm, ppm, tif, tiff, xbm, xpm等多种图片格式。
 
 作者
 --------------------
 	三生石 (huangezhao@gmail.com)
 
 下载可执行文件
-    [v3.0正式版，2013/3/31](http://goo.gl/n8hvO)
+--------------------
+	[v3.0正式版，2013/3/31](http://goo.gl/n8hvO)
     
 特点：
 --------------------
@@ -25,17 +26,19 @@ Ez看图
 	* 自动放映/暂停功能;
 	* 支持复制图片内容到剪贴板;
 	* 支持自定义快捷键。
-
-    EzViewer is a simple image viewer, programmed by Qt4.
-    It's open-source and cross-platform software, with full international support.
-    It supports jpg, bmp, gif, png, jpeg, ico, svg, webp, psd(partly), pbm, pgm, ppm, tif, tiff, xbm, xpm, and many other image formats.
+   
+    
+EzViewer is a simple image viewer, programmed by Qt4.
+It's open-source and cross-platform software, with full international support.
+It supports jpg, bmp, gif, png, jpeg, ico, svg, webp, psd(partly), pbm, pgm, ppm, tif, tiff, xbm, xpm, and many other image formats.
 
 Author
 --------------------
 	Yuezhao Huang (huangezhao@gmail.com)
 
 Get the binary
-    [v3.0，2013/3/31](http://goo.gl/n8hvO)
+--------------------
+	[v3.0，2013/3/31](http://goo.gl/n8hvO)
     
 Features:
 --------------------
