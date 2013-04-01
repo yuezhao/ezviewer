@@ -115,6 +115,19 @@
     </message>
 </context>
 <context>
+    <name>Config</name>
+    <message>
+        <location filename="../config.cpp" line="74"/>
+        <source>Enable/Disable Custom Background Color</source>
+        <translation>启用/禁用自定义背景颜色</translation>
+    </message>
+    <message>
+        <location filename="../config.cpp" line="77"/>
+        <source>Enable/Disable Pre-reading</source>
+        <translation>启用/禁用预读功能</translation>
+    </message>
+</context>
+<context>
     <name>ContralBar</name>
     <message>
         <location filename="../ui/contralbar.ui" line="20"/>

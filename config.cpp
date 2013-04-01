@@ -71,6 +71,13 @@ Config::Config()
     initConfigValue();
     loadAllShortcut();
 
+    ActionManager::registerFunction(tr("Enable/Disable Custom Background Color"),
+                                    this, &Config::changeBgColorMode,
+                                    "Config::changeBgColorMode");
+    ActionManager::registerFunction(tr("Enable/Disable Pre-reading"),
+                                    this, &Config::changePreReadingMode,
+                                    "Config::changePreReadingMode");
+
     QList<QByteArray> list = QImageReader::supportedImageFormats();
     for(int i=0; i < list.size(); ++i)
         mFormatsList.append(list.at(i));

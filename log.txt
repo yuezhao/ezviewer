@@ -1,91 +1,91 @@
 2012.2.25:
-�����������ļ���дĿ¼��һ��bug��
+修正：配置文件读写目录的一个bug。
 2012.2.26:
-���ӣ���סCtrlʱ������ס����������λ�ÿ����ƶ����塣
+增加：按住Ctrl时，鼠标点住窗体内任意位置可以移动窗体。
 2012.2.27:
-���ӣ�ͼƬ�洰���С�ı�����š�
-���ӣ������С��ͼƬ��С������
+增加：图片随窗体大小改变而缩放。
+增加：窗体大小随图片大小调整。
 2012.2.28:
-���ӣ��Զ�����/��ͣ���ܡ�
+增加：自动播放/暂停功能。
 2012.2.29:
-���ӣ���ֹ�Զ��屳��ɫ���ܡ�
+增加：禁止自定义背景色功能。
 
 2012.3.5:
-���ӣ�������塣
-���ӣ��Ƿ�ʹ��ϵͳ��������
+增加：浮动面板。
+增加：是否使用系统标题栏。
 2012.3.7:
-���ӣ�ͼƬ���Ŵ��ڴ���ʱ�������������϶�ͼƬ���ͷ�����Ĺ��Ի�����
+增加：图片缩放大于窗体时，鼠标左键快速拖动图片，释放鼠标后的惯性滑动。
 
 2012.9.13:
-�ع�����������ͼƬ�Ĵ�������MainWindow������ImageViewer���Ӷȣ�ȥ���������С��ͼƬ��С�������Ĺ��ܣ�ȥ�����Ƿ�ʹ��ϵͳ���������Ĺ��ܣ�ȥ������ʱȫ������󻯵ȹ��ܡ�
+重构：接受拖入图片的代码移至MainWindow，减少ImageViewer复杂度；去除“窗体大小随图片大小调整”的功能；去除“是否使用系统标题栏”的功能；去除启动时全屏或最大化等功能。
 
-��������������ʱ�Զ�����Ϊ�ϴιر�ǰ�Ĵ�С��
-������Windows��֧���ļ���ʽ������
+新增：窗体启动时自动调整为上次关闭前的大小。
+新增：Windows下支持文件格式关联。
 
 2012.9.14:
-��������������������壬�����л�ͼƬ��
+新增：左右两个浮动面板，用于切换图片。
 
 2012.10.6
-������ɾ���ļ�������վ��
+新增：删除文件到回收站。
 
 2012.10.6-2012.10.7,2012.10.20:
-�ع�������PicManager�࣬��ԭ��ImageViewer�����ļ�������صĲ���ת�Ƶ�PicManager���У�PicManager������ΪImageViewer��һ����Ա��
+重构：添加PicManager类，将原来ImageViewer类中文件管理相关的部分转移到PicManager类中，PicManager对象作为ImageViewer的一个成员。
 
 2012.10.22-2012.10.23:
-�ع���ImageViewer��ֻ����ͼƬ��ʾ��صĹ��ܣ���ΪPicManager��Ļ��࣬PicManager���ImageViewer���������޸ķ�ӳ�ļ��б��仯�Ĵ��룬��Ϊʵʱ��ء�PicManager������һ����ԱImageCache�࣬���������ȡ��ͼƬ��״̬��Ϊ��һ�����߳�Ԥ����׼����
-������ɾ���ļ�������վ��һ��bug��
+重构：ImageViewer类只保留图片显示相关的功能，作为PicManager类的基类，PicManager类从ImageViewer类派生。修改反映文件列表变化的代码，改为实时监控。PicManager类增加一个成员ImageCache类，用来保存读取的图片的状态，为下一步多线程预读作准备。
+修正：删除文件到回收站的一个bug。
 
 2012.11.2-2012.11.5:
-���������������ļ����ݵı仯���ı����ú�����н���ͬʱ��Ч��
-�ع�����MainWindow�н������ô��ڵĲ��ְ�װΪ��SettingsDialog������settingwidget.h�У� ������ͼƬʱ������������ڡ�
+新增：监视配置文件内容的变化，改变设置后对所有进程同时生效。
+重构：将MainWindow中建立设置窗口的部分包装为类SettingsDialog，放在settingwidget.h中； 拖入多个图片时不启动多个窗口。
 
 2012.11.17:
-����������ʱ����ʾ���壬������ͼƬ��
-������ͼƬ�Ŵ󳬳������Сʱ��ʾ�Ҳ���·����飬ָʾ��ǰ��ʾ������ռ����ͼƬ�ı�����λ�á�
+修正：启动时先显示窗体，再载入图片。
+新增：图片放大超出窗体大小时显示右侧和下方滑块，指示当前显示的内容占整个图片的比例及位置。
 
 2012.12.14:
-�����������������ͼƬ���Լӿ췴�����ʱ���ٶȡ�
+新增：缓存浏览过的图片，以加快反向浏览时的速度。
 2012.12.14-16:
-������ʹ��һ��Ԥ���߳�Ԥ����һ��ͼƬ�������ͼƬ�л�ʱ�������ٶȡ�
+新增：使用一个预读线程预读下一张图片，以提高图片切换时的载入速度。
 2012.12.17:
-����Ԥ���뻺�湦�ܣ���������ѡ�
+完善预读与缓存功能，增加设置选项。
 
 2012.12.25:
-����������psd��ʽ��֧��(�������Կ�Դ��libqpsd��Ŀ: github.com/Code-ReaQtor/libqpsd������ronmarti18@gmail.com)��
+新增：部分psd格式的支持(代码来自开源的libqpsd项目: github.com/Code-ReaQtor/libqpsd，作者ronmarti18@gmail.com)。
 
-2013.1.2��2013.1.3:
-������webp��ʽ֧��(��������google��Դ��libwebp��Ŀ��developers.google.com/speed/webp/�����ο����������ݣ�qwebp.7z������code.google.com/p/webp/issues/detail?id=53 �� qt_webp-master������github.com/cor3ntin/qt_webp)��
-�Ż�����libqpsd����ͼƬ����ʱ��4��ѭ���Ż�Ϊ2����������psdͼƬ�����ٶȡ�
+2013.1.2－2013.1.3:
+新增：webp格式支持(代码来自google开源的libwebp项目：developers.google.com/speed/webp/，并参考了以下内容：qwebp.7z，来自code.google.com/p/webp/issues/detail?id=53 及 qt_webp-master，来自github.com/cor3ntin/qt_webp)。
+优化：将libqpsd处理图片数据时的4个循环优化为2个，大幅提高psd图片加载速度。
 
 2013.2.14-2013.2.17:
-���ִ�����������޸�һЩbug��
-�ع�����������صĲ������ݷŵ�config.h������������Ż����Ľ�FloatFrame��
-�Ż���������öԻ������ʾ�ٶȡ�
-����������ͼƬʱ��ʾ���ű���(�ü���QToolTip)��
-���������ͣ��ezviewer���Ͻ�һ��ʱ�����ʾͼƬ����(�ʺ�ȫ���ۿ�ʱ�鿴����)��
+部分代码的整理。修复一些bug。
+重构：将配置相关的部分内容放到config.h。整体代码风格优化。改进FloatFrame。
+优化：提高设置对话框的显示速度。
+新增：缩放图片时提示缩放比例(裁剪了QToolTip)。
+新增：鼠标停在ezviewer右上角一定时间后显示图片属性(适合全屏观看时查看属性)。
 
 2013.2.17:
-�ع���Config������ɣ�SettingWidget��MainWindow����ֱ�Ӷ�ȡIni�ļ���
+重构：Config改造完成，SettingWidget和MainWindow不再直接读取Ini文件。
 
 2013.3.1:
-�Ż���������ͼƬʱԤ����һ�ŵ�ʱ�����������ʱ������ʾ��ϵ��ٶȡ�
+优化：调整打开图片时预读下一张的时机，提高启动时窗口显示完毕的速度。
 
 2013.3.15:
-����������������Exif��Ϣ�鿴(ʹ��Wang Bin��PhotoKit�е�ExifReader�࣬��http://github.com/wang-bin/PhotoKit ��ͬʱWindows��ʹ����Wang Bin��libexif-port��https://github.com/wang-bin/libexif-port )��
+新增：属性中增加Exif信息查看(使用Wang Bin的PhotoKit中的ExifReader类，见http://github.com/wang-bin/PhotoKit 。同时Windows下使用了Wang Bin的libexif-port：https://github.com/wang-bin/libexif-port )。
 
 2013.3.22-2013.3.24:
-�ع������ImageCacheΪImageWrapper��ImageFactory����Ԥ�������湦�ܺ���ImageFactory��ImageWrapper���װ����ͼƬ��ʽ��
-������֧��Svg����(����QSvgRenderer��QImage��Ⱦ��ʽ����֧����ͣ����������֧������ʸ������)��
-�������ִ����ع����޸���һЩbug��
+重构：拆分ImageCache为ImageWrapper与ImageFactory，将预读、缓存功能合入ImageFactory。ImageWrapper则封装各种图片格式。
+新增：支持Svg动画(采用QSvgRenderer的QImage渲染方式，不支持暂停、步进，不支持无损矢量缩放)。
+其他部分代码重构。修复了一些bug。
 
 2013.3.26-2013.3.28:
-�ع���ʹ��QThreadPool��QRunnable����֮ǰ���Զ���QThread����Ԥ����
-�����ع�ImageWrapper��ImageFactory��һЩbug��������
-���������ں����֡��ico�ļ�����F������ѭ���л�����֡��
-�Ż�������QtConcurrent::runʵ�����öԻ��������ʾ��
+重构：使用QThreadPool和QRunnable代替之前的自定义QThread进行预读。
+继续重构ImageWrapper和ImageFactory。一些bug的修正。
+新增：对于含多个帧的ico文件，按F键可以循环切换各个帧。
+优化：改用QtConcurrent::run实现设置对话框快速显示。
 
 2013.3.29-2013.3.31:
-�Ż����������ļ���������һ����ȫѡ���͡�ȫ��ѡ�����ܡ�
-�������Զ����ݼ����ܡ�
-�ü���ʹ��QXmlPutGet��дxml�ļ����Ա����Զ����ݼ����á� (���� Emanuel Eichhammer, ��ַ�� http://www.workslikeclockwork.com/index.php/components/xml-classes-for-qt/ )
-������Config����������û�е��õ�bug��
+优化：设置中文件关联增加一个“全选”和“全不选”功能。
+新增：自定义快捷键功能。
+裁剪：使用QXmlPutGet读写xml文件，以保存自定义快捷键配置。 (作者 Emanuel Eichhammer, 网址： http://www.workslikeclockwork.com/index.php/components/xml-classes-for-qt/ )
+修正：Config的析构函数没有调用的bug。

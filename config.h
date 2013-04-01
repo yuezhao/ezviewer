@@ -102,6 +102,9 @@ private:
     static void loadAllShortcut();
     static void saveAllShortcut();
 
+    void changeBgColorMode() { setEnableBgColor(!enableBgColor()); }
+    void changePreReadingMode() { setEnablePreReading(!enablePreReading()); }
+
     static Config *instance();
 
 

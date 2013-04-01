@@ -106,7 +106,7 @@ void ShortcutSetting::setupData()
     }
 
     table->resizeColumnsToContents();   // 按列的内容自动调整大小
-    table->horizontalHeader()->setStretchLastSection(true); // 剩余部分用最后一列来填充
+//    table->horizontalHeader()->setStretchLastSection(true); // 剩余部分用最后一列来填充
 //    table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);//使列完全填充并平分
 
     connect(table, SIGNAL(currentCellChanged(int,int,int,int)),
