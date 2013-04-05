@@ -31,7 +31,8 @@ bool setAssociation(const QString &extension,
                     const QString &typeDescription = QString::null,
                     const QString &friendlyAppName = QString::null);
 bool clearAssociation(const QString &extension);
-
+// Must call this after change association setting, like set or clear association.
+void refreshExplorer();
 }
 
 #endif // FILEASSOC_H

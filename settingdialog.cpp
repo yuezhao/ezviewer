@@ -162,6 +162,7 @@ void SettingsDialog::changeAssociation(bool enabled)
     }else{
         OSRelated::clearAssociation(ext);
     }
+    OSRelated::refreshExplorer();
 
     reviewCheckAllButtonState();
 }
@@ -195,9 +196,11 @@ void SettingsDialog::changeAllAssociation(bool checked)
             }else{
                 OSRelated::clearAssociation(ext);
             }
-            cb->setChecked(OSRelated::checkAssociation(cb->text()));
+            cb->setChecked(checked);
         }
     }
+
+    OSRelated::refreshExplorer();
 
     reviewCheckAllButtonState();
 }

@@ -89,3 +89,6 @@
 新增：自定义快捷键功能。
 裁剪：使用QXmlPutGet读写xml文件，以保存自定义快捷键配置。 (作者 Emanuel Eichhammer, 网址： http://www.workslikeclockwork.com/index.php/components/xml-classes-for-qt/ )
 修正：Config的析构函数没有调用的bug。
+
+2013.4.5:
+优化：提高全部设置/全部取消文件关联的速度。

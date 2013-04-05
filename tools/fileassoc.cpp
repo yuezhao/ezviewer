@@ -227,7 +227,7 @@ bool setAssociation(const QString &extension,
 
     RegCU.sync();
     RegCR.sync();
-    SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);//该句为刷新系统缓存。
+//    SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);//该句为刷新系统缓存。
 
     return (RegCU.status() == QSettings::NoError && RegCR.status() == QSettings::NoError);
 
@@ -288,11 +288,21 @@ bool clearAssociation(const QString & extension)
 
     RegCU.sync();
     RegCR.sync();
-    SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);//该句为刷新系统缓存。
+//    SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);//该句为刷新系统缓存。
 
     return (RegCU.status() == QSettings::NoError && RegCR.status() == QSettings::NoError);
 #else
     return false;
+#endif  // Q_WS_WIN
+}
+
+void refreshExplorer()
+{
+    if(!isSupportAssociation()) return;
+
+#ifdef Q_WS_WIN
+    SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);//该句为刷新系统缓存。
+#else
 #endif  // Q_WS_WIN
 }
 }
