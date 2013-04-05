@@ -59,12 +59,13 @@ public slots:
     void copyToClipboard();
 
 protected slots:
-    void wheelEvent(QWheelEvent *e);
     void paintEvent(QPaintEvent *e);
+    void resizeEvent ( QResizeEvent * event );
+
+    void wheelEvent(QWheelEvent *e);
     void mouseMoveEvent ( QMouseEvent * event );
     void mousePressEvent ( QMouseEvent * event );
     void mouseReleaseEvent ( QMouseEvent * event );
-    void resizeEvent ( QResizeEvent * event );
 
 private slots:
     void myTimerEvent();            // for auto scroll

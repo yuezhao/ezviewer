@@ -31,6 +31,8 @@ using namespace PhotoKit;
 #include <QPainter>
 #include <QSvgRenderer>
 
+#include<QMutex>
+
 
 QImage ImageWrapper::currentImage() const
 {
@@ -119,8 +121,6 @@ void ImageWrapper::load(const QString &filePath, bool isPreReading)
         if (!reader.read(&image)) // cannot read image
             image = QImage();
     }
-
-    qDebug("error string: %s", qPrintable(reader.errorString()));
 
     if (isPreReading) { // will re-create these when animation start.
         SafeDelete(movie);

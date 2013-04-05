@@ -57,8 +57,6 @@ private:
 ImageWrapper * ImageFactory::newOrReuseImage()
 {
     int total = 1 + (Config::enablePreReading() ? 1 : 0) + CacheNumber;
-    qDebug("cache num is %d, total is %d, now has %d",
-           CacheNumber, total, list.size());
 
     ImageWrapper *image;
     if(list.size() < total){
@@ -66,6 +64,7 @@ ImageWrapper * ImageFactory::newOrReuseImage()
     }else{
         image = list.at(total - 1);
         list.removeAt(total - 1);
+        waitForImageReady(image); // Without this, it will be crashed if more than one thread run image.load().
         image->recycle();
         image->setReady(false);
         image->setHashCode(ImageWrapper::HASH_INVALID);
@@ -105,8 +104,8 @@ ImageWrapper * ImageFactory::getImageWrapper(const QString &filePath)
     }
 
     image = newOrReuseImage();
-    list.prepend(image);
     image->setHashCode(hash);
+    list.prepend(image);
     if (hash == ImageWrapper::HASH_INVALID) {
         image->setReady(true);
     } else {
@@ -130,8 +129,8 @@ void ImageFactory::preReading(const QString &filePath)
     }
 
     image = newOrReuseImage();
-    list.insert(1, image);  /// assert(list.size());
     image->setHashCode(hash);
+    list.insert(1, image);  /// assert(list.size());
     if (hash == ImageWrapper::HASH_INVALID) {
         image->setReady(true);
     } else {

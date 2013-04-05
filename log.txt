@@ -92,3 +92,7 @@
 
 2013.4.5:
 优化：提高全部设置/全部取消文件关联的速度。
+
+2013.4.6:
+BUGFIX：开启预读的情况下，有可能因为多个线程同时进入ImageWrapper::load()而引起异常退出：Error - RtlWerpReportException failed with status code :-1073741823.这种情况多发生在连续查看下一张后突然转为查看上一张图片，此时由于没有符合HashCode的ImageWrapper而只能reuse，这时有可能reuse到一个已经处于预读状态的ImageWrapper。解决方案：ImageFactory::newOrReuseImage()中reuse时也要判断是否getReady()。
+��能有一个线程获得锁。

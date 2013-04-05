@@ -110,7 +110,7 @@ private:
 
     enum LIST_MODE {
         FileNameListMode,
-        FullPathListMode,
+        FullPathListMode
     } listMode;
     QString curDir; // only use for FileNameListMode
     QStringList list;

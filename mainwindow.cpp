@@ -517,7 +517,6 @@ void MainWindow::registerAllFunction()
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
     QKeySequence keys(e->modifiers() + e->key());
-    qDebug("key press: %s", qPrintable(keys.toString()));
 
     if (slideTimer->isActive()) {
         QString action = ActionManager::getMatchAction(keys.toString());

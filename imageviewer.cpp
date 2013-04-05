@@ -212,19 +212,6 @@ void ImageViewer::paintEvent(QPaintEvent *e)
         return;
     }
 
-//        qDebug() << QString("paintEvent top_left(%1,%2) size(%3,%4)")
-//                    .arg(e->rect().left()).arg(e->rect().top())
-//                    .arg(e->rect().width()).arg(e->rect().height());
-//        qDebug() << QString("topLeft(%1,%2)").arg(topLeft.x()).arg(topLeft.y());
-//        qDebug() << QString("scale : %1").arg(scale);
-//        qDebug() << QString("pixmap.size(%1,%2)").arg(pixmap.width()).arg(pixmap.height());
-//        qDebug() << QString("translate to (%1,%2)")
-//                    .arg((topLeft + shift).toPoint().x())
-//                    .arg((topLeft + shift).toPoint().y());
-//        qDebug() << QString("scale size to (%1,%2)")
-//                    .arg(pixmap.width()*scale)
-//                    .arg(pixmap.height()*scale);
-
     switch(antialiasMode){
     case 0:
         if(scale <= 1) break;
