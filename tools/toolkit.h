@@ -50,7 +50,7 @@ template<typename T>
 void swap(T &a, T &b);
 
 template<typename T>
-T gcd(T a, T b); //求最大公约数
+T gcd(T a, T b); // get the greatest common divisor 姹傛渶澶у叕绾︽暟
 }
 
 

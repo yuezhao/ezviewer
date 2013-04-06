@@ -84,7 +84,7 @@ private:
      */
     void updateTopLeft();    // no use update()
     void updateShift();      // use update()
-    void rotatePixmap(bool isLeft);//ture left or right 90 degrees£¬use update()
+    void rotatePixmap(bool isLeft); //ture left or right 90 degrees, use update()
     void mirrored(bool horizontal = false, bool vertical = true);
 
     void myMouseMove(QMouseEvent * event);

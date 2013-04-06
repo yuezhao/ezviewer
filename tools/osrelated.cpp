@@ -78,24 +78,24 @@ void moveFile2Trash(const QString &filePath)
 {
 #ifdef Q_WS_WIN
 
-    SHFILEOPSTRUCT FileOp;//定义SHFILEOPSTRUCT结构对象;
+    SHFILEOPSTRUCT FileOp;
     FileOp.hwnd = 0;
-    FileOp.wFunc = FO_DELETE; //执行文件删除操作;
+    FileOp.wFunc = FO_DELETE;
 
     TCHAR buf[_MAX_PATH + 1];
-    _tcscpy(buf, QStringToTCHAR(QDir::toNativeSeparators(filePath)));  // 复制路径,end with '\0'.
+    _tcscpy(buf, QStringToTCHAR(QDir::toNativeSeparators(filePath)));  // Copy file path, ends with '\0'.
     buf[_tcslen(buf)+1] = 0;  //! must end with 2 '\0'.
 
     FileOp.pFrom = buf; // source file path
-    FileOp.pTo = NULL; //目标文件路径
-    FileOp.fFlags |= FOF_ALLOWUNDO;//此标志使删除文件备份到Windows回收站
-//    FileOp.fFlags &= ~FOF_ALLOWUNDO;    //直接删除，不进入回收站
+    FileOp.pTo = NULL; // dist file path
+    FileOp.fFlags |= FOF_ALLOWUNDO; // delete file to trash
+//    FileOp.fFlags &= ~FOF_ALLOWUNDO;    // directly delete, don't move to trash
 
 //    if(!needAsk)
-        FileOp.fFlags |= FOF_NOCONFIRMATION;    //! 直接删除，不进行确认
+        FileOp.fFlags |= FOF_NOCONFIRMATION;    //! delete without notification dialog
 
-    // 如果文件被占用，返回值是32或1223
-    if(SHFileOperation(&FileOp)) //这里开始删除文件
+    // IF file is being used, the return value is 32 or 1223.
+    if(SHFileOperation(&FileOp)) // Actually delete file here
         QMessageBox::warning(0, QObject::tr("Delete Failed"),
                              QObject::tr("Delete file '%1' failed!")
                              .arg(QFileInfo(filePath).fileName()));

@@ -61,7 +61,7 @@ void PicManager::updateFileNameList(const QString &curfile)
 void PicManager::updateFullPathList(const QString &file)
 {
     int index = list.indexOf(file);
-    //! 如果文件名已经过滤并且简化，则可以不用验证index != -1 ??
+    //! If file name has been filtered and simplified, does index != -1 needed??
     if(!QFile::exists(file) && index != -1)
         list.removeAt(index);
     currentIndex = list.indexOf(file);

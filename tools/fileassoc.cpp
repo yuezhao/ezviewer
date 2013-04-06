@@ -92,11 +92,11 @@ bool setProgID(const QString &ProgID,
     appPath.replace('/', '\\'); //Explorer gives 'Access Denied' if we write the path with forward slashes to the registry
 
     if(!typeDescription.isNull())
-        Reg.setValue(classId + REG_DEFAULT, typeDescription);/// txt¸ñÊ½Èç¹ûÃ»ÓÐÕâÒ»¾ä£¬½«ÎÞ·¨ÐÂ½¨ÎÄ±¾ÎÄµµ¡£
+        Reg.setValue(classId + REG_DEFAULT, typeDescription);/// Without this, will no able to create new text document.
     if(!friendlyName.isNull())
         Reg.setValue(classId + "/shell/open/FriendlyAppName", friendlyName);
     Reg.setValue(classId + "/shell/open/command/.", QString("\"%1\" \"%2\"").arg(appPath, "%1"));
-    Reg.setValue(classId + "/DefaultIcon/.", QString("\"%1\",0").arg(appPath)); /// ½«µ±Ç°ÔËÐÐµÄ³ÌÐò×ÊÔ´ÖÐµÄµÚÒ»¸öÍ¼±êÖÃÈë
+    Reg.setValue(classId + "/DefaultIcon/.", QString("\"%1\",0").arg(appPath)); /// Use the first icon of current program for default format icon.
 
     return true;
 }
@@ -113,13 +113,13 @@ bool removeUserChoice(const QString & extension)
     QTemporaryFile file;
     if (file.open()) {
         QTextStream out(&file);
-        // ×¢²á±í½âËø£¬UserChoice ¸ø everyone ÍêÈ«¿ØÖÆÈ¨
+        // Unlock Registry, make user 'everyone' can access 'UserChoice' completely.
         out << "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\." + extension + "\\UserChoice [7]";
         out.flush();
         file.flush();
 
-        // win 7 ×Ô´ø×¢²á±í¹¤¾ß,ÓÃÓÚ¸Ä±äÈ¨ÏÞ¡£ÒªÇó²ÎÊýÂ·¾¶ÊÇUnicode¡£ÖÐÎÄÂ·¾¶¿ÉÄÜ»á³öÎÊÌâ¡£
-        //Ö´ÐÐÍê±Ï²Å·µ»Ø¡£
+        // win7 build-in tool, for user access changing. Require path argument encoded by Unicode. Chinese may cause problem.
+        // Only return after execute completely.
         QProcess::execute(QString("regini.exe %1").arg(file.fileName()));
 
         /// Windows 7, only can remove "/UserChoice" if we own it. remove "/UserChoice/Progid" is forbidden.
@@ -178,7 +178,7 @@ bool checkAssociation(const QString & extension)
     }
 
     //Finally, check the system-wide association
-    //ÈôCurClassId»òCurAppId²»Îª¿Õ£¬ËµÃ÷ÓÃ»§ÔÚ¡°´ò¿ª·½Ê½¡±ÖÐÑ¡ÔñÁËÆäËû³ÌÐò£¬ÓÅÏÈ¼¶¸ß£¬»á¸²¸ÇÆäËûÉèÖÃ¡£
+    //è‹¥CurClassIdæˆ–CurAppIdä¸ä¸ºç©ºï¼Œè¯´æ˜Žç”¨æˆ·åœ¨â€œæ‰“å¼€æ–¹å¼â€ä¸­é€‰æ‹©äº†å…¶ä»–ç¨‹åºï¼Œä¼˜å…ˆçº§é«˜ï¼Œä¼šè¦†ç›–å…¶ä»–è®¾ç½®ã€‚
     if (!isRegistered && CurClassId.isEmpty() && CurAppId.isEmpty())
         isRegistered = (RegCR.value(ext + REG_DEFAULT).toString() == ProgID);
 
@@ -227,7 +227,7 @@ bool setAssociation(const QString &extension,
 
     RegCU.sync();
     RegCR.sync();
-//    SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);//¸Ã¾äÎªË¢ÐÂÏµÍ³»º´æ¡£
+//    SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);// Refresh Explorer cache.
 
     return (RegCU.status() == QSettings::NoError && RegCR.status() == QSettings::NoError);
 
@@ -276,7 +276,7 @@ bool clearAssociation(const QString & extension)
 
     if (QSysInfo::WindowsVersion >= QSysInfo::WV_NT){
         if (RegCU.value("Software/Classes/" + ext + REG_DEFAULT).toString() == ProgID) //Only remove if we own it
-            /// MSDNÉÏ²»½¨ÒéÉ¾³ý£¬¿ÉÄÜ»áÒý·¢ÆäËûÎÊÌâ¡£ÀýÈçÉ¾³ý.txt×éÊ±µ¼ÖÂÎÞ·¨ÐÂ½¨ÎÄ±¾ÎÄµµ¡£
+            /// This is no recommend to delete in MSDN, case it may cause other problems, such as cannot create new text document if delete '.txt' group.
             //  RegCU.remove("Software/Classes/" + ext);
             RegCU.remove("Software/Classes/" + ProgID);
     }else{
@@ -288,7 +288,7 @@ bool clearAssociation(const QString & extension)
 
     RegCU.sync();
     RegCR.sync();
-//    SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);//¸Ã¾äÎªË¢ÐÂÏµÍ³»º´æ¡£
+//    SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);// Refresh Explorer cache.
 
     return (RegCU.status() == QSettings::NoError && RegCR.status() == QSettings::NoError);
 #else
@@ -301,7 +301,7 @@ void refreshExplorer()
     if(!isSupportAssociation()) return;
 
 #ifdef Q_WS_WIN
-    SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);//¸Ã¾äÎªË¢ÐÂÏµÍ³»º´æ¡£
+    SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, 0, 0);// Refresh Explorer cache.
 #else
 #endif  // Q_WS_WIN
 }

@@ -66,7 +66,7 @@ void ShortcutSetting::setupViews()
     button = new QPushButton(this);
     button->setIcon(QIcon(":/Delete2"));
     button->setFixedSize(size);
-    button->setFocusPolicy(Qt::NoFocus);    // 得到焦点时，不显示虚线框
+    button->setFocusPolicy(Qt::NoFocus);    // Otherwise if get focus, it will show a rect round button.
     button->setFlat(true);
     button->setCursor(QCursor(Qt::PointingHandCursor));
     connect(button, SIGNAL(clicked()), SLOT(removeShortcut()));
@@ -79,7 +79,7 @@ void ShortcutSetting::setupViews()
     buttonLayout->addSpacing(RightMargin);
     lineEdit->setLayout(buttonLayout);
 
-    // 设置输入框中文件输入区，不让输入的文字在被隐藏在按钮下
+    // Setting the input rect, protects the text from covered by the button.
     lineEdit->setTextMargins(0, 1, size.width() + RightMargin, 1);
     lineEdit->installEventFilter(this);
 
@@ -105,9 +105,9 @@ void ShortcutSetting::setupData()
         table->setItem(i, 1, new QTableWidgetItem(shortcuts.join(SplitFlag)));
     }
 
-    table->resizeColumnsToContents();   // 按列的内容自动调整大小
-//    table->horizontalHeader()->setStretchLastSection(true); // 剩余部分用最后一列来填充
-//    table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);//使列完全填充并平分
+    table->resizeColumnsToContents();   // Auto resize by the content of columns.
+//    table->horizontalHeader()->setStretchLastSection(true); // Fill the rest by the last column.
+//    table->horizontalHeader()->setResizeMode(QHeaderView::Stretch); // Make every column stretched and divide all the room equally.
 
     connect(table, SIGNAL(currentCellChanged(int,int,int,int)),
             SLOT(currentItemChanged(int,int,int,int)));
