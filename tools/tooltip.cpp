@@ -38,29 +38,17 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifdef Q_WS_MAC
-# include <private/qcore_mac_p.h>
-#endif
-
 #include <qapplication.h>
 #include <qdesktopwidget.h>
 #include <qevent.h>
-#include <qhash.h>
 #include <qlabel.h>
 #include <qpointer.h>
 #include <qstyle.h>
 #include <qstyleoption.h>
 #include <qstylepainter.h>
 #include <qtimer.h>
-//#include <qtooltip.h>
-#include <private/qeffects_p.h>
 #include <qtextdocument.h>
 #include <qdebug.h>
-
-#ifdef Q_WS_MAC
-# include <private/qcore_mac_p.h>
-#include <private/qt_cocoa_helpers_mac_p.h>
-#endif
 
 #include "tooltip.h"
 
@@ -214,20 +202,8 @@ void TipLabel::timerEvent(QTimerEvent *e)
         || e->timerId() == expireTimer.timerId()){
         hideTimer.stop();
         expireTimer.stop();
-#if defined(Q_WS_MAC) && !defined(QT_NO_EFFECTS)
-        if (QApplication::isEffectEnabled(Qt::UI_FadeTooltip)){
-            // Fade out tip on mac (makes it invisible).
-            // The tip will not be deleted until a new tip is shown.
 
-                        // DRSWAT - Cocoa
-                        macWindowFade(qt_mac_window_for(this));
-            QTipLabel::instance->fadingOut = true; // will never be false again.
-        }
-        else
-            hideTipImmediately();
-#else
         hideTipImmediately();
-#endif
     }
 }
 
@@ -268,20 +244,7 @@ int TipLabel::getTipScreen(const QPoint &pos, QWidget *w)
 
 void TipLabel::placeTip(const QPoint &pos, QWidget *w, bool alignCenter)
 {
-#ifdef Q_WS_MAC
-    // When in full screen mode, there is no Dock nor Menu so we can use
-    // the whole screen for displaying the tooltip. However when not in
-    // full screen mode we need to save space for the dock, so we use
-    // availableGeometry instead.
-    extern bool qt_mac_app_fullscreen; //qapplication_mac.mm
-    QRect screen;
-    if(qt_mac_app_fullscreen)
-        screen = QApplication::desktop()->screenGeometry(getTipScreen(pos, w));
-    else
-        screen = QApplication::desktop()->availableGeometry(getTipScreen(pos, w));
-#else
     QRect screen = QApplication::desktop()->screenGeometry(getTipScreen(pos, w));
-#endif
 
     QPoint p = pos;
     if (alignCenter){    // Make sure place in the widget center.
@@ -344,7 +307,7 @@ void ToolTip::showText(const QPoint &pos, const QString &text, QWidget *w, const
 
     if (!text.isEmpty()){ // no tip can be reused, create new tip:
 #ifndef Q_WS_WIN
-        new QTipLabel(text, w, minMsec); // sets QTipLabel::instance to itself
+        new TipLabel(text, w, minMsec); // sets QTipLabel::instance to itself
 #else
         // On windows, we can't use the widget as parent otherwise the window will be
         // raised when the tooltip will be shown
@@ -356,17 +319,7 @@ void ToolTip::showText(const QPoint &pos, const QString &text, QWidget *w, const
         TipLabel::instance->placeTip(pos, w, alignCenter);
         TipLabel::instance->setObjectName(QLatin1String("qtooltip_label"));
 
-
-#if !defined(QT_NO_EFFECTS) && !defined(Q_WS_MAC)
-        if (QApplication::isEffectEnabled(Qt::UI_FadeTooltip))
-            qFadeEffect(TipLabel::instance);
-        else if (QApplication::isEffectEnabled(Qt::UI_AnimateTooltip))
-            qScrollEffect(TipLabel::instance);
-        else
-            TipLabel::instance->show();
-#else
-        QTipLabel::instance->show();
-#endif
+        TipLabel::instance->show();
     }
 }
 
