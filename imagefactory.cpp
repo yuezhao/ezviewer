@@ -40,17 +40,18 @@ int ImageFactory::CacheNumber = 0;
 class Runnable : public QRunnable
 {
 public:
-    Runnable(ImageWrapper * iw, const QString &filePath)
-        : image(iw), path(filePath) {}
+    Runnable(ImageWrapper * iw, const QString &filePath, bool preReading = true)
+        : image(iw), path(filePath), isPreReading(preReading) {}
 
     void run() {
         if (image)
-            image->load(path, true);
+            image->load(path, isPreReading);
     }
 
 private:
     ImageWrapper *image;
     QString path;
+    bool isPreReading;
 };
 
 
@@ -88,6 +89,7 @@ ImageWrapper * ImageFactory::findImageByHash(uint hash)
 void ImageFactory::waitForImageReady(ImageWrapper *image)
 {
     while(!image->getReady()){
+        qApp->processEvents(QEventLoop::AllEvents);
         // wait for pre-reading in another thread
     }
 }
@@ -109,7 +111,9 @@ ImageWrapper * ImageFactory::getImageWrapper(const QString &filePath)
     if (hash == ImageWrapper::HASH_INVALID) {
         image->setReady(true);
     } else {
-        image->load(filePath);
+//        image->load(filePath);
+        QThreadPool::globalInstance()->start(new Runnable(image, filePath, false));
+        waitForImageReady(image);
     }
 
     return image;

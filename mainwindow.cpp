@@ -435,6 +435,15 @@ void MainWindow::parseCmd(QStringList args)
     }
 }
 
+void MainWindow::preProcessCmd(const QStringList &args)
+{
+    if(args.size() > 1){    // first one is name of executable path
+        QFileInfo fi(args.at(1));
+        if (fi.exists() && fi.isFile())
+            ImageFactory::preReading(fi.absoluteFilePath()); // TODO: if the computer is one-core and user sets pre-reading enabled?
+    }
+}
+
 void MainWindow::showContextMenu(const QPoint &pos)
 {
     bool hasPixmap = viewer->hasPicture();
@@ -527,11 +536,11 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
     }
 
     if(ActionManager::run(keys.toString())) {
-        e->accept();
-        qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+        // TODO: HOWTO delete the key event in the event loop during ActionManager::run() ?
+//        qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+        e->accept();        
         return;
     }
 
     QWidget::keyPressEvent(e);
-    qApp->processEvents(QEventLoop::ExcludeUserInputEvents); //add:20121006
 }

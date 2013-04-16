@@ -40,6 +40,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
 
     void parseCmd(QStringList args);
+    static void preProcessCmd(const QStringList &args);
 
 protected slots:
     void closeEvent(QCloseEvent *event);

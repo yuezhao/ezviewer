@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     else if(app_ts.load(QString("lang/EzViewer_%1").arg(lang_country)))
         app.installTranslator( &app_ts );
 
-    // TODO: pre-reading picture in here
+    MainWindow::preProcessCmd(app.arguments());
     MainWindow m;
     m.show();
     app.processEvents(QEventLoop::ExcludeUserInputEvents);

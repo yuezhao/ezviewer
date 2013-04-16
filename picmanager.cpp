@@ -23,6 +23,7 @@
 #include "config.h"
 #include "global.h"
 #include "osrelated.h"
+#include "tooltip.h"
 
 #include <QApplication>
 #include <QMessageBox>
@@ -251,5 +252,9 @@ void PicManager::deleteFile(bool needAsk)
 
     curImage->recycle();
     OSRelated::moveFile2Trash(curPath); ///
+    if (!QFile::exists(curPath)) {
+        QPoint site = mapToGlobal(pos()) + QPoint(10, height() - 40);
+        ToolTip::showText(site, tr("Delete file success!"));
+    }
 }
 
