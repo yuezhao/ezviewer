@@ -47,6 +47,8 @@ signals:
     void siteChange(const QPoint &change);
 
 public slots:
+    void changeScaleMode();
+    void changeAlignMode();
     void changeAntialiasMode(int mode);
     // if color is invalid, means disabled custom background color.
     void changeBgColor(const QColor &color);
@@ -71,19 +73,23 @@ private slots:
     void myTimerEvent();            // for auto scroll
 
 private:
-    /*! init the value of topLeft and scale, according to the size of image
-     * no use update(), no impact the value of rotate or mirrorH/mirrorV.
-     */
-    void initToFitWidget();
+    bool scaleLargeThanWidget();
 
     void updateImageArea()
     { update(QRect((topLeft + shift).toPoint(), image.size()*scale)); }
 
+    /*! init the value of topLeft and scale, according to the size of image
+     * no use update(), no impact the value of rotate or mirrorH/mirrorV.
+     */
+    void layoutImage(); // determine the visible rect of the image.
+
+    void calcScaleRatio();
     /*! updateShift() needs the value of topLeft,
      * so the order of these two functions below is important.
      */
-    void updateTopLeft();    // no use update()
-    void updateShift();      // use update()
+    void calcTopLeft();    // no use update()
+    void calcShift();      // no use update()
+    void updateShift();    // use update()
     void rotatePixmap(bool isLeft); //ture left or right 90 degrees, use update()
     void mirrored(bool horizontal = false, bool vertical = true);
 
@@ -114,10 +120,18 @@ private:
     QTimer timer;
 };
 
-inline void ImageViewer::updateTopLeft()
+
+inline bool ImageViewer::scaleLargeThanWidget()
 {
-    topLeft = QPointF(rect().width() - image.width()*scale,
-                      rect().height() - image.height()*scale ) / qreal(2);
+    return image.width() * scale > rect().width()
+            || image.height() * scale > rect().height();
 }
+
+inline void ImageViewer::calcTopLeft()
+{
+    topLeft.setX((rect().width() - image.width() * scale) / qreal(2));
+    topLeft.setY((rect().height() - image.height() * scale ) / qreal(2));
+}
+
 
 #endif

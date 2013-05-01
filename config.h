@@ -40,6 +40,28 @@ signals:
     void configChanged();
 
 public:
+    enum ScaleMode {
+        ScaleLargeImageToFitWidget = 0,
+        KeepImageSize,
+        FitWidgetWidth,
+        FitWidgetHeight,
+        ScaleToFitWidget,
+        ScaleToExpandWidget
+    };
+
+    enum AlignMode {
+        AlignLeftTop = 0,
+        AlignCenterTop,
+        AlignRightTop,
+        AlignLeftCenter,
+        AlignCenterCenter,
+        AlignRightCenter,
+        AlignLeftBottom,
+        AlignCenterBottom,
+        AlignRightBottom
+    };
+
+
     const static qreal ScaleMax;
     const static qreal ScaleMin;
     const static QPointF OriginPoint;
@@ -67,6 +89,8 @@ public:
 
 
     static bool showDialog()    { return instance()->mShowDialog; }
+    static ScaleMode scaleMode(){ return instance()->mScaleMode; }
+    static AlignMode alignMode(){ return instance()->mAlignMode; }
     static int  antialiasMode() { return instance()->mAntialiasMode; }
     static bool enableBgColor() { return instance()->mEnableBgColor; }
     static QColor bgColor()     { return instance()->mBgColor; }
@@ -76,6 +100,8 @@ public:
     static QByteArray lastGeometry(){ return instance()->mLastGeometry; }
 
     static void setShowDialog(bool enabled);
+    static void setScaleMode(ScaleMode mode);
+    static void setAlignMode(AlignMode mode);
     static void setAntialiasMode(int mode);
     static void setEnableBgColor(bool enabled);
     static void setBgColor(const QColor &color);
@@ -102,6 +128,8 @@ private:
     static void loadAllShortcut();
     static void saveAllShortcut();
 
+    void changeScaleMode(ScaleMode mode); // if current mode is already @mode, then will change to default mode: ScaleLargeImageToFitWidget.
+    void changeAlignMode(AlignMode mode); // if current mode is already @mode, then will change to default mode: AlignCenterCenter.
     void changeBgColorMode() { setEnableBgColor(!enableBgColor()); }
     void changePreReadingMode() { setEnablePreReading(!enablePreReading()); }
 
@@ -117,6 +145,8 @@ private:
     QFileSystemWatcher *cfgWatcher;
 
     bool mShowDialog;
+    ScaleMode mScaleMode;
+    AlignMode mAlignMode;
     int mAntialiasMode;
     bool mEnableBgColor;
     QColor mBgColor;

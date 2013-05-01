@@ -54,6 +54,18 @@ ImageViewer::ImageViewer(QWidget *parent)
     setMinimumSize(Config::WindowMinSize);
 }
 
+void ImageViewer::changeScaleMode()
+{
+    layoutImage();
+    update();
+}
+
+void ImageViewer::changeAlignMode()
+{
+    layoutImage();
+    update();
+}
+
 void ImageViewer::changeAntialiasMode(int mode)
 {
     if(mode < 0 || mode > 2 || antialiasMode == mode) return;
@@ -91,8 +103,118 @@ void ImageViewer::loadImage(const QImage &im, const QString &msg_if_no_image)
     mirrorH = false;
     mirrorV = false;
     hasUserZoom = false;
-    initToFitWidget();
+    layoutImage();
     repaint();      ///
+}
+
+void ImageViewer::layoutImage()
+{
+    //restore the cursor even if the image cannot load.
+    setCursor(Qt::ArrowCursor);
+
+    if(noPicture()) return;
+
+    calcScaleRatio();
+    calcTopLeft();
+    calcShift();
+
+    if (scaleLargeThanWidget())
+        setCursor(Qt::OpenHandCursor);
+}
+
+void ImageViewer::calcScaleRatio()
+{
+    if(image.width() == 0 || image.height() == 0) {
+        scale = 1.0;
+        scaleMin = qMin(Config::ScaleMin, scale);
+        return;
+    }
+
+    QSize pixSize(image.size());
+
+    switch (Config::scaleMode()) {
+    case Config::KeepImageSize:
+        scale = 1.0;
+        break;
+    case Config::FitWidgetWidth:
+        scale = width() / qreal(image.width());
+        break;
+    case Config::FitWidgetHeight:
+        scale = height() / qreal(image.height());
+        break;
+    case Config::ScaleToFitWidget:
+    {
+        qreal widthRatio = width() / qreal(image.width());
+        qreal heightRatio = height() / qreal(image.height());
+        scale = qMin(widthRatio, heightRatio);
+        break;
+    }
+    case Config::ScaleToExpandWidget:
+    {
+        qreal widthRatio = width() / qreal(image.width());
+        qreal heightRatio = height() / qreal(image.height());
+        scale = qMax(widthRatio, heightRatio);
+        break;
+    }
+    case Config::ScaleLargeImageToFitWidget:
+    default:
+        //if image large than widget, will scale image to fit widget.
+        if(!(rect().size() - pixSize).isValid())//! SIZE_ADJUST !!!
+            pixSize.scale(rect().size() + Config::SizeAdjusted, Qt::KeepAspectRatio);
+        scale = qreal(pixSize.width()) / image.width();
+        break;
+    }
+
+    scaleMin = qMin(Config::ScaleMin, scale);
+}
+
+void ImageViewer::calcShift()
+{
+    if(!scaleLargeThanWidget()) {
+        shift.setX(0);
+        shift.setY(0);
+        return;
+    }
+
+    switch (Config::alignMode()) {
+    case Config::AlignLeftTop:
+        shift.setX(topLeft.x() < 0 ? -topLeft.x() : 0);
+        shift.setY(topLeft.y() < 0 ? -topLeft.y() : 0);
+        break;
+    case Config::AlignCenterTop:
+        shift.setX(0);
+        shift.setY(topLeft.y() < 0 ? -topLeft.y() : 0);
+        break;
+    case Config::AlignRightTop:
+        shift.setX(topLeft.x() < 0 ? topLeft.x() : 0);
+        shift.setY(topLeft.y() < 0 ? -topLeft.y() : 0);
+        break;
+    case Config::AlignLeftCenter:
+        shift.setX(topLeft.x() < 0 ? -topLeft.x() : 0);
+        shift.setY(0);
+        break;
+    case Config::AlignRightCenter:
+        shift.setX(topLeft.x() < 0 ? topLeft.x() : 0);
+        shift.setY(0);
+        break;
+    case Config::AlignLeftBottom:
+        shift.setX(topLeft.x() < 0 ? -topLeft.x() : 0);
+        shift.setY(topLeft.y() < 0 ? topLeft.y() : 0);
+        break;
+    case Config::AlignCenterBottom:
+        shift.setX(0);
+        shift.setY(topLeft.y() < 0 ? topLeft.y() : 0);
+        break;
+    case Config::AlignRightBottom:
+        shift.setX(topLeft.x() < 0 ? topLeft.x() : 0);
+        shift.setY(topLeft.y() < 0 ? topLeft.y() : 0);
+        break;
+    case Config::AlignCenterCenter:
+    default:
+        shift.setX(0);
+        shift.setY(0);
+        break;
+    }
 }
 
 void ImageViewer::updateShift()
@@ -101,8 +223,8 @@ void ImageViewer::updateShift()
     QRectF pixRect(topLeft + shift, image.size()*scale);
     if(pixRect.width() <= widgetRect.width()
             && pixRect.height() <= widgetRect.height()){
-        shift = Config::OriginPoint;
-        setCursor(QCursor(Qt::ArrowCursor));
+        shift = QPointF(0, 0);
+        setCursor(Qt::ArrowCursor);
     }else{
         if(pixRect.width() <= widgetRect.width())
             shift.setX(0);
@@ -119,31 +241,10 @@ void ImageViewer::updateShift()
             shift.setY(shift.y() + (widgetRect.height() - pixRect.bottom()));
 
         if(cursor().shape() != Qt::ClosedHandCursor)//in mouse move event
-            setCursor(QCursor(Qt::OpenHandCursor));
+            setCursor(Qt::OpenHandCursor);
     }
 
     update();
-}
-
-void ImageViewer::initToFitWidget()//no change the value of rotate
-{
-    //restore the cursor even if the image cannot load.
-    setCursor(QCursor(Qt::ArrowCursor));
-
-    if(noPicture()) return;
-
-    QSize pixSize(image.size());
-    //if image large than widget, will scale image to fit widget.
-    if(!(rect().size() - pixSize).isValid())//! SIZE_ADJUST !!!
-        pixSize.scale(rect().size() + Config::SizeAdjusted, Qt::KeepAspectRatio);
-    if(image.width() == 0)
-        scale = 1.0;
-    else
-        scale = qreal(pixSize.width()) / image.width();
-    scaleMin = qMin(Config::ScaleMin, scale);
-
-    updateTopLeft();
-    shift = Config::OriginPoint;
 }
 
 void ImageViewer::zoomIn(double factor)
@@ -159,7 +260,7 @@ void ImageViewer::zoomIn(double factor)
     /*! topLeft must determined before shift,
      * otherwise will impact updateShift()
      */
-    updateTopLeft();
+    calcTopLeft();
     shift /= scale_old;
     shift *= scale;
     updateShift();
@@ -178,7 +279,7 @@ void ImageViewer::rotatePixmap(bool isLeft)
     rotate %= 360;
     QMatrix m = QMatrix().rotate(isLeft ? -90 : 90);
     image = image.transformed(m, Qt::SmoothTransformation);
-    initToFitWidget();
+    layoutImage();
     update();
 }
 
@@ -192,7 +293,7 @@ void ImageViewer::mirrored(bool horizontal, bool vertical)
         mirrorV = !mirrorV;
 
     image = image.mirrored(horizontal, vertical);
-    initToFitWidget();
+    layoutImage();
     update();
 }
 
@@ -267,10 +368,10 @@ void ImageViewer::resizeEvent(QResizeEvent *e)
     if(noPicture()) return;
 
     if(hasUserZoom){
-        updateTopLeft();
+        calcTopLeft();
         updateShift();
     }else{
-        initToFitWidget();
+        layoutImage(); //! FIXME: if user drag and move image content, this will reset the shift if align mode isn't AlignCenterCenter.
     }
     QWidget::resizeEvent(e);
 }
@@ -306,7 +407,7 @@ void ImageViewer::mousePressEvent ( QMouseEvent * event )
     if(event->button() & Qt::LeftButton){
         startPos = event->globalPos();
         if(hasPicture() && cursor().shape() == Qt::OpenHandCursor)
-            setCursor(QCursor(Qt::ClosedHandCursor));
+            setCursor(Qt::ClosedHandCursor);
 
         justPressed = true;
         pressPos = event->pos();
@@ -335,7 +436,7 @@ void ImageViewer::mouseReleaseEvent ( QMouseEvent * event )
         }
 
         if(cursor().shape() == Qt::ClosedHandCursor)
-            setCursor(QCursor(Qt::OpenHandCursor));
+            setCursor(Qt::OpenHandCursor);
     }
 }
 

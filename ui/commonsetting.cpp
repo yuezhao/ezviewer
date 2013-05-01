@@ -35,6 +35,7 @@ CommonSetting::CommonSetting(QWidget *parent) :
     ui->ui_groupBox->hide();
 
     showDialogCheckBox = ui->showDialogCheckBox;
+    scaleModeCombo = ui->scaleModeCombo;
     antialiasModeCombo = ui->antialiasModeCombo;
     timerSpinBox = ui->timerSpinBox;
     colorButton = ui->colorButton;
@@ -45,10 +46,25 @@ CommonSetting::CommonSetting(QWidget *parent) :
     cacheValueLabel = ui->cacheValueLabel;
     cacheValueSlider = ui->cacheValueSlider;
 
+    alignButtonGroup = new QButtonGroup(this);
+    alignButtonGroup->addButton(ui->leftTopButton, 0);
+    alignButtonGroup->addButton(ui->centerTopButton, 1);
+    alignButtonGroup->addButton(ui->rightTopButton, 2);
+    alignButtonGroup->addButton(ui->leftCenterButton, 3);
+    alignButtonGroup->addButton(ui->centerCenterButton, 4);
+    alignButtonGroup->addButton(ui->rightCenterButton, 5);
+    alignButtonGroup->addButton(ui->leftBottomButton, 6);
+    alignButtonGroup->addButton(ui->centerBottomButton, 7);
+    alignButtonGroup->addButton(ui->rightBottomButton, 8);
+
     initUIvalue();
 
     connect(showDialogCheckBox, SIGNAL(stateChanged(int)),
             SLOT(showDialogChange(int)));
+    connect(scaleModeCombo, SIGNAL(currentIndexChanged(int)),
+            SLOT(scaleModeChange(int)));
+    connect(alignButtonGroup, SIGNAL(buttonClicked(int)),
+            SLOT(alignModeChange(int)));
     connect(antialiasModeCombo, SIGNAL(currentIndexChanged(int)),
             SLOT(antialiasModeChange(int)));
     connect(colorButton, SIGNAL(clicked()), SLOT(setColor()));
@@ -77,6 +93,8 @@ CommonSetting::~CommonSetting()
 void CommonSetting::initUIvalue()
 {
     showDialogCheckBox->setChecked(Config::showDialog());
+    scaleModeCombo->setCurrentIndex(Config::scaleMode());
+    alignButtonGroup->button(Config::alignMode())->setChecked(true);
     antialiasModeCombo->setCurrentIndex(Config::antialiasMode());
     timerSpinBox->setValue(Config::timerInterval());
     preReadingCheckBox->setChecked(Config::enablePreReading());
@@ -97,6 +115,18 @@ void CommonSetting::initUIvalue()
 void CommonSetting::showDialogChange(int state)
 {
     Config::setShowDialog(state == Qt::Checked);
+}
+
+void CommonSetting::scaleModeChange(int index)
+{
+    if(index == -1) return;
+    Config::setScaleMode(Config::ScaleMode(index));
+}
+
+void CommonSetting::alignModeChange(int id)
+{
+    if (id < Config::AlignLeftTop || id > Config::AlignRightBottom) return;
+    Config::setAlignMode(Config::AlignMode(id));
 }
 
 void CommonSetting::antialiasModeChange(int index)

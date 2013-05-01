@@ -2,7 +2,7 @@ Ez看图
 =======
 
 EZ看图是一个简单纯粹的图片浏览器，使用Qt4编写，开源跨平台，国际化支持。   
-默认支持jpg, bmp, gif(包括动画), png, jpeg, ico, svg(包括动画),  mng(包括动画), webp, psd(部分支持), pbm, pgm, ppm, tif, tiff, xbm, xpm等多种图片格式。     
+默认支持jpg, bmp, gif(包括动画), png, jpeg, ico, svg(包括动画),  mng(包括动画), webp, psd(部分支持), psb(部分支持),pbm, pgm, ppm, tif, tiff, xbm, xpm等多种图片格式。     
 
 ***下载可执行文件:*** [v3.0正式版，2013/3/31](http://goo.gl/n8hvO)
 

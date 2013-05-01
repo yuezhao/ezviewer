@@ -26,6 +26,10 @@
 #include <QFileSystemWatcher>
 #include <QImageReader>
 
+#define SPLIT(x) &x, #x
+#define MERGE(x, y) &x, #x "+" #y, y
+
+
 const qreal Config::ScaleMax = 20.0;
 const qreal Config::ScaleMin = 0.1;
 const QPointF Config::OriginPoint(0.0, 0.0);
@@ -48,6 +52,8 @@ const QString StartupGroup = "Startup";
 const QString SizeModeKey = StartupGroup + "/SizeMode";
 const QString DialogKey = StartupGroup + "/ShowDialog";
 const QString EffectGroup = "Effect";
+const QString ScaleModeKey = EffectGroup + "/ScaleMode";
+const QString AlignModeKey = EffectGroup + "/AlignMode";
 const QString AntialiasModeKey = EffectGroup + "/Antialiasing";
 const QString EnableBgColorKey = EffectGroup + "/EnableBgColor";
 const QString BgColorKey = EffectGroup + "/BgColor";
@@ -72,11 +78,42 @@ Config::Config()
     loadAllShortcut();
 
     ActionManager::registerFunction(tr("Enable/Disable Custom Background Color"),
-                                    this, &Config::changeBgColorMode,
-                                    "Config::changeBgColorMode");
+                                    this, SPLIT(Config::changeBgColorMode));
     ActionManager::registerFunction(tr("Enable/Disable Pre-reading"),
-                                    this, &Config::changePreReadingMode,
-                                    "Config::changePreReadingMode");
+                                    this, SPLIT(Config::changePreReadingMode));
+
+    ActionManager::registerFunction(tr("Scale Mode: ") + tr("Scale Large Image to Fit Window"),
+                                    this, MERGE(Config::changeScaleMode, ScaleLargeImageToFitWidget));
+    ActionManager::registerFunction(tr("Scale Mode: ") + tr("Keep Image Size"),
+                                    this, MERGE(Config::changeScaleMode, KeepImageSize));
+    ActionManager::registerFunction(tr("Scale Mode: ") + tr("Fit Window Width"),
+                                    this, MERGE(Config::changeScaleMode, FitWidgetWidth));
+    ActionManager::registerFunction(tr("Scale Mode: ") + tr("Fit Window Height"),
+                                    this, MERGE(Config::changeScaleMode, FitWidgetHeight));
+    ActionManager::registerFunction(tr("Scale Mode: ") + tr("Scale to Fit Window"),
+                                    this, MERGE(Config::changeScaleMode, ScaleToFitWidget));
+    ActionManager::registerFunction(tr("Scale Mode: ") + tr("Scale to Expand Window"),
+                                    this, MERGE(Config::changeScaleMode, ScaleToExpandWidget));
+
+    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Left Top"),
+                                    this, MERGE(Config::changeAlignMode, AlignLeftTop));
+    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Left Center"),
+                                    this, MERGE(Config::changeAlignMode, AlignLeftCenter));
+    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Left Bottom"),
+                                    this, MERGE(Config::changeAlignMode, AlignLeftBottom));
+    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Center Top"),
+                                    this, MERGE(Config::changeAlignMode, AlignCenterTop));
+    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Center"),
+                                    this, MERGE(Config::changeAlignMode, AlignCenterCenter));
+    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Center Bottom"),
+                                    this, MERGE(Config::changeAlignMode, AlignCenterBottom));
+    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Right Top"),
+                                    this, MERGE(Config::changeAlignMode, AlignRightTop));
+    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Right Center"),
+                                    this, MERGE(Config::changeAlignMode, AlignRightCenter));
+    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Right Bottom"),
+                                    this, MERGE(Config::changeAlignMode, AlignRightBottom));
+
 
     QList<QByteArray> list = QImageReader::supportedImageFormats();
     for(int i=0; i < list.size(); ++i)
@@ -120,6 +157,8 @@ void Config::initConfigValue()
 {
     QSettings settings(ConfigFilePath(), QSettings::IniFormat);
     mShowDialog = settings.value(DialogKey, true).toBool();
+    mScaleMode = (ScaleMode)settings.value(ScaleModeKey, ScaleLargeImageToFitWidget).toInt();
+    mAlignMode = (AlignMode)settings.value(AlignModeKey, AlignCenterCenter).toInt();
     mAntialiasMode = settings.value(AntialiasModeKey, 0).toInt();
     mEnableBgColor = settings.value(EnableBgColorKey, true).toBool();
     QString colorStr = settings.value(BgColorKey, BgGreen).toString();
@@ -129,6 +168,10 @@ void Config::initConfigValue()
     mCacheValue = settings.value(CacheValueKey, -1).toInt();
     mLastGeometry = settings.value(GeometryKey).toByteArray();
 
+    if (mScaleMode < ScaleLargeImageToFitWidget || mScaleMode > ScaleToExpandWidget)
+        mScaleMode = ScaleLargeImageToFitWidget;
+    if (mAlignMode < AlignLeftTop || mAlignMode > AlignRightBottom)
+        mAlignMode = AlignCenterCenter;
     if(mAntialiasMode < 0 || mAntialiasMode > 2) // 3 modes
         mAntialiasMode = 0;
     mBgColor.setNamedColor(colorStr);
@@ -160,6 +203,16 @@ void Config::cancelConfigWatcher(const QObject *receiver)
 void Config::setShowDialog(bool enabled)
 {
     setValue(DialogKey, enabled);
+}
+
+void Config::setScaleMode(ScaleMode mode)
+{
+    setValue(ScaleModeKey, mode);
+}
+
+void Config::setAlignMode(AlignMode mode)
+{
+    setValue(AlignModeKey, mode);
 }
 
 void Config::setAntialiasMode(int mode)
@@ -197,7 +250,21 @@ void Config::setLastGeometry(const QByteArray &geometry)
     setValue(GeometryKey, geometry);
 }
 
+void Config::changeScaleMode(ScaleMode mode)
+{
+    if (scaleMode() == mode)
+        setValue(ScaleModeKey, ScaleLargeImageToFitWidget);
+    else
+        setValue(ScaleModeKey, mode);
+}
 
+void Config::changeAlignMode(AlignMode mode)
+{
+    if (alignMode() == mode)
+        setValue(AlignModeKey, AlignCenterCenter);
+    else
+        setValue(AlignModeKey, mode);
+}
 
 void Config::addShortcut(const QString &keySequence, const QString &actionScript)
 {

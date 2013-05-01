@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>401</width>
-    <height>478</height>
+    <width>414</width>
+    <height>616</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -64,6 +64,40 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <item row="0" column="2">
+       <widget class="QComboBox" name="scaleModeCombo">
+        <item>
+         <property name="text">
+          <string>Scale Large Image to Fit Window</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Keep Image Size</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Fit Window Width</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Fit Window Height</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Scale to Fit Window</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Scale to Expand Window</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="2" column="2">
        <widget class="QComboBox" name="antialiasModeCombo">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -94,21 +128,28 @@
         </item>
        </widget>
       </item>
-      <item row="0" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>Antialiasing:</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#0000ff;&quot;&gt;Antialiasing:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
+      <item row="5" column="0">
        <widget class="QLabel" name="colorLabel">
         <property name="text">
          <string>Background Color:</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Scale Mode &lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;(New!)&lt;/span&gt;&lt;span style=&quot; color:#000000;&quot;&gt;:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <property name="sizeConstraint">
          <enum>QLayout::SetDefaultConstraint</enum>
@@ -165,7 +206,7 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="0" colspan="3">
+      <item row="4" column="0" colspan="3">
        <widget class="QCheckBox" name="colorCheckBox">
         <property name="text">
          <string>Enable Custom Background Color</string>
@@ -175,11 +216,596 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Align Mode &lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;(New!)&lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QFrame" name="frame">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(112, 150, 255);</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_8">
+         <property name="margin">
+          <number>2</number>
+         </property>
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <item row="0" column="1">
+          <widget class="QRadioButton" name="centerTopButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>35</width>
+             <height>35</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QRadioButton::checked {
+	background-color: rgb(255, 255, 255);
+ }
+
+QRadioButton::unchecked {
+	
+	background-color: rgb(153, 194, 255);
+ }
+
+QRadioButton::indicator {
+     width: 40px;
+     height: 40px;
+ }
+
+ QRadioButton::indicator::unchecked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:pressed {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator::checked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:pressed {
+     image: url(about:blank);
+ }</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QRadioButton" name="rightCenterButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>35</width>
+             <height>35</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QRadioButton::checked {
+	background-color: rgb(255, 255, 255);
+ }
+
+QRadioButton::unchecked {
+	
+	background-color: rgb(153, 194, 255);
+ }
+
+QRadioButton::indicator {
+     width: 40px;
+     height: 40px;
+ }
+
+ QRadioButton::indicator::unchecked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:pressed {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator::checked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:pressed {
+     image: url(about:blank);
+ }</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QRadioButton" name="centerCenterButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>35</width>
+             <height>35</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QRadioButton::checked {
+	background-color: rgb(255, 255, 255);
+ }
+
+QRadioButton::unchecked {
+	
+	background-color: rgb(153, 194, 255);
+ }
+
+QRadioButton::indicator {
+     width: 40px;
+     height: 40px;
+ }
+
+ QRadioButton::indicator::unchecked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:pressed {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator::checked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:pressed {
+     image: url(about:blank);
+ }</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QRadioButton" name="centerBottomButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>35</width>
+             <height>35</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QRadioButton::checked {
+	background-color: rgb(255, 255, 255);
+ }
+
+QRadioButton::unchecked {
+	
+	background-color: rgb(153, 194, 255);
+ }
+
+QRadioButton::indicator {
+     width: 40px;
+     height: 40px;
+ }
+
+ QRadioButton::indicator::unchecked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:pressed {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator::checked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:pressed {
+     image: url(about:blank);
+ }</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>19</width>
+             <height>19</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QRadioButton" name="leftBottomButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>35</width>
+             <height>35</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QRadioButton::checked {
+	background-color: rgb(255, 255, 255);
+ }
+
+QRadioButton::unchecked {
+	
+	background-color: rgb(153, 194, 255);
+ }
+
+QRadioButton::indicator {
+     width: 40px;
+     height: 40px;
+ }
+
+ QRadioButton::indicator::unchecked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:pressed {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator::checked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:pressed {
+     image: url(about:blank);
+ }</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>19</width>
+             <height>19</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QRadioButton" name="rightTopButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>35</width>
+             <height>35</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QRadioButton::checked {
+	background-color: rgb(255, 255, 255);
+ }
+
+QRadioButton::unchecked {
+	
+	background-color: rgb(153, 194, 255);
+ }
+
+QRadioButton::indicator {
+     width: 40px;
+     height: 40px;
+ }
+
+ QRadioButton::indicator::unchecked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:pressed {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator::checked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:pressed {
+     image: url(about:blank);
+ }</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QRadioButton" name="leftCenterButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>35</width>
+             <height>35</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QRadioButton::checked {
+	background-color: rgb(255, 255, 255);
+ }
+
+QRadioButton::unchecked {
+	
+	background-color: rgb(153, 194, 255);
+ }
+
+QRadioButton::indicator {
+     width: 40px;
+     height: 40px;
+ }
+
+ QRadioButton::indicator::unchecked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:pressed {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator::checked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:pressed {
+     image: url(about:blank);
+ }</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QRadioButton" name="rightBottomButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>35</width>
+             <height>35</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QRadioButton::checked {
+	background-color: rgb(255, 255, 255);
+ }
+
+QRadioButton::unchecked {
+	
+	background-color: rgb(153, 194, 255);
+ }
+
+QRadioButton::indicator {
+     width: 40px;
+     height: 40px;
+ }
+
+ QRadioButton::indicator::unchecked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:pressed {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator::checked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:pressed {
+     image: url(about:blank);
+ }</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>19</width>
+             <height>19</height>
+            </size>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QRadioButton" name="leftTopButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>35</width>
+             <height>35</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QRadioButton::checked {
+	background-color: rgb(255, 255, 255);
+ }
+
+QRadioButton::unchecked {
+	
+	background-color: rgb(153, 194, 255);
+ }
+
+QRadioButton::indicator {
+     width: 40px;
+     height: 40px;
+ }
+
+ QRadioButton::indicator::unchecked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:unchecked:pressed {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator::checked {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:hover {
+     image: url(about:blank);
+ }
+
+ QRadioButton::indicator:checked:pressed {
+     image: url(about:blank);
+ }</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
      </layout>
-     <zorder>antialiasModeCombo</zorder>
-     <zorder>label_2</zorder>
-     <zorder>colorLabel</zorder>
-     <zorder>colorCheckBox</zorder>
     </widget>
    </item>
    <item row="3" column="0">
@@ -201,6 +827,29 @@
           <width>100</width>
           <height>25</height>
          </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"> QSpinBox::down-button {
+     subcontrol-origin: border;
+     subcontrol-position: left; 
+
+     width: 25px;
+     border-image: url(:/Left2.png);
+     border-width: 0px;
+     border-top-width: 0;
+ }
+
+QSpinBox::up-button {
+     subcontrol-origin: border;
+     subcontrol-position: right;
+
+     width: 25px;
+     border-image: url(:/Right2.png);
+     border-width: 0px;
+ }</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
         <property name="suffix">
          <string> s</string>

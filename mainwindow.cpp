@@ -34,6 +34,7 @@
 
 #define GET_SCRIPT(x) #x
 #define SPLIT(x) &x, #x
+#define MERGE(x, y) &x, #x "" #y, y
 
 const int SWITCH_FRAME_WIDTH = 90;
 const int BUTTOM_FRAME_HEIGHT = 60;
@@ -151,6 +152,8 @@ void MainWindow::readSettings()
 
 void MainWindow::applyConfig()
 {
+    viewer->changeScaleMode();
+    viewer->changeAlignMode();
     viewer->changeAntialiasMode(Config::antialiasMode());
     if(Config::enableBgColor())
         viewer->changeBgColor(Config::bgColor());
@@ -529,22 +532,17 @@ void MainWindow::registerAllFunction()
                                     viewer, SPLIT(PicManager::deleteFileNoAsk));
 
     ActionManager::registerFunction(tr("Zoom In"),
-                                    viewer, SPLIT(PicManager::zoomIn), 0.1);
+                                    viewer, MERGE(PicManager::zoomIn, 0.1));
     ActionManager::registerFunction(tr("Zoom In (Slow)"),
-                                    viewer, &PicManager::zoomIn,
-                                    "PicManager::zoomIn0.05", 0.05);
+                                    viewer, MERGE(PicManager::zoomIn, 0.05));
     ActionManager::registerFunction(tr("Zoom in (Fast)"),
-                                    viewer, &PicManager::zoomIn,
-                                    "PicManager::zoomIn0.2", 0.2);
+                                    viewer, MERGE(PicManager::zoomIn, 0.2));
     ActionManager::registerFunction(tr("Zoom Out"),
-                                    viewer, &PicManager::zoomIn,
-                                    "PicManager::zoomIn-0.1", -0.1);
+                                    viewer, MERGE(PicManager::zoomIn, -0.1));
     ActionManager::registerFunction(tr("Zoom Out (Slow)"),
-                                    viewer, &PicManager::zoomIn,
-                                    "PicManager::zoomIn-0.05", -0.05);
+                                    viewer, MERGE(PicManager::zoomIn, -0.05));
     ActionManager::registerFunction(tr("Zoom Out (Fast)"),
-                                    viewer, &PicManager::zoomIn,
-                                    "PicManager::zoomIn-0.2", -0.2);
+                                    viewer, MERGE(PicManager::zoomIn, -0.2));
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e)

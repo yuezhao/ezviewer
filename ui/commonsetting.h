@@ -28,6 +28,7 @@ namespace Ui {
     class CommonSetting;
 }
 
+class QButtonGroup;
 class QCheckBox;
 class QComboBox;
 class QLineEdit;
@@ -51,6 +52,8 @@ protected slots:
     void restoreDefaults();
 
     void showDialogChange(int state);
+    void scaleModeChange(int index);
+    void alignModeChange(int id);
     void antialiasModeChange(int index);
     void bgColorEnable(int state);
     void setColor();
@@ -62,6 +65,8 @@ private:
     Ui::CommonSetting *ui;
 
     QCheckBox *showDialogCheckBox;
+    QComboBox *scaleModeCombo;
+    QButtonGroup *alignButtonGroup;
     QComboBox *antialiasModeCombo;
     QSpinBox  *timerSpinBox;
     QPushButton *colorButton;
