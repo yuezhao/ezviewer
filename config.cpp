@@ -31,7 +31,7 @@ const qreal Config::ScaleMin = 0.1;
 const QPointF Config::OriginPoint(0.0, 0.0);
 const QSize Config::SizeAdjusted(0, 1);
 const QSize Config::WindowMinSize(280, 200);
-const QSize Config::WindowFitSize(500, 400);
+const QSize Config::WindowFitSize(800, 500);
 const QString Config::BgGreen = "#C7EDCC";
 const QDir::SortFlags Config::DirSortFlag = QDir::Name | QDir::IgnoreCase;
 const int Config::AutoScrollInterval = 25;    //20

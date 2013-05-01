@@ -371,52 +371,52 @@
 <context>
     <name>ImageWrapper</name>
     <message>
-        <location filename="../imagewrapper.cpp" line="235"/>
+        <location filename="../imagewrapper.cpp" line="240"/>
         <source>yyyy-MM-dd, hh:mm:ss</source>
         <translation>yyyy年MM月dd日，hh:mm:ss</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="238"/>
+        <location filename="../imagewrapper.cpp" line="243"/>
         <source>File Name: %1</source>
         <translation>文件名： %1</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="239"/>
+        <location filename="../imagewrapper.cpp" line="244"/>
         <source>File Size: %1 (%2 Bytes)</source>
         <translation>文件大小: %1 (%2 字节)</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="241"/>
+        <location filename="../imagewrapper.cpp" line="246"/>
         <source>Created Time: %1</source>
         <translation>创建时间: %1</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="251"/>
+        <location filename="../imagewrapper.cpp" line="256"/>
         <source>Image Format: %1</source>
         <translation>图像格式： %1</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="253"/>
+        <location filename="../imagewrapper.cpp" line="258"/>
         <source>Color Count: %1</source>
         <translation>颜色数: %1</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="255"/>
+        <location filename="../imagewrapper.cpp" line="260"/>
         <source>Color Count: True color</source>
         <translation>颜色数: 真彩色</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="256"/>
+        <location filename="../imagewrapper.cpp" line="261"/>
         <source>Depth: %1</source>
         <translation>色深: %1</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="264"/>
+        <location filename="../imagewrapper.cpp" line="269"/>
         <source>Size: %1 x %2 (%3)</source>
         <translation>尺寸: %1 x %2 (%3)</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="267"/>
+        <location filename="../imagewrapper.cpp" line="272"/>
         <source>Frame Count: %1</source>
         <translation>帧数： %1</translation>
     </message>
@@ -432,12 +432,12 @@
         <translation type="obsolete">EZ图像查看器</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="127"/>
+        <location filename="../mainwindow.cpp" line="132"/>
         <source>Open File</source>
         <translation>打开文件</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="128"/>
+        <location filename="../mainwindow.cpp" line="133"/>
         <source>Images (%1);;All Files (*)</source>
         <translation>图片文件 (%1);;所有文件 (*)</translation>
     </message>
@@ -446,41 +446,41 @@
         <translation type="obsolete">EZ看图</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="213"/>
-        <location filename="../mainwindow.cpp" line="466"/>
+        <location filename="../mainwindow.cpp" line="226"/>
+        <location filename="../mainwindow.cpp" line="499"/>
         <source>Property</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="372"/>
+        <location filename="../mainwindow.cpp" line="385"/>
         <source>&amp;Quit</source>
         <translation>退出(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="377"/>
+        <location filename="../mainwindow.cpp" line="390"/>
         <source>&amp;Open</source>
         <translation>打开(&amp;O)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="366"/>
+        <location filename="../mainwindow.cpp" line="379"/>
         <source>&amp;Setting</source>
         <translation>设置(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="262"/>
-        <location filename="../mainwindow.cpp" line="264"/>
-        <location filename="../mainwindow.cpp" line="380"/>
+        <location filename="../mainwindow.cpp" line="275"/>
+        <location filename="../mainwindow.cpp" line="277"/>
+        <location filename="../mainwindow.cpp" line="400"/>
         <source>Auto Play</source>
         <translation>自动放映</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="270"/>
-        <location filename="../mainwindow.cpp" line="272"/>
+        <location filename="../mainwindow.cpp" line="283"/>
+        <location filename="../mainwindow.cpp" line="285"/>
         <source>Stop Play</source>
         <translation>停止放映</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="369"/>
+        <location filename="../mainwindow.cpp" line="382"/>
         <source>&amp;About</source>
         <translation>关于(&amp;A)</translation>
     </message>
@@ -493,72 +493,72 @@
         <translation type="obsolete">最小化</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="383"/>
+        <location filename="../mainwindow.cpp" line="403"/>
         <source>Rotate &amp;Left</source>
         <translation>逆时钟旋转90度(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="387"/>
+        <location filename="../mainwindow.cpp" line="407"/>
         <source>Rotate &amp;Right</source>
         <translation>顺时钟旋转90度(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="390"/>
+        <location filename="../mainwindow.cpp" line="410"/>
         <source>Mirrored &amp;Horizontal</source>
         <translation>水平镜像(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="393"/>
+        <location filename="../mainwindow.cpp" line="413"/>
         <source>Mirrored &amp;Vertical</source>
         <translation>竖直镜像(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="396"/>
+        <location filename="../mainwindow.cpp" line="416"/>
         <source>&amp;Copy to clipboard</source>
         <translation>复制到剪贴板(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="399"/>
+        <location filename="../mainwindow.cpp" line="419"/>
         <source>&amp;Property</source>
         <translation>属性(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="404"/>
+        <location filename="../mainwindow.cpp" line="424"/>
         <source>&amp;Delete</source>
         <translation>删除(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="460"/>
+        <location filename="../mainwindow.cpp" line="493"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="498"/>
+        <location filename="../mainwindow.cpp" line="531"/>
         <source>Zoom In</source>
         <translation>放大</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="500"/>
+        <location filename="../mainwindow.cpp" line="533"/>
         <source>Zoom In (Slow)</source>
         <translation>放大(较慢)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="503"/>
+        <location filename="../mainwindow.cpp" line="536"/>
         <source>Zoom in (Fast)</source>
         <translation>放大(较快)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="506"/>
+        <location filename="../mainwindow.cpp" line="539"/>
         <source>Zoom Out</source>
         <translation>缩小</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="509"/>
+        <location filename="../mainwindow.cpp" line="542"/>
         <source>Zoom Out (Slow)</source>
         <translation>缩小(较慢)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="512"/>
+        <location filename="../mainwindow.cpp" line="545"/>
         <source>Zoom Out (Fast)</source>
         <translation>缩小(较快)</translation>
     </message>
@@ -567,67 +567,72 @@
         <translation type="obsolete">切换全屏</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="462"/>
+        <location filename="../mainwindow.cpp" line="495"/>
         <source>Full Screen</source>
         <translation>切换全屏</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="464"/>
+        <location filename="../mainwindow.cpp" line="497"/>
         <source>Auto Play/Stop</source>
         <translation>自动放映/停止</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="468"/>
+        <location filename="../mainwindow.cpp" line="501"/>
         <source>Setting</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="470"/>
+        <location filename="../mainwindow.cpp" line="503"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="475"/>
+        <location filename="../mainwindow.cpp" line="508"/>
         <source>Next Picture</source>
         <translation>下一张图片</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="477"/>
+        <location filename="../mainwindow.cpp" line="510"/>
         <source>Previous Picture</source>
         <translation>上一张图片</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="472"/>
+        <location filename="../mainwindow.cpp" line="505"/>
         <source>Quit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="479"/>
+        <location filename="../mainwindow.cpp" line="394"/>
+        <source>Show in &amp;Explorer</source>
+        <translation>在资源管理器中定位(&amp;E)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="512"/>
         <source>Rotate Left</source>
         <translation>逆时钟旋转90度</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="481"/>
+        <location filename="../mainwindow.cpp" line="514"/>
         <source>Rotate Right</source>
         <translation>顺时钟旋转90度</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="483"/>
+        <location filename="../mainwindow.cpp" line="516"/>
         <source>Mirrored Horizontal</source>
         <translation>水平镜像</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="485"/>
+        <location filename="../mainwindow.cpp" line="518"/>
         <source>Mirrored Vertical</source>
         <translation>竖直镜像</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="487"/>
+        <location filename="../mainwindow.cpp" line="520"/>
         <source>Animation Play/Pause</source>
         <translation>动画播放/暂停</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="489"/>
+        <location filename="../mainwindow.cpp" line="522"/>
         <source>Frame Step</source>
         <translation>帧步进</translation>
     </message>
@@ -640,17 +645,17 @@
         <translation type="obsolete">步进/下一帧</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="491"/>
+        <location filename="../mainwindow.cpp" line="524"/>
         <source>Copy to clipboard</source>
         <translation>复制到剪贴板</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="493"/>
+        <location filename="../mainwindow.cpp" line="526"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="495"/>
+        <location filename="../mainwindow.cpp" line="528"/>
         <source>Delete Without Notification</source>
         <translation>直接删除(没有通知)</translation>
     </message>
@@ -667,7 +672,7 @@
         <translation type="obsolete">文件关联</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="85"/>
+        <location filename="../mainwindow.cpp" line="90"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
@@ -794,14 +799,19 @@
 &apos;%1’</translation>
     </message>
     <message>
-        <location filename="../picmanager.cpp" line="244"/>
+        <location filename="../picmanager.cpp" line="250"/>
         <source>Delete File</source>
         <translation>删除文件</translation>
     </message>
     <message>
-        <location filename="../picmanager.cpp" line="245"/>
+        <location filename="../picmanager.cpp" line="251"/>
         <source>Are you sure to delete file &apos;%1&apos;?</source>
         <translation>是否确定要删除文件 &apos;%1&apos;?</translation>
+    </message>
+    <message>
+        <location filename="../picmanager.cpp" line="262"/>
+        <source>Delete file success!</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>File Name: %1</source>
@@ -945,14 +955,14 @@ You can help to improve %1 by email the picture to %2</source>
         <translation type="obsolete">&lt;p align=&apos;center&apos;&gt;%1 - 一个简单的图片浏览器&lt;/p&gt;&lt;p&gt;版本: &amp;nbsp;&amp;nbsp; v%2&lt;br&gt;编译时间: &amp;nbsp;&amp;nbsp;  %3&lt;br&gt;CopyRight &amp;#169; 2012 %4&lt;/p&gt;&lt;p&gt;联系作者: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%5&apos;&gt;%5&lt;/a&gt;&lt;br&gt;项目主页: &amp;nbsp;&amp;nbsp; &lt;a href=&apos;http://%6&apos;&gt;%6&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../tools/osrelated.cpp" line="99"/>
-        <location filename="../tools/osrelated.cpp" line="106"/>
+        <location filename="../tools/osrelated.cpp" line="100"/>
+        <location filename="../tools/osrelated.cpp" line="107"/>
         <source>Delete Failed</source>
         <translation>删除失败</translation>
     </message>
     <message>
-        <location filename="../tools/osrelated.cpp" line="100"/>
-        <location filename="../tools/osrelated.cpp" line="107"/>
+        <location filename="../tools/osrelated.cpp" line="101"/>
+        <location filename="../tools/osrelated.cpp" line="108"/>
         <source>Delete file &apos;%1&apos; failed!</source>
         <translation>文件 ‘%1’ 删除失败！</translation>
     </message>

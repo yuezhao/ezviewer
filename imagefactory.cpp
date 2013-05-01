@@ -65,8 +65,6 @@ ImageWrapper * ImageFactory::newOrReuseImage()
     }else{
         image = list.at(total - 1);
         list.removeAt(total - 1);
-        waitForImageReady(image); // Without this, it will be crashed if more than one thread run image.load().
-        image->recycle();
         image->setReady(false);
         image->setHashCode(ImageWrapper::HASH_INVALID);
     }
@@ -79,7 +77,6 @@ ImageWrapper * ImageFactory::findImageByHash(uint hash)
     foreach(ImageWrapper *image, list){
         if(image->getHashCode() == hash){
             list.removeOne(image);
-            waitForImageReady(image);
             return image;
         }
     }
@@ -111,9 +108,7 @@ ImageWrapper * ImageFactory::getImageWrapper(const QString &filePath)
     if (hash == ImageWrapper::HASH_INVALID) {
         image->setReady(true);
     } else {
-//        image->load(filePath);
         QThreadPool::globalInstance()->start(new Runnable(image, filePath, false));
-        waitForImageReady(image);
     }
 
     return image;

@@ -26,6 +26,7 @@
 using namespace PhotoKit;
 #endif // USE_EXIF
 
+#include <QApplication>
 #include <QDateTime>
 #include <QMovie>
 #include <QPainter>
@@ -63,6 +64,11 @@ void ImageWrapper::load(const QString &filePath, bool isPreReading)
     if (filePath.isEmpty())
         return;
 
+    static QMutex mutex;
+    QMutexLocker locker(&mutex);    //! FIXME: if the thread pool has more than one thread, when they call this function at the same time, may cause problem by the calling order.
+
+    recycle();
+
     imagePath = filePath;
     imageAttribute = QString::null;
     formatFlag = REGULAR_FLAG;
@@ -77,26 +83,25 @@ void ImageWrapper::load(const QString &filePath, bool isPreReading)
 
     if(isAnimationFromat(imageFormat)){
         if (imageFormat == "svg") {
-            svgRender = new QSvgRenderer(imagePath);
+            svgRender = new QSvgRenderer(imagePath); // this svgRender was created in pre-reading thread.
             if (svgRender->animated()) {
                 formatFlag |= SVG_FLAG;
                 image = QImage(svgRender->defaultSize(), QImage::Format_ARGB32);
                 QPainter painter(&image);
                 svgRender->render(&painter);
-            } else {
+            }/* else {
                 SafeDelete(svgRender);
-            }
+            }*/
         } else if (imageFrames != 1) {  // "gif" or "mng" animation
-            movie = new QMovie(imagePath);
+            movie = new QMovie(imagePath);  // this movie was created in pre-reading thread.
             movie->setFormat(imageFormat.toLocal8Bit()); /// this is important when the file name didn't end with 'gif'.
             if(movie->isValid()) {
                 formatFlag |= MOVIE_FLAG;
                 if (movie->jumpToFrame(0))
                     image = movie->currentImage();
-            }else{    //cannot read image, so delete
+            }/*else{    //cannot read image, so delete
                 SafeDelete(movie);
-                qDebug("is animation, but creat QMovie fail");
-            }
+            }*/
         }
     }
 
@@ -122,10 +127,10 @@ void ImageWrapper::load(const QString &filePath, bool isPreReading)
             image = QImage();
     }
 
-    if (isPreReading) { // will re-create these when animation start.
+//    if (isPreReading) { // will re-create these when animation start.
         SafeDelete(movie);
         SafeDelete(svgRender);
-    }
+//    }
 
     if(image.isNull()){
         imageFormat = "";
@@ -136,13 +141,17 @@ void ImageWrapper::load(const QString &filePath, bool isPreReading)
 }
 
 
+/*! NOTE: QMovie use QTimer for changing frame, and QTimer muse start in the thread that it has been created.
+ *  Since QTimer has parent(QMovie) and we couldn't use moveToThread with it (it is a d-pointer member of QMovie),
+ *  so muse create the movie in main thread.
+ */
 void ImageWrapper::startAnimation()
 {
     qDebug("isAnimation, will start animation");
 
     if (formatFlag & MOVIE_FLAG) {
         if (!movie) {
-            movie = new QMovie(imagePath);
+            movie = new QMovie(imagePath); // this movie was created in main thread.
             movie->setFormat(imageFormat.toLocal8Bit());
         }
 
@@ -151,7 +160,7 @@ void ImageWrapper::startAnimation()
         connect(movie, SIGNAL(updated(QRect)), SIGNAL(animationUpdated()));
     } else if (formatFlag & SVG_FLAG) {
         if (!svgRender)
-            svgRender = new QSvgRenderer(imagePath);
+            svgRender = new QSvgRenderer(imagePath); // this svgRender was created in main thread.
         connect(svgRender, SIGNAL(repaintNeeded()), SLOT(updateSvgImage()));
     }
 }

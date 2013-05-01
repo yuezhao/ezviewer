@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     MainWindow::preProcessCmd(app.arguments());
     MainWindow m;
     m.show();
-    app.processEvents(QEventLoop::ExcludeUserInputEvents);
+//    app.processEvents(QEventLoop::ExcludeUserInputEvents);
     m.parseCmd(app.arguments());
 
     return app.exec();

@@ -34,6 +34,9 @@ bool preReadingSuggested();
 
 void moveFile2Trash(const QString &filePath);
 
+bool supportShowFileInExplorer();
+void showFileInExplorer(const QString &filePath);
+
 }
 
 #endif // OSRELATED_H

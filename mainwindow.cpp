@@ -24,6 +24,7 @@
 #include "global.h"
 #include "contralbar.h"
 #include "floatframe.h"
+#include "osrelated.h"
 #include "toolkit.h"
 #include "tooltip.h"
 #include "actionmanager.h"
@@ -64,6 +65,10 @@ MainWindow::MainWindow(QWidget *parent) :
     registerAllFunction();
 
     resize(Config::WindowFitSize);
+    QRect rect = QApplication::desktop()->availableGeometry();
+    QPoint pos = QPoint((rect.width() - Config::WindowFitSize.width()) / 2 + rect.left(),
+                        (rect.height() - Config::WindowFitSize.height()) / 2 + rect.top());
+    move(pos);  // show this window in the center of Desktop
     readSettings();
     Config::insertConfigWatcher(this, SLOT(applyConfig()));
 
@@ -130,10 +135,18 @@ void MainWindow::openFile()
         viewer->openFile(fileName);
 }
 
+void MainWindow::showInExplorer()
+{
+    if(viewer->hasFile()){
+        OSRelated::showFileInExplorer(viewer->filePath());
+    }
+}
+
 void MainWindow::readSettings()
 {
     applyConfig();    ///
-    restoreGeometry(Config::lastGeometry());
+    if (!Config::lastGeometry().isEmpty())
+        restoreGeometry(Config::lastGeometry());
 }
 
 void MainWindow::applyConfig()
@@ -377,6 +390,13 @@ void MainWindow::initContextMenu()
                 tr("&Open"), this);
     connect(openAction, SIGNAL(triggered()), SLOT(openFile()));
 
+    if (OSRelated::supportShowFileInExplorer()) {
+        locateAction = new QAction(tr("Show in &Explorer"), this);
+        connect(locateAction, SIGNAL(triggered()), SLOT(showInExplorer()));
+    } else {
+        locateAction = NULL;
+    }
+
     slideAction = new QAction(QIcon(":/Play.png"), tr("Auto Play"), this);
     connect(slideAction, SIGNAL(triggered()), SLOT(switchSlideShow()));
 
@@ -406,6 +426,8 @@ void MainWindow::initContextMenu()
 
     contextMenu = new QMenu(this);
     contextMenu->addAction(openAction);
+    if (locateAction)
+        contextMenu->addAction(locateAction);
     contextMenu->addAction(slideAction);
     contextMenu->addSeparator();
     contextMenu->addAction(rotateLeftAction);
@@ -452,6 +474,8 @@ void MainWindow::showContextMenu(const QPoint &pos)
     bool notSliding = (!slideTimer->isActive());
 
     openAction->setEnabled(notSliding);
+    if (locateAction)
+        locateAction->setEnabled(has_file);
     slideAction->setEnabled(has_file);
     rotateLeftAction->setEnabled(hasPixmap);
     rotateRightAction->setEnabled(hasPixmap);
@@ -525,22 +549,29 @@ void MainWindow::registerAllFunction()
 
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
+    static bool locked = false; // this function will be called only in main thread, so doesn't need using mutex.
+    if (locked)
+        return;
+    else
+        locked = true;
+
     QKeySequence keys(e->modifiers() + e->key());
 
     if (slideTimer->isActive()) {
         QString action = ActionManager::getMatchAction(keys.toString());
         if (action == GET_SCRIPT(MainWindow::openFile)
                 || action == GET_SCRIPT(PicManager::deleteFileNoAsk)
-                || action == GET_SCRIPT(PicManager::deleteFileAsk) )
+                || action == GET_SCRIPT(PicManager::deleteFileAsk) ) {
+            locked = false;
             return;
+        }
     }
 
     if(ActionManager::run(keys.toString())) {
-        // TODO: HOWTO delete the key event in the event loop during ActionManager::run() ?
-//        qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
-        e->accept();        
-        return;
+        e->accept();
+    } else {
+        QWidget::keyPressEvent(e);
     }
 
-    QWidget::keyPressEvent(e);
+    locked = false;
 }

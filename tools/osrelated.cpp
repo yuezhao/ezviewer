@@ -24,6 +24,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QProcess>
 #include <QThread>
 
 #ifdef Q_WS_WIN
@@ -107,6 +108,31 @@ void moveFile2Trash(const QString &filePath)
                              QObject::tr("Delete file '%1' failed!")
                              .arg(QFileInfo(filePath).fileName()));
 
+#endif // Q_WS_WIN
+}
+
+bool supportShowFileInExplorer()
+{
+#ifdef Q_WS_WIN
+    return true;
+#else
+    return false;
+#endif // Q_WS_WIN
+}
+
+void showFileInExplorer(const QString &filePath)
+{
+    if (!supportShowFileInExplorer())
+        return;
+
+#ifdef Q_WS_WIN
+    QString path = filePath;
+    path.replace('/', '\\');
+    QStringList args;
+    args << "/select," << QString("%1").arg(path);
+    QProcess::execute("explorer", args);
+#else
+    // do nothing
 #endif // Q_WS_WIN
 }
 

@@ -58,6 +58,7 @@ protected slots:
     void showContextMenu(const QPoint &pos);
 
     void openFile();
+    void showInExplorer();
     void changeFullScreen();
     void showAttribute();
     void switchSlideShow();
@@ -99,6 +100,7 @@ private:
 
     QMenu *contextMenu;
     QAction *openAction;
+    QAction *locateAction;
     QAction *slideAction;
     QAction *rotateLeftAction;
     QAction *rotateRightAction;

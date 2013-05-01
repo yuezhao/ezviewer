@@ -122,6 +122,11 @@ void PicManager::readFile(const QString &fullPath)
     curImage->recycle();
     curImage = ImageFactory::getImageWrapper(curPath);
 
+    while(!curImage->getReady()){
+        qApp->processEvents(QEventLoop::AllEvents);
+        // wait for pre-reading in another thread
+    }
+
     if(curImage->isAnimation()) {
         connect(curImage, SIGNAL(animationUpdated()), SLOT(updateAnimation()));
         curImage->startAnimation();
@@ -197,6 +202,7 @@ bool PicManager::prePic()
 {
     // maybe current file is not a picture, and current dir has no any picture also, so we need check if(list.size() < 1).
     if(!hasFile() || list.size() < 1) return false;
+    if (!curImage->getReady()) return false;
 
     currentIndex = getPreIndex(currentIndex);
     readFile(currentIndex);
@@ -208,6 +214,7 @@ bool PicManager::prePic()
 bool PicManager::nextPic()
 {
     if(!hasFile() || list.size() < 1) return false; //
+    if (!curImage->getReady()) return false;
 
     currentIndex = getNextIndex(currentIndex);
     readFile(currentIndex);
@@ -239,6 +246,7 @@ void PicManager::showEvent ( QShowEvent * event )
 void PicManager::deleteFile(bool needAsk)
 {
     if(!hasFile() || !QFile::exists(curPath)) return;
+    if (!curImage->getReady()) return;
 
     if(needAsk){
         int ret = QMessageBox::question(
@@ -252,9 +260,9 @@ void PicManager::deleteFile(bool needAsk)
 
     curImage->recycle();
     OSRelated::moveFile2Trash(curPath); ///
-    if (!QFile::exists(curPath)) {
-        QPoint site = mapToGlobal(pos()) + QPoint(10, height() - 40);
-        ToolTip::showText(site, tr("Delete file success!"));
-    }
+//    if (!QFile::exists(curPath)) {
+//        QPoint site = mapToGlobal(pos()) + QPoint(10, height() - 40);
+//        ToolTip::showText(site, tr("Delete file success!"));
+//    }
 }
 
