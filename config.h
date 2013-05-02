@@ -86,7 +86,7 @@ public:
     const static qreal ZoomOutRatioSlow;
     const static qreal ZoomOutRatioFast;
 
-    const static int   DefaultMoveContentSpeed;
+    const static int   DefaultScrollContentSpeed;
 
     const static qreal ScaleMaxLimit;
     const static qreal ScaleMinLimit;

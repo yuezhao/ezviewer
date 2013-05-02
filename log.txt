@@ -109,3 +109,4 @@ BUGFIX：开启预读的情况下，有可能因为多个线程同时进入Image
 新增：允许通过键盘按键移动图片内容(缩放超过窗体显示范围的情况下)。
 重构：ImageViewer和FloatFrame的部分用户操作逻辑移到MainWindow中。
 重构：规范Config中关于配置的默认值部分，方便集中修改。
+重构：移植Qt demo中的flickable，将惯性滑动部分封装为VelocityTracker，并将ImageViewer中惯性滑动的部分抽离，用VelocityTracker代替，以减少其处理逻辑。

@@ -23,7 +23,8 @@ HEADERS = global.h \
     tools/tooltip.h \
     tools/action.h \
     tools/actionmanager.h \
-    tools/qxmlputget.h
+    tools/qxmlputget.h \
+    tools/velocitytracker.h
 
 SOURCES = main.cpp \
     config.cpp \
@@ -42,7 +43,8 @@ SOURCES = main.cpp \
     tools/toolkit.cpp \
     tools/tooltip.cpp \
     tools/actionmanager.cpp \
-    tools/qxmlputget.cpp
+    tools/qxmlputget.cpp \
+    tools/velocitytracker.cpp
 
 TRANSLATIONS += res/EzViewer_zh_CN.ts
 

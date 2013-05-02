@@ -230,69 +230,6 @@ void MainWindow::showAttribute()
     }
 }
 
-bool MainWindow::eventFilter(QObject *obj, QEvent *event)
-{
-    switch(event->type()) {
-    case QEvent::ToolTip:
-    {
-        if (obj != viewer) break;
-
-        QHelpEvent* e = static_cast<QHelpEvent*>(event);
-        if (attributeRect.contains(e->pos())){
-            QString attribute = viewer->attribute();
-            if(!attribute.isEmpty())
-                ToolTip::showText(e->globalPos(),
-                                  attribute.prepend("<b>").append("</b>"),
-                                  false, 0.8);
-        }
-        return true;
-    }
-    case QEvent::MouseButtonDblClick:
-    {
-        if (obj != viewer && obj != bottomFrame) break;
-
-        QMouseEvent *e = static_cast<QMouseEvent*>(event);
-        if(e->button() & Qt::LeftButton)
-            changeFullScreen();
-        return true;
-    }
-    case QEvent::ContextMenu:
-    {
-        QContextMenuEvent *e = static_cast<QContextMenuEvent*>(event);
-        showContextMenu(e->globalPos());
-        return true;
-    }
-    case QEvent::Wheel:
-    {
-        QWheelEvent *e = static_cast<QWheelEvent *>(event);
-
-//        if (e->delta() < 0)
-//            viewer->nextPic();
-//        else
-//            viewer->prePic();
-
-        qreal factor = 0.1;
-        switch(e->modifiers()){
-        case Qt::ShiftModifier:
-            factor = e->delta() / qreal(2400); // e->delta() is +120 or -120
-            break;
-        case Qt::ControlModifier:
-            factor = e->delta() / qreal(600);
-            break;
-        default:
-            factor = e->delta() / qreal(1200);
-            break;
-        }
-        viewer->zoomIn(factor, viewer->mapFromGlobal(e->globalPos()));
-        break;
-    }
-    default:
-        break;
-    }
-
-    return false;
-}
-
 void MainWindow::switchSlideShow()// if other commend when slide show??
 {
     if(!viewer->hasFile() && !slideTimer->isActive())  ////for setMyWindowTitle() call
@@ -474,27 +411,6 @@ void MainWindow::initContextMenu()
     contextMenu->addAction(closeAction);
 }
 
-
-void MainWindow::parseCmd(QStringList args)
-{
-    args.removeFirst(); // remove name of executable
-    if(!args.empty()){
-        viewer->openFiles(args);
-    }else{
-        if(Config::showDialog()) // show dialog while launch.
-            openFile();
-    }
-}
-
-void MainWindow::preProcessCmd(const QStringList &args)
-{
-    if(args.size() > 1){    // first one is name of executable path
-        QFileInfo fi(args.at(1));
-        if (fi.exists() && fi.isFile())
-            ImageFactory::preReading(fi.absoluteFilePath()); // TODO: if the computer is one-core and user sets pre-reading enabled?
-    }
-}
-
 void MainWindow::showContextMenu(const QPoint &pos)
 {
     bool hasPixmap = viewer->hasPicture();
@@ -515,6 +431,26 @@ void MainWindow::showContextMenu(const QPoint &pos)
     attributeAction->setEnabled(hasPixmap || has_file); //
 
     contextMenu->popup(pos);
+}
+
+void MainWindow::parseCmd(QStringList args)
+{
+    args.removeFirst(); // remove name of executable
+    if(!args.empty()){
+        viewer->openFiles(args);
+    }else{
+        if(Config::showDialog()) // show dialog while launch.
+            openFile();
+    }
+}
+
+void MainWindow::preProcessCmd(const QStringList &args)
+{
+    if(args.size() > 1){    // first one is name of executable path
+        QFileInfo fi(args.at(1));
+        if (fi.exists() && fi.isFile())
+            ImageFactory::preReading(fi.absoluteFilePath()); // TODO: if the computer is one-core and user sets pre-reading enabled?
+    }
 }
 
 void MainWindow::registerAllFunction()
@@ -570,18 +506,18 @@ void MainWindow::registerAllFunction()
     ActionManager::registerFunction(tr("Zoom Out (Fast)"), viewer,
                    &PicManager::zoomIn, SPLIT_PARAM(Config::ZoomOutRatioFast));
 
-    ActionManager::registerFunction(tr("Move Content Up"),
-                   viewer, &PicManager::moveContent, "moveContentUp",
-                   0, Config::DefaultMoveContentSpeed);
-    ActionManager::registerFunction(tr("Move Content Left"),
-                   viewer, &PicManager::moveContent, "moveContentLeft",
-                   Config::DefaultMoveContentSpeed, 0);
-    ActionManager::registerFunction(tr("Move Content Right"),
-                   viewer, &PicManager::moveContent, "moveContentRight",
-                   -Config::DefaultMoveContentSpeed, 0);
-    ActionManager::registerFunction(tr("Move Content Down"),
-                   viewer, &PicManager::moveContent, "moveContentDown",
-                   0, -Config::DefaultMoveContentSpeed);
+    ActionManager::registerFunction(tr("Scroll Content Up"),
+                   viewer, &PicManager::scrollContent, "scrollContentUp",
+                   0, Config::DefaultScrollContentSpeed);
+    ActionManager::registerFunction(tr("Scroll Content Left"),
+                   viewer, &PicManager::scrollContent, "scrollContentLeft",
+                   Config::DefaultScrollContentSpeed, 0);
+    ActionManager::registerFunction(tr("Scroll Content Right"),
+                   viewer, &PicManager::scrollContent, "scrollContentRight",
+                   -Config::DefaultScrollContentSpeed, 0);
+    ActionManager::registerFunction(tr("Scroll Content Down"),
+                   viewer, &PicManager::scrollContent, "scrollContentDown",
+                   0, -Config::DefaultScrollContentSpeed);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e)
@@ -611,4 +547,67 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
     }
 
     locked = false;
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    switch(event->type()) {
+    case QEvent::ToolTip:
+    {
+        if (obj != viewer) break;
+
+        QHelpEvent* e = static_cast<QHelpEvent*>(event);
+        if (attributeRect.contains(e->pos())){
+            QString attribute = viewer->attribute();
+            if(!attribute.isEmpty())
+                ToolTip::showText(e->globalPos(),
+                                  attribute.prepend("<b>").append("</b>"),
+                                  false, 0.8);
+        }
+        return true;
+    }
+    case QEvent::MouseButtonDblClick:
+    {
+        if (obj != viewer && obj != bottomFrame) break;
+
+        QMouseEvent *e = static_cast<QMouseEvent*>(event);
+        if(e->button() & Qt::LeftButton)
+            changeFullScreen();
+        return true;
+    }
+    case QEvent::ContextMenu:
+    {
+        QContextMenuEvent *e = static_cast<QContextMenuEvent*>(event);
+        showContextMenu(e->globalPos());
+        return true;
+    }
+    case QEvent::Wheel:
+    {
+        QWheelEvent *e = static_cast<QWheelEvent *>(event);
+
+//        if (e->delta() < 0)
+//            viewer->nextPic();
+//        else
+//            viewer->prePic();
+
+        qreal factor = 0.1;
+        switch(e->modifiers()){
+        case Qt::ShiftModifier:
+            factor = e->delta() / qreal(2400); // e->delta() is +120 or -120
+            break;
+        case Qt::ControlModifier:
+            factor = e->delta() / qreal(600);
+            break;
+        default:
+            factor = e->delta() / qreal(1200);
+            break;
+        }
+        viewer->zoomIn(factor, viewer->mapFromGlobal(e->globalPos()));
+        break;
+    }
+    default:
+        break;
+    }
+
+    return false;
 }

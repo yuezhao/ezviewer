@@ -36,7 +36,7 @@ const qreal Config::ZoomInRatioFast = 0.2;
 const qreal Config::ZoomOutRatioNomal = -0.1;
 const qreal Config::ZoomOutRatioSlow = -0.05;
 const qreal Config::ZoomOutRatioFast = -0.2;
-const int   Config::DefaultMoveContentSpeed = 15;
+const int   Config::DefaultScrollContentSpeed = 15;
 
 const qreal Config::ScaleMaxLimit = 20.0;
 const qreal Config::ScaleMinLimit = 0.1;
@@ -180,6 +180,7 @@ void Config::fileChanged(const QString &filePath)
 
 void Config::initConfigValue()
 {
+    qDebug("initConfigValue");
     QSettings settings(ConfigFilePath(), QSettings::IniFormat);
     mShowDialog = settings.value(DialogKey, DefaultShowDialog).toBool();
     mScaleMode = (ScaleMode)settings.value(ScaleModeKey, DefaultScaleMode).toInt();

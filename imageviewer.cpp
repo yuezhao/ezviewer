@@ -23,24 +23,8 @@
 #include "config.h"
 #include "imageviewer.h"
 #include "tooltip.h"
+#include "velocitytracker.h"
 
-//!    paste()
-//    const QMimeData *mimeData = QApplication::clipboard()->mimeData();
-//    if (mimeData->hasImage())
-//        pixmap = qvariant_cast<QPixmap>(mimeData->imageData());
-//    update();
-
-
-const int threshold = 10;
-
-static QPoint deaccelerate(const QPoint &speed, int a = 1, int max = 64)
-{
-    int x = qBound(-max, speed.x(), max);
-    int y = qBound(-max, speed.y(), max);
-    x = (x == 0) ? x : (x > 0) ? qMax(0, x - a) : qMin(0, x + a);
-    y = (y == 0) ? y : (y > 0) ? qMax(0, y - a) : qMin(0, y + a);
-    return QPoint(x, y);
-}
 
 ImageViewer::ImageViewer(QWidget *parent)
     : QWidget(parent),
@@ -48,12 +32,12 @@ ImageViewer::ImageViewer(QWidget *parent)
       alignMode(Config::DefaultAlignMode),
       antialiasMode(Config::DefaultAntialiasMode),
       bgColor(Config::DefaultBgColor),
-      justPressed(false),
-      timeStamp(QTime::currentTime())
+      velocityTracker(new VelocityTracker(this))
 {
-    connect(&timer, SIGNAL(timeout()), SLOT(myTimerEvent()));
-
     setMinimumSize(Config::WindowMinSize);
+
+    velocityTracker->setTickInterval(Config::AutoScrollInterval);
+    connect(velocityTracker, SIGNAL(changedDelta(QPoint)), SLOT(scrollContent(QPoint)));
 }
 
 void ImageViewer::changeScaleMode(int mode)
@@ -111,6 +95,9 @@ void ImageViewer::updatePixmap(const QImage &im)
 
 void ImageViewer::loadImage(const QImage &im, const QString &msg_if_no_image)
 {
+    if (velocityTracker->isScrolling())
+        velocityTracker->stopAutoScrolling();
+
     image = im;
     errStr = msg_if_no_image;
     rotate = 0;
@@ -179,7 +166,7 @@ void ImageViewer::calcScaleRatio()
     case Config::ScaleLargeImageToFitWidget:
     default:
         //if image large than widget, will scale image to fit widget.
-        if(!(rect().size() - pixSize).isValid())//! SIZE_ADJUST !!!
+        if(!(rect().size() - pixSize).isValid())
             pixSize.scale(rect().size() + Config::SizeAdjusted, Qt::KeepAspectRatio);
         scale = qreal(pixSize.width()) / image.width();
         break;
@@ -260,16 +247,16 @@ void ImageViewer::updateShift()
         else if(pixRect.top() < 0 && pixRect.bottom() < widgetRect.height())
             shift.setY(shift.y() + (widgetRect.height() - pixRect.bottom()));
 
-        if(cursor().shape() != Qt::ClosedHandCursor)//in mouse move event
+        if(cursor().shape() != Qt::ClosedHandCursor)// in mouse move event
             setCursor(Qt::OpenHandCursor);
     }
 
     update();
 }
 
-void ImageViewer::moveContent(int deltaX, int deltaY)
+void ImageViewer::scrollContent(int deltaX, int deltaY)
 {
-    //if widget smaller than widget, allow to move image.
+    // if widget smaller than widget, allow to move image.
     if(hasPicture() && scaleLargeThanWidget()){
         shift.setX(shift.x() + deltaX);
         shift.setY(shift.y() + deltaY);
@@ -284,7 +271,7 @@ void ImageViewer::zoomIn(double factor)
     qreal scale_old = scale;
     scale += factor;
     scale = qMax(scaleMin, qMin(Config::ScaleMaxLimit, scale));
-    if(scale == scale_old)//scale no changed
+    if(scale == scale_old) // scale no changed
         return;
 
     /*! topLeft must determined before shift,
@@ -358,7 +345,7 @@ void ImageViewer::paintEvent(QPaintEvent *e)
     if(bgColor.isValid())
         painter.fillRect(e->rect(), bgColor);
 
-    if(noPicture() && !errStr.isEmpty()){ // case FileNoPicture:
+    if(noPicture() && !errStr.isEmpty()){
         painter.drawText(rect(), Qt::AlignCenter, errStr);
         return;
     }
@@ -385,7 +372,7 @@ void ImageViewer::paintEvent(QPaintEvent *e)
 
 
     // draw scroll bar
-    if(/*!justPressed && */ speed != QPoint(0, 0)){
+    if(velocityTracker->isScrolling()){
         const QColor LINE_COLOR(0, 0, 0, 80);
         painter.setBrush(LINE_COLOR);
         painter.setPen(Qt::NoPen);
@@ -421,86 +408,33 @@ void ImageViewer::resizeEvent(QResizeEvent *e)
         calcTopLeft();
         updateShift();
     }else{
-        layoutImage(); //! FIXME: if user drag and move image content, this will reset the shift if align mode isn't AlignCenterCenter.
+        layoutImage(); //! FIXME: if user drag and move image content (when AlignCenter is hasUserZoom and shift != (0,0)) , this will reset the shift if align mode isn't AlignCenterCenter.
     }
     QWidget::resizeEvent(e);
 }
 
 void ImageViewer::mousePressEvent ( QMouseEvent * event )
 {
+    velocityTracker->handleMousePress(event);
+
     if(event->button() & Qt::LeftButton){
-        startPos = event->globalPos();
         if(hasPicture() && cursor().shape() == Qt::OpenHandCursor)
             setCursor(Qt::ClosedHandCursor);
-
-        justPressed = true;
-        pressPos = event->pos();
-        if(timer.isActive()){ // auto scroll
-            speed = QPoint(0, 0);
-            timer.stop();
-        }
     }
 }
 
 void ImageViewer::mouseMoveEvent ( QMouseEvent * event )
 {
-    //! For mouse move events, this is all buttons that are pressed down.
-    if(event->buttons() & Qt::LeftButton)
-        myMouseMove(event);
+    velocityTracker->handleMouseMove(event);
 }
 
 void ImageViewer::mouseReleaseEvent ( QMouseEvent * event )
 {
+    velocityTracker->handleMouseRelease(event);
+
     if(event->button() & Qt::LeftButton){
-        myMouseMove(event);
-
-        if(!justPressed && speed != QPoint(0, 0)) {
-            speed /= 4;
-            timer.start(Config::AutoScrollInterval);
-        }
-
         if(cursor().shape() == Qt::ClosedHandCursor)
             setCursor(Qt::OpenHandCursor);
     }
 }
 
-void ImageViewer::myMouseMove(QMouseEvent * event)
-{
-    QPoint change = event->globalPos() - startPos;
-    moveContent(change.x(), change.y());
-
-    if(hasPicture() && scaleLargeThanWidget()){
-        QPoint delta = event->pos() - pressPos;
-        if(justPressed){
-            if (delta.x() > threshold || delta.x() < -threshold ||
-                    delta.y() > threshold || delta.y() < -threshold) {
-                timeStamp = QTime::currentTime(); //start calculate
-                justPressed = false; ///
-                this->delta = QPoint(0, 0);
-                pressPos = event->pos();
-            }
-        }else{
-            if (timeStamp.elapsed() > 100) {
-                timeStamp = QTime::currentTime();   //restart calculate
-                speed = delta - this->delta;    ///
-                this->delta = delta;
-            }
-        }
-    }
-
-    startPos = event->globalPos();    //
-}
-
-void ImageViewer::myTimerEvent()
-{
-    speed = deaccelerate(speed, 2);
-
-    QPointF shiftOld = shift;
-    shift += speed;
-    updateShift();
-
-    if(shift == shiftOld)
-        speed = QPoint(0, 0);
-    if (speed == QPoint(0, 0))
-        timer.stop();
-}

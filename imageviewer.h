@@ -22,10 +22,9 @@
 #define IMAGEVIEWER_H
 
 #include <QWidget>
-#include <QTime>
-#include <QTimer>
 
 
+class VelocityTracker;
 class ImageViewer : public QWidget
 {
     Q_OBJECT
@@ -50,8 +49,9 @@ public slots:
     // if color is invalid, means disabled custom background color.
     void changeBgColor(const QColor &color);
 
-    void moveContent(int deltaX, int deltaY);
-    void zoomIn(double factor); // pivot is center of this widget.
+    void scrollContent(int deltaX, int deltaY);
+    void scrollContent(const QPoint &delta) { scrollContent(delta.x(), delta.y()); }
+    void zoomIn(double factor); // pivot is the center of this widget.
     void zoomIn(double factor, const QPoint &pivot);
     void rotateLeft()       { rotatePixmap(-90); }
     void rotateRight()      { rotatePixmap(90); }
@@ -66,9 +66,6 @@ protected slots:
     void mouseMoveEvent ( QMouseEvent * event );
     void mousePressEvent ( QMouseEvent * event );
     void mouseReleaseEvent ( QMouseEvent * event );
-
-private slots:
-    void myTimerEvent();            // for auto scroll
 
 private:
     bool scaleLargeThanWidget();
@@ -87,16 +84,16 @@ private:
      */
     void calcTopLeft();    // no use update()
     void calcShift();      // no use update()
+
     void updateShift();    // use update()
 
     void rotatePixmap(int degree); // use update()
+
     enum MirrorMode {
         MirrorHorizontal = 0,
         MirrorVertical
     };
     void mirrored(MirrorMode mode);
-
-    void myMouseMove(QMouseEvent * event);
 
 private:
     QImage image;
@@ -114,15 +111,9 @@ private:
     bool mirrorH;
     bool mirrorV;
     QPointF shift;    //
-    QPoint startPos;
     bool hasUserZoom;
 
-    bool justPressed;
-    QPoint pressPos;
-    QPoint delta;
-    QPoint speed;
-    QTime  timeStamp;
-    QTimer timer;
+    VelocityTracker *velocityTracker;
 };
 
 
