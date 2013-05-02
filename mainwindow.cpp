@@ -33,8 +33,8 @@
 #include <QtGui>
 
 #define GET_SCRIPT(x) #x
-#define SPLIT(x) &x, #x
-#define MERGE(x, y) &x, #x "" #y, y
+#define SPLIT_FUNCTION(x) &x, #x
+#define SPLIT_PARAM(x) #x, x
 
 const int SWITCH_FRAME_WIDTH = 90;
 const int BUTTOM_FRAME_HEIGHT = 60;
@@ -57,7 +57,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(slideTimer, SIGNAL(timeout()), viewer, SLOT(nextPic()));
 
     connect(viewer, SIGNAL(imageChanged(QString)), SLOT(imageChanged(QString)));
-    connect(viewer, SIGNAL(siteChange(QPoint)), SLOT(moveWindow(QPoint)));
 
     initContextMenu();
     initButtomBar();
@@ -152,15 +151,15 @@ void MainWindow::readSettings()
 
 void MainWindow::applyConfig()
 {
-    viewer->changeScaleMode();
-    viewer->changeAlignMode();
+    viewer->changeScaleMode(Config::scaleMode());
+    viewer->changeAlignMode(Config::alignMode());
     viewer->changeAntialiasMode(Config::antialiasMode());
     if(Config::enableBgColor())
         viewer->changeBgColor(Config::bgColor());
     else
         viewer->changeBgColor(QColor());
     changeTimerInterval(Config::timerInterval());
-    viewer->setCacheNumber(Config::cacheValue());
+    viewer->setCacheNumber(Config::cacheNum());
     viewer->setPreReadingEnabled(Config::enablePreReading());
 }
 
@@ -233,37 +232,64 @@ void MainWindow::showAttribute()
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
-    if (obj == viewer) {
-        switch(event->type()) {
-        case QEvent::ToolTip:
-        {
-            QHelpEvent* e = static_cast<QHelpEvent*>(event);
-            if (attributeRect.contains(e->pos())){
-                QString attribute = viewer->attribute();
-                if(!attribute.isEmpty())
-                    ToolTip::showText(e->globalPos(),
-                                      attribute.prepend("<b>").append("</b>"),
-                                      false, 0.8);
-            }
-            return true;
+    switch(event->type()) {
+    case QEvent::ToolTip:
+    {
+        if (obj != viewer) break;
+
+        QHelpEvent* e = static_cast<QHelpEvent*>(event);
+        if (attributeRect.contains(e->pos())){
+            QString attribute = viewer->attribute();
+            if(!attribute.isEmpty())
+                ToolTip::showText(e->globalPos(),
+                                  attribute.prepend("<b>").append("</b>"),
+                                  false, 0.8);
         }
-        case QEvent::MouseButtonDblClick:
-        {
-            QMouseEvent *e = static_cast<QMouseEvent*>(event);
-            if(e->button() & Qt::LeftButton)
-                changeFullScreen();
-            return true;
-        }
-        case QEvent::ContextMenu:
-        {
-            QContextMenuEvent *e = static_cast<QContextMenuEvent*>(event);
-            showContextMenu(e->globalPos());
-            return true;
-        }
+        return true;
+    }
+    case QEvent::MouseButtonDblClick:
+    {
+        if (obj != viewer && obj != bottomFrame) break;
+
+        QMouseEvent *e = static_cast<QMouseEvent*>(event);
+        if(e->button() & Qt::LeftButton)
+            changeFullScreen();
+        return true;
+    }
+    case QEvent::ContextMenu:
+    {
+        QContextMenuEvent *e = static_cast<QContextMenuEvent*>(event);
+        showContextMenu(e->globalPos());
+        return true;
+    }
+    case QEvent::Wheel:
+    {
+        QWheelEvent *e = static_cast<QWheelEvent *>(event);
+
+//        if (e->delta() < 0)
+//            viewer->nextPic();
+//        else
+//            viewer->prePic();
+
+        qreal factor = 0.1;
+        switch(e->modifiers()){
+        case Qt::ShiftModifier:
+            factor = e->delta() / qreal(2400); // e->delta() is +120 or -120
+            break;
+        case Qt::ControlModifier:
+            factor = e->delta() / qreal(600);
+            break;
         default:
+            factor = e->delta() / qreal(1200);
             break;
         }
+        viewer->zoomIn(factor, viewer->mapFromGlobal(e->globalPos()));
+        break;
     }
+    default:
+        break;
+    }
+
     return false;
 }
 
@@ -293,8 +319,8 @@ void MainWindow::switchSlideShow()// if other commend when slide show??
 
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
-    buttomFrame->resize(width(), BUTTOM_FRAME_HEIGHT);
-    buttomFrame->move(0, height() - BUTTOM_FRAME_HEIGHT);
+    bottomFrame->resize(width(), BUTTOM_FRAME_HEIGHT);
+    bottomFrame->move(0, height() - BUTTOM_FRAME_HEIGHT);
     leftFrame->resize(SWITCH_FRAME_WIDTH, height() - BUTTOM_FRAME_HEIGHT - ATTRIBUTE_RECT_HEIGHT);
     leftFrame->move(0, ATTRIBUTE_RECT_HEIGHT);
     rightFrame->resize(SWITCH_FRAME_WIDTH, height() - BUTTOM_FRAME_HEIGHT - ATTRIBUTE_RECT_HEIGHT);
@@ -307,21 +333,17 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 void MainWindow::initButtomBar()
 {
-    buttomFrame = new FloatFrame(this);
-    connect(buttomFrame, SIGNAL(showContextMenu(QPoint)),
-            SLOT(showContextMenu(QPoint)));
-    connect(buttomFrame, SIGNAL(mouseDoubleClick()),
-            SLOT(changeFullScreen()));
+    bottomFrame = new FloatFrame(this);
     ///set all the button's focous policy to Qt::NoFocous in 'ui' file.
 
-    contralBar = new ContralBar(buttomFrame);
-    buttomFrame->addWidget(contralBar);
+    contralBar = new ContralBar(bottomFrame);
+    bottomFrame->addWidget(contralBar);
 
-    QHBoxLayout *hlayout = new QHBoxLayout(buttomFrame);
+    QHBoxLayout *hlayout = new QHBoxLayout(bottomFrame);
     hlayout->setContentsMargins(0,0,0,0);   ///qframe's layout margis default is not 0.
     hlayout->setAlignment(Qt::AlignCenter);
     hlayout->addWidget(contralBar);
-    buttomFrame->setLayout(hlayout);
+    bottomFrame->setLayout(hlayout);
 
     settingButton = contralBar->settingButton;
     openButton = contralBar->openButton;
@@ -340,6 +362,8 @@ void MainWindow::initButtomBar()
     connect(rotateLeftButton, SIGNAL(clicked()), viewer, SLOT(rotateLeft()));
     connect(rotateRightButton, SIGNAL(clicked()), viewer, SLOT(rotateRight()));
     connect(deleteButton, SIGNAL(clicked()), viewer, SLOT(deleteFileAsk()));
+
+    bottomFrame->installEventFilter(this);
 }
 
 void MainWindow::initSwitchFrame()
@@ -347,7 +371,6 @@ void MainWindow::initSwitchFrame()
     leftFrame = new FloatFrame(this);
     leftFrame->setFillBackground(false);
     leftFrame->setHideInterval(400);
-    connect(leftFrame, SIGNAL(showContextMenu(QPoint)), SLOT(showContextMenu(QPoint)));
     connect(leftFrame, SIGNAL(mouseClicked()), viewer, SLOT(prePic()));
 
     QLabel *lb = new QLabel(leftFrame);
@@ -363,7 +386,6 @@ void MainWindow::initSwitchFrame()
     rightFrame = new FloatFrame(this);
     rightFrame->setFillBackground(false);
     rightFrame->setHideInterval(400);
-    connect(rightFrame, SIGNAL(showContextMenu(QPoint)), SLOT(showContextMenu(QPoint)));
     connect(rightFrame, SIGNAL(mouseClicked()), viewer, SLOT(nextPic()));
 
     lb = new QLabel(rightFrame);
@@ -374,6 +396,10 @@ void MainWindow::initSwitchFrame()
     hlayout->setAlignment(Qt::AlignCenter);
     hlayout->addWidget(lb);
     rightFrame->setLayout(hlayout);
+
+
+    leftFrame->installEventFilter(this);
+    rightFrame->installEventFilter(this);
 }
 
 void MainWindow::initContextMenu()
@@ -494,55 +520,68 @@ void MainWindow::showContextMenu(const QPoint &pos)
 void MainWindow::registerAllFunction()
 {
     ActionManager::registerFunction(tr("Open"),
-                                    this, SPLIT(MainWindow::openFile));
+                   this, SPLIT_FUNCTION(MainWindow::openFile));
     ActionManager::registerFunction(tr("Full Screen"),
-                                    this, SPLIT(MainWindow::changeFullScreen));
+                   this, SPLIT_FUNCTION(MainWindow::changeFullScreen));
     ActionManager::registerFunction(tr("Auto Play/Stop"),
-                                    this, SPLIT(MainWindow::switchSlideShow));
+                   this, SPLIT_FUNCTION(MainWindow::switchSlideShow));
     ActionManager::registerFunction(tr("Property"),
-                                    this, SPLIT(MainWindow::showAttribute));
+                   this, SPLIT_FUNCTION(MainWindow::showAttribute));
     ActionManager::registerFunction(tr("Setting"),
-                                    this, SPLIT(MainWindow::setting));
+                   this, SPLIT_FUNCTION(MainWindow::setting));
     ActionManager::registerFunction(tr("About"),
-                                    this, SPLIT(MainWindow::about));
+                   this, SPLIT_FUNCTION(MainWindow::about));
     ActionManager::registerFunction(tr("Quit"),
-                                    this, SPLIT(MainWindow::close));
+                   this, SPLIT_FUNCTION(MainWindow::close));
 
     ActionManager::registerFunction(tr("Next Picture"),
-                                    viewer, SPLIT(PicManager::nextPic));
+                   viewer, SPLIT_FUNCTION(PicManager::nextPic));
     ActionManager::registerFunction(tr("Previous Picture"),
-                                    viewer, SPLIT(PicManager::prePic));
+                   viewer, SPLIT_FUNCTION(PicManager::prePic));
     ActionManager::registerFunction(tr("Rotate Left"),
-                                    viewer, SPLIT(PicManager::rotateLeft));
+                   viewer, SPLIT_FUNCTION(PicManager::rotateLeft));
     ActionManager::registerFunction(tr("Rotate Right"),
-                                    viewer, SPLIT(PicManager::rotateRight));
+                   viewer, SPLIT_FUNCTION(PicManager::rotateRight));
     ActionManager::registerFunction(tr("Mirrored Horizontal"),
-                                    viewer, SPLIT(PicManager::mirrorHorizontal));
+                   viewer, SPLIT_FUNCTION(PicManager::mirrorHorizontal));
     ActionManager::registerFunction(tr("Mirrored Vertical"),
-                                    viewer, SPLIT(PicManager::mirrorVertical));
+                   viewer, SPLIT_FUNCTION(PicManager::mirrorVertical));
     ActionManager::registerFunction(tr("Animation Play/Pause"),
-                                    viewer, SPLIT(PicManager::switchAnimationState));
+                   viewer, SPLIT_FUNCTION(PicManager::switchAnimationState));
     ActionManager::registerFunction(tr("Frame Step"),
-                                    viewer, SPLIT(PicManager::nextAnimationFrame));
+                   viewer, SPLIT_FUNCTION(PicManager::nextAnimationFrame));
     ActionManager::registerFunction(tr("Copy to clipboard"),
-                                    viewer, SPLIT(PicManager::copyToClipboard));
+                   viewer, SPLIT_FUNCTION(PicManager::copyToClipboard));
     ActionManager::registerFunction(tr("Delete"),
-                                    viewer, SPLIT(PicManager::deleteFileAsk));
+                   viewer, SPLIT_FUNCTION(PicManager::deleteFileAsk));
     ActionManager::registerFunction(tr("Delete Without Notification"),
-                                    viewer, SPLIT(PicManager::deleteFileNoAsk));
+                   viewer, SPLIT_FUNCTION(PicManager::deleteFileNoAsk));
 
-    ActionManager::registerFunction(tr("Zoom In"),
-                                    viewer, MERGE(PicManager::zoomIn, 0.1));
-    ActionManager::registerFunction(tr("Zoom In (Slow)"),
-                                    viewer, MERGE(PicManager::zoomIn, 0.05));
-    ActionManager::registerFunction(tr("Zoom in (Fast)"),
-                                    viewer, MERGE(PicManager::zoomIn, 0.2));
-    ActionManager::registerFunction(tr("Zoom Out"),
-                                    viewer, MERGE(PicManager::zoomIn, -0.1));
-    ActionManager::registerFunction(tr("Zoom Out (Slow)"),
-                                    viewer, MERGE(PicManager::zoomIn, -0.05));
-    ActionManager::registerFunction(tr("Zoom Out (Fast)"),
-                                    viewer, MERGE(PicManager::zoomIn, -0.2));
+    ActionManager::registerFunction(tr("Zoom In"), viewer,
+                   &PicManager::zoomIn, SPLIT_PARAM(Config::ZoomInRatioNomal));
+    ActionManager::registerFunction(tr("Zoom In (Slow)"), viewer,
+                   &PicManager::zoomIn, SPLIT_PARAM(Config::ZoomInRatioSlow));
+    ActionManager::registerFunction(tr("Zoom in (Fast)"), viewer,
+                   &PicManager::zoomIn, SPLIT_PARAM(Config::ZoomInRatioFast));
+    ActionManager::registerFunction(tr("Zoom Out"), viewer,
+                   &PicManager::zoomIn, SPLIT_PARAM(Config::ZoomOutRatioNomal));
+    ActionManager::registerFunction(tr("Zoom Out (Slow)"), viewer,
+                   &PicManager::zoomIn, SPLIT_PARAM(Config::ZoomOutRatioSlow));
+    ActionManager::registerFunction(tr("Zoom Out (Fast)"), viewer,
+                   &PicManager::zoomIn, SPLIT_PARAM(Config::ZoomOutRatioFast));
+
+    ActionManager::registerFunction(tr("Move Content Up"),
+                   viewer, &PicManager::moveContent, "moveContentUp",
+                   0, Config::DefaultMoveContentSpeed);
+    ActionManager::registerFunction(tr("Move Content Left"),
+                   viewer, &PicManager::moveContent, "moveContentLeft",
+                   Config::DefaultMoveContentSpeed, 0);
+    ActionManager::registerFunction(tr("Move Content Right"),
+                   viewer, &PicManager::moveContent, "moveContentRight",
+                   -Config::DefaultMoveContentSpeed, 0);
+    ActionManager::registerFunction(tr("Move Content Down"),
+                   viewer, &PicManager::moveContent, "moveContentDown",
+                   0, -Config::DefaultMoveContentSpeed);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e)

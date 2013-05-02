@@ -30,6 +30,7 @@ namespace Ui {
 
 class QButtonGroup;
 class QCheckBox;
+class QColor;
 class QComboBox;
 class QLineEdit;
 class QLabel;
@@ -49,6 +50,7 @@ signals:
 
 protected slots:
     void initUIvalue();
+    void changeColorSettingUI(const QColor &color);
     void restoreDefaults();
 
     void showDialogChange(int state);

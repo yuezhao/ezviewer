@@ -21,7 +21,6 @@
 #include "floatframe.h"
 
 #include <QTimerEvent>
-#include <QContextMenuEvent>
 #include <QMouseEvent>
 
 
@@ -108,17 +107,6 @@ void FloatFrame::timerEvent(QTimerEvent *e)
 
     hideTimer.stop();
     expireTimer.stop();
-}
-
-void FloatFrame::contextMenuEvent(QContextMenuEvent *event)
-{
-    emit showContextMenu(event->globalPos());
-}
-
-void FloatFrame::mouseDoubleClickEvent(QMouseEvent *event)
-{
-    if(event->button() & Qt::LeftButton)
-        emit mouseDoubleClick();
 }
 
 void FloatFrame::mouseReleaseEvent(QMouseEvent *event)

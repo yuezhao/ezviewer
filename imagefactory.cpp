@@ -24,6 +24,7 @@
 #include "imagewrapper.h"
 #include "toolkit.h"
 
+#include <QCoreApplication>
 #include <QRunnable>
 #include <QThreadPool>
 

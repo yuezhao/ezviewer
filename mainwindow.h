@@ -51,8 +51,6 @@ protected slots:
 
     bool eventFilter(QObject *obj, QEvent *event);
 
-    void moveWindow(const QPoint &change)
-    { if(!isFullScreen()) move(pos() + change); }
     void applyConfig();
     void imageChanged(const QString &fileName = QString::null);
     void showContextMenu(const QPoint &pos);
@@ -84,7 +82,7 @@ private:
     int slideInterval; // msec
     QRect attributeRect;
 
-    FloatFrame *buttomFrame;
+    FloatFrame *bottomFrame;
     FloatFrame *leftFrame;
     FloatFrame *rightFrame;
 

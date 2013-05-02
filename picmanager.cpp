@@ -54,7 +54,7 @@ void PicManager::updateFileNameList(const QString &curfile)
     if(!curDir.endsWith('/'))
         curDir.append('/');
 
-    list = QDir(curDir, Config::supportFormats(), Config::DirSortFlag, QDir::Files)
+    list = QDir(curDir, Config::supportFormats(), Config::DefaultDirSortFlag, QDir::Files)
             .entryList();
     currentIndex = list.indexOf(fileInfo.fileName());
 }

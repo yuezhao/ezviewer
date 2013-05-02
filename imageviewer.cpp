@@ -43,32 +43,46 @@ static QPoint deaccelerate(const QPoint &speed, int a = 1, int max = 64)
 }
 
 ImageViewer::ImageViewer(QWidget *parent)
-    : QWidget(parent)
+    : QWidget(parent),
+      scaleMode(Config::DefaultScaleMode),
+      alignMode(Config::DefaultAlignMode),
+      antialiasMode(Config::DefaultAntialiasMode),
+      bgColor(Config::DefaultBgColor),
+      justPressed(false),
+      timeStamp(QTime::currentTime())
 {
-    antialiasMode = 0;
-
-    justPressed = false;
-    timeStamp = QTime::currentTime();
     connect(&timer, SIGNAL(timeout()), SLOT(myTimerEvent()));
 
     setMinimumSize(Config::WindowMinSize);
 }
 
-void ImageViewer::changeScaleMode()
+void ImageViewer::changeScaleMode(int mode)
 {
+    if (mode < Config::ScaleModeBegin || mode > Config::ScaleModeEnd
+            || scaleMode == mode)
+        return;
+
+    scaleMode = mode;
     layoutImage();
     update();
 }
 
-void ImageViewer::changeAlignMode()
+void ImageViewer::changeAlignMode(int mode)
 {
+    if (mode < Config::AlignModeBegin || mode > Config::AlignModeEnd
+            || alignMode == mode)
+        return;
+
+    alignMode = mode;
     layoutImage();
     update();
 }
 
 void ImageViewer::changeAntialiasMode(int mode)
 {
-    if(mode < 0 || mode > 2 || antialiasMode == mode) return;
+    if(mode < Config::AntialiasModeBegin || mode > Config::AntialiasModeEnd
+            || antialiasMode == mode)
+        return;
 
     antialiasMode = mode;
     updateImageArea();
@@ -122,17 +136,23 @@ void ImageViewer::layoutImage()
         setCursor(Qt::OpenHandCursor);
 }
 
+bool ImageViewer::scaleLargeThanWidget()
+{
+    return image.width() * scale > rect().width() + Config::SizeAdjusted.width()
+            || image.height() * scale > rect().height() + Config::SizeAdjusted.height();
+}
+
 void ImageViewer::calcScaleRatio()
 {
     if(image.width() == 0 || image.height() == 0) {
         scale = 1.0;
-        scaleMin = qMin(Config::ScaleMin, scale);
+        scaleMin = qMin(Config::ScaleMinLimit, scale);
         return;
     }
 
     QSize pixSize(image.size());
 
-    switch (Config::scaleMode()) {
+    switch (scaleMode) {
     case Config::KeepImageSize:
         scale = 1.0;
         break;
@@ -165,7 +185,7 @@ void ImageViewer::calcScaleRatio()
         break;
     }
 
-    scaleMin = qMin(Config::ScaleMin, scale);
+    scaleMin = qMin(Config::ScaleMinLimit, scale);
 }
 
 void ImageViewer::calcShift()
@@ -176,7 +196,7 @@ void ImageViewer::calcShift()
         return;
     }
 
-    switch (Config::alignMode()) {
+    switch (alignMode) {
     case Config::AlignLeftTop:
         shift.setX(topLeft.x() < 0 ? -topLeft.x() : 0);
         shift.setY(topLeft.y() < 0 ? -topLeft.y() : 0);
@@ -247,13 +267,23 @@ void ImageViewer::updateShift()
     update();
 }
 
+void ImageViewer::moveContent(int deltaX, int deltaY)
+{
+    //if widget smaller than widget, allow to move image.
+    if(hasPicture() && scaleLargeThanWidget()){
+        shift.setX(shift.x() + deltaX);
+        shift.setY(shift.y() + deltaY);
+        updateShift();
+    }
+}
+
 void ImageViewer::zoomIn(double factor)
 {
     if(noPicture()) return;
 
     qreal scale_old = scale;
     scale += factor;
-    scale = qMax(scaleMin, qMin(Config::ScaleMax, scale));
+    scale = qMax(scaleMin, qMin(Config::ScaleMaxLimit, scale));
     if(scale == scale_old)//scale no changed
         return;
 
@@ -271,28 +301,48 @@ void ImageViewer::zoomIn(double factor)
                       true, 0.7, 800);
 }
 
-void ImageViewer::rotatePixmap(bool isLeft)
+void ImageViewer::zoomIn(double factor, const QPoint &pivot)
+{
+    if(noPicture() || !rect().contains(pivot)) // pivot must inner widget
+        return;
+
+    qreal scale_old = scale;
+    zoomIn(factor);
+
+    QPointF distance(rect().center() - pivot);
+    QPointF change(distance / scale_old * scale - distance);
+    shift += change;    // to keep the pivot position, must after scale.
+    updateShift();
+}
+
+void ImageViewer::rotatePixmap(int degree)
 {
     if(noPicture()) return;
 
-    rotate += (isLeft ? -90 : 90);
+    rotate += degree;
     rotate %= 360;
-    QMatrix m = QMatrix().rotate(isLeft ? -90 : 90);
+    QMatrix m = QMatrix().rotate(degree);
     image = image.transformed(m, Qt::SmoothTransformation);
     layoutImage();
     update();
 }
 
-void ImageViewer::mirrored(bool horizontal, bool vertical)
+void ImageViewer::mirrored(MirrorMode mode)
 {
     if(noPicture()) return;
 
-    if(horizontal)
+    switch (mode) {
+    case MirrorHorizontal:
         mirrorH = !mirrorH;
-    if(vertical)
+        break;
+    case MirrorVertical:
         mirrorV = !mirrorV;
+        break;
+    default:
+        return;
+    }
 
-    image = image.mirrored(horizontal, vertical);
+    image = image.mirrored(mode == MirrorHorizontal, mode == MirrorVertical);
     layoutImage();
     update();
 }
@@ -314,12 +364,12 @@ void ImageViewer::paintEvent(QPaintEvent *e)
     }
 
     switch(antialiasMode){
-    case 0:
+    case Config::AntialiasWhenZoomIn:
         if(scale <= 1) break;
-    case 1:
+    case Config::AlwaysAntialias:
         painter.setRenderHint(QPainter::SmoothPixmapTransform);
         break;
-//       case 2:
+    case Config::NoAntialias:
     default:
         break;
     }
@@ -376,32 +426,6 @@ void ImageViewer::resizeEvent(QResizeEvent *e)
     QWidget::resizeEvent(e);
 }
 
-void ImageViewer::wheelEvent(QWheelEvent *e)
-{
-    if(noPicture() || !rect().contains(e->pos())) //cursor is not in widget
-        return;
-
-    qreal scale_old = scale;
-
-    switch(e->modifiers()){
-    case Qt::ShiftModifier:
-        zoomIn(e->delta() / qreal(2400)); //e->delta() is +120 or -120
-        break;
-    case Qt::ControlModifier:
-        zoomIn(e->delta() / qreal(600));
-        break;
-    default:
-        zoomIn(e->delta() / qreal(1200));
-        break;
-    }
-
-    QPointF distance(rect().center() - e->pos());
-    QPointF change(distance / scale_old * scale - distance);
-    shift += change;    //to keep the cursor position, must after scale.
-    updateShift();
-}
-
-
 void ImageViewer::mousePressEvent ( QMouseEvent * event )
 {
     if(event->button() & Qt::LeftButton){
@@ -431,7 +455,7 @@ void ImageViewer::mouseReleaseEvent ( QMouseEvent * event )
         myMouseMove(event);
 
         if(!justPressed && speed != QPoint(0, 0)) {
-            speed /= 4; //! ??
+            speed /= 4;
             timer.start(Config::AutoScrollInterval);
         }
 
@@ -443,32 +467,23 @@ void ImageViewer::mouseReleaseEvent ( QMouseEvent * event )
 void ImageViewer::myMouseMove(QMouseEvent * event)
 {
     QPoint change = event->globalPos() - startPos;
+    moveContent(change.x(), change.y());
 
-    if(event->modifiers() == Qt::ControlModifier){
-        emit siteChange(change);
-    }else{
-        //if widget smaller than widget, allow to move image.
-        //! + SIZE_ADJUST
-        if(hasPicture() && !(rect().size() + Config::SizeAdjusted - image.size()*scale).isValid()){
-            shift += change;
-            updateShift();
-
-
-            QPoint delta = event->pos() - pressPos;
-            if(justPressed){
-                if (delta.x() > threshold || delta.x() < -threshold ||
-                        delta.y() > threshold || delta.y() < -threshold) {
-                    timeStamp = QTime::currentTime(); //start calculate
-                    justPressed = false; ///
-                    this->delta = QPoint(0, 0);
-                    pressPos = event->pos();
-                }
-            }else{
-                if (timeStamp.elapsed() > 100) {
-                    timeStamp = QTime::currentTime();   //restart calculate
-                    speed = delta - this->delta;    ///
-                    this->delta = delta;
-                }
+    if(hasPicture() && scaleLargeThanWidget()){
+        QPoint delta = event->pos() - pressPos;
+        if(justPressed){
+            if (delta.x() > threshold || delta.x() < -threshold ||
+                    delta.y() > threshold || delta.y() < -threshold) {
+                timeStamp = QTime::currentTime(); //start calculate
+                justPressed = false; ///
+                this->delta = QPoint(0, 0);
+                pressPos = event->pos();
+            }
+        }else{
+            if (timeStamp.elapsed() > 100) {
+                timeStamp = QTime::currentTime();   //restart calculate
+                speed = delta - this->delta;    ///
+                this->delta = delta;
             }
         }
     }
@@ -478,7 +493,7 @@ void ImageViewer::myMouseMove(QMouseEvent * event)
 
 void ImageViewer::myTimerEvent()
 {
-    speed = deaccelerate(speed);
+    speed = deaccelerate(speed, 2);
 
     QPointF shiftOld = shift;
     shift += speed;

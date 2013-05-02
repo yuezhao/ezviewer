@@ -97,9 +97,9 @@ QStringList ActionManager::getBindShortcuts(const QString &actionScript)
 bool ActionManager::run(const QString &keySequence)
 {
     if (shortcutMap.contains(keySequence)) {
-        QString script = shortcutMap.value(keySequence);
-        if (actionMap.contains(script))
-            return actionMap.value(script)->run();
+        QString tag = shortcutMap.value(keySequence);
+        if (actionMap.contains(tag))
+            return actionMap.value(tag)->run();
     }
     return false;
 }

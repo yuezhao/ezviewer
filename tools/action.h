@@ -86,4 +86,31 @@ private:
     ArgumentType param;
 };
 
+
+template <typename T, typename ReturnType = void, typename ArgumentType = int>
+class ActionImplWithArgument2 : public Action
+{
+public:
+    typedef ReturnType (T::*FuncType)(ArgumentType, ArgumentType);
+
+    ActionImplWithArgument2(const QString &description,
+                           T *obj, FuncType f,
+                           ArgumentType arg1, ArgumentType arg2)
+        : Action(description), object(obj), function(f), param1(arg1), param2(arg2)
+    {}
+
+    virtual bool run() {
+        if (object && function) {
+            (object->*function)(param1, param2);
+            return true;
+        }
+        return false;
+    }
+private:
+    T *object;
+    FuncType function;
+    ArgumentType param1;
+    ArgumentType param2;
+};
+
 #endif // ACTION_H

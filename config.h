@@ -21,7 +21,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <QCoreApplication>
 #include <QColor>
 #include <QDir>
 #include <QPointF>
@@ -41,15 +40,21 @@ signals:
 
 public:
     enum ScaleMode {
+        ScaleModeBegin = 0,
+
         ScaleLargeImageToFitWidget = 0,
         KeepImageSize,
         FitWidgetWidth,
         FitWidgetHeight,
         ScaleToFitWidget,
-        ScaleToExpandWidget
+        ScaleToExpandWidget,
+
+        ScaleModeEnd = ScaleToExpandWidget
     };
 
     enum AlignMode {
+        AlignModeBegin = 0,
+
         AlignLeftTop = 0,
         AlignCenterTop,
         AlignRightTop,
@@ -58,22 +63,48 @@ public:
         AlignRightCenter,
         AlignLeftBottom,
         AlignCenterBottom,
-        AlignRightBottom
+        AlignRightBottom,
+
+        AlignModeEnd = AlignRightBottom
+    };
+
+    enum AntialiasMode {
+        AntialiasModeBegin = 0,
+
+        AntialiasWhenZoomIn = 0,
+        AlwaysAntialias,
+        NoAntialias,
+
+        AntialiasModeEnd = NoAntialias
     };
 
 
-    const static qreal ScaleMax;
-    const static qreal ScaleMin;
+    const static qreal ZoomInRatioNomal;
+    const static qreal ZoomInRatioSlow;
+    const static qreal ZoomInRatioFast;
+    const static qreal ZoomOutRatioNomal;
+    const static qreal ZoomOutRatioSlow;
+    const static qreal ZoomOutRatioFast;
+
+    const static int   DefaultMoveContentSpeed;
+
+    const static qreal ScaleMaxLimit;
+    const static qreal ScaleMinLimit;
     const static QPointF OriginPoint;
     const static QSize SizeAdjusted;
 
     const static QSize WindowMinSize;
     const static QSize WindowFitSize;
-    const static QString BgGreen;
+    const static QString DefaultBgColor;
 
-    const static int AutoScrollInterval;
-    const static int FileSizePrecision;
-    const static QDir::SortFlags DirSortFlag;
+    const static int   AutoScrollInterval;
+    const static int   FileSizePrecision;
+
+    const static QDir::SortFlags DefaultDirSortFlag;
+
+    const static ScaleMode DefaultScaleMode = ScaleLargeImageToFitWidget;
+    const static AlignMode DefaultAlignMode = AlignCenterCenter;
+    const static AntialiasMode DefaultAntialiasMode = AntialiasWhenZoomIn;
 
 
     /**
@@ -91,18 +122,18 @@ public:
     static bool showDialog()    { return instance()->mShowDialog; }
     static ScaleMode scaleMode(){ return instance()->mScaleMode; }
     static AlignMode alignMode(){ return instance()->mAlignMode; }
-    static int  antialiasMode() { return instance()->mAntialiasMode; }
+    static AntialiasMode antialiasMode() { return instance()->mAntialiasMode; }
     static bool enableBgColor() { return instance()->mEnableBgColor; }
     static QColor bgColor()     { return instance()->mBgColor; }
     static int  timerInterval() { return instance()->mTimerInterval; }
     static bool enablePreReading() { return instance()->mEnablePreReading; }
-    static int  cacheValue()    { return instance()->mCacheValue; }
+    static int  cacheNum()    { return instance()->mCacheNum; }
     static QByteArray lastGeometry(){ return instance()->mLastGeometry; }
 
     static void setShowDialog(bool enabled);
     static void setScaleMode(ScaleMode mode);
     static void setAlignMode(AlignMode mode);
-    static void setAntialiasMode(int mode);
+    static void setAntialiasMode(AntialiasMode mode);
     static void setEnableBgColor(bool enabled);
     static void setBgColor(const QColor &color);
     static void setTimerInterval(int interval);
@@ -128,8 +159,9 @@ private:
     static void loadAllShortcut();
     static void saveAllShortcut();
 
-    void changeScaleMode(ScaleMode mode); // if current mode is already @mode, then will change to default mode: ScaleLargeImageToFitWidget.
-    void changeAlignMode(AlignMode mode); // if current mode is already @mode, then will change to default mode: AlignCenterCenter.
+    void changeScaleMode(ScaleMode mode); // if current mode is already @mode, then will change to default mode.
+    void changeAlignMode(AlignMode mode); // if current mode is already @mode, then will change to default mode.
+    void changeAntialiasMode(AntialiasMode mode); // if current mode is already @mode, then will change to default mode.
     void changeBgColorMode() { setEnableBgColor(!enableBgColor()); }
     void changePreReadingMode() { setEnablePreReading(!enablePreReading()); }
 
@@ -147,12 +179,12 @@ private:
     bool mShowDialog;
     ScaleMode mScaleMode;
     AlignMode mAlignMode;
-    int mAntialiasMode;
+    AntialiasMode mAntialiasMode;
     bool mEnableBgColor;
     QColor mBgColor;
     int mTimerInterval;
     bool mEnablePreReading;
-    int mCacheValue;
+    int mCacheNum;
     QByteArray mLastGeometry;
 
     QStringList mFormatsList;

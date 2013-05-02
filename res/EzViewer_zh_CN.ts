@@ -28,72 +28,68 @@
         <translation type="obsolete">抗锯齿：</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="116"/>
         <source>Using when pictures enlarged</source>
-        <translation>当放大图片时使用</translation>
+        <translation type="obsolete">当放大图片时使用</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="121"/>
         <source>Always using</source>
-        <translation>总是使用</translation>
+        <translation type="obsolete">总是使用</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="126"/>
         <source>Always no using</source>
-        <translation>从不使用</translation>
+        <translation type="obsolete">从不使用</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="141"/>
+        <location filename="../ui/commonsetting.ui" line="153"/>
         <source>Background Color:</source>
         <translation>背景颜色：</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="200"/>
+        <location filename="../ui/commonsetting.ui" line="212"/>
         <source>#FFFFFF</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="212"/>
+        <location filename="../ui/commonsetting.ui" line="224"/>
         <source>Enable Custom Background Color</source>
         <translation>允许自定义背景颜色</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="70"/>
+        <location filename="../ui/commonsetting.ui" line="82"/>
         <source>Scale Large Image to Fit Window</source>
         <translation>缩放大图至适合窗口</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="75"/>
+        <location filename="../ui/commonsetting.ui" line="87"/>
         <source>Keep Image Size</source>
         <translation>保持原图大小(按100%显示)</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="80"/>
+        <location filename="../ui/commonsetting.ui" line="92"/>
         <source>Fit Window Width</source>
         <translation>适合窗口宽度</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="85"/>
+        <location filename="../ui/commonsetting.ui" line="97"/>
         <source>Fit Window Height</source>
         <translation>适合窗口高度</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="90"/>
+        <location filename="../ui/commonsetting.ui" line="102"/>
         <source>Scale to Fit Window</source>
         <translation>缩放以适合窗口</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="95"/>
+        <location filename="../ui/commonsetting.ui" line="107"/>
         <source>Scale to Expand Window</source>
         <translation>缩放以充满窗口</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="134"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#0000ff;&quot;&gt;Antialiasing:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#0000ff;&quot;&gt;边缘平滑：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="obsolete">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#0000ff;&quot;&gt;边缘平滑：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="148"/>
+        <location filename="../ui/commonsetting.ui" line="160"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Scale Mode &lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;(New!)&lt;/span&gt;&lt;span style=&quot; color:#000000;&quot;&gt;:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;缩放模式 &lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;(新！)&lt;/span&gt;&lt;span style=&quot; color:#000000;&quot;&gt;：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -102,62 +98,82 @@
         <translation type="obsolete">缩放模式：</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="222"/>
+        <location filename="../ui/commonsetting.ui" line="128"/>
+        <source>Using When Pictures Zoom In</source>
+        <translation>当放大图片时使用</translation>
+    </message>
+    <message>
+        <location filename="../ui/commonsetting.ui" line="133"/>
+        <source>Always Using</source>
+        <translation>总是使用</translation>
+    </message>
+    <message>
+        <location filename="../ui/commonsetting.ui" line="138"/>
+        <source>Never Using</source>
+        <translation>从不使用</translation>
+    </message>
+    <message>
+        <location filename="../ui/commonsetting.ui" line="146"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#0000ff;&quot;&gt;Antialiasing Mode:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#0000ff;&quot;&gt;平滑渲染：&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../ui/commonsetting.ui" line="234"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Align Mode &lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;(New!)&lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;对齐模式 &lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;(新！)&lt;/span&gt;：&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="814"/>
+        <location filename="../ui/commonsetting.ui" line="826"/>
         <source>Auto Play</source>
         <translation>自动放映</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="855"/>
+        <location filename="../ui/commonsetting.ui" line="867"/>
         <source> s</source>
         <translation> 秒</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="877"/>
+        <location filename="../ui/commonsetting.ui" line="889"/>
         <source>Timing Interval:</source>
         <translation>定时间隔：</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="890"/>
+        <location filename="../ui/commonsetting.ui" line="902"/>
         <source>UI</source>
         <translation>界面</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="896"/>
+        <location filename="../ui/commonsetting.ui" line="908"/>
         <source>Show Countral Bar</source>
         <translation>显示控制栏</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="909"/>
+        <location filename="../ui/commonsetting.ui" line="921"/>
         <source>Advanced</source>
         <translation>高级</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="917"/>
+        <location filename="../ui/commonsetting.ui" line="929"/>
         <source>If the memory of your computer is large than 1G, cache is suggested.</source>
         <translation>如果电脑内存大于1G，建议缓存浏览过的图片。</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="920"/>
+        <location filename="../ui/commonsetting.ui" line="932"/>
         <source>Cache Viewed Pictures:</source>
         <translation>缓存浏览过的图片:</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="945"/>
+        <location filename="../ui/commonsetting.ui" line="957"/>
         <source>2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="1000"/>
+        <location filename="../ui/commonsetting.ui" line="1012"/>
         <source>This will speed up picture switching.</source>
         <translation>预读可以加快图片切换速度</translation>
     </message>
     <message>
-        <location filename="../ui/commonsetting.ui" line="1006"/>
+        <location filename="../ui/commonsetting.ui" line="1018"/>
         <source>Pre-reading Next Picture</source>
         <translation>预读下一张图片</translation>
     </message>
@@ -165,112 +181,134 @@
 <context>
     <name>Config</name>
     <message>
-        <location filename="../config.cpp" line="80"/>
+        <location filename="../config.cpp" line="99"/>
         <source>Enable/Disable Custom Background Color</source>
         <translation>启用/禁用自定义背景颜色</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="82"/>
+        <location filename="../config.cpp" line="101"/>
         <source>Enable/Disable Pre-reading</source>
         <translation>启用/禁用预读功能</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="85"/>
-        <location filename="../config.cpp" line="87"/>
-        <location filename="../config.cpp" line="89"/>
-        <location filename="../config.cpp" line="91"/>
-        <location filename="../config.cpp" line="93"/>
-        <location filename="../config.cpp" line="95"/>
+        <location filename="../config.cpp" line="104"/>
+        <location filename="../config.cpp" line="106"/>
+        <location filename="../config.cpp" line="108"/>
+        <location filename="../config.cpp" line="110"/>
+        <location filename="../config.cpp" line="112"/>
+        <location filename="../config.cpp" line="114"/>
         <source>Scale Mode: </source>
         <translation>缩放模式：</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="85"/>
+        <location filename="../config.cpp" line="104"/>
         <source>Scale Large Image to Fit Window</source>
         <translation>缩放大图至适合窗口</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="87"/>
+        <location filename="../config.cpp" line="106"/>
         <source>Keep Image Size</source>
         <translation>保持原图大小(按100%显示)</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="89"/>
+        <location filename="../config.cpp" line="108"/>
         <source>Fit Window Width</source>
         <translation>适合窗口宽度</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="91"/>
+        <location filename="../config.cpp" line="110"/>
         <source>Fit Window Height</source>
         <translation>适合窗口高度</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="93"/>
+        <location filename="../config.cpp" line="112"/>
         <source>Scale to Fit Window</source>
         <translation>缩放以适合窗口</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="95"/>
+        <location filename="../config.cpp" line="114"/>
         <source>Scale to Expand Window</source>
         <translation>缩放以充满窗口</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="98"/>
-        <location filename="../config.cpp" line="100"/>
-        <location filename="../config.cpp" line="102"/>
-        <location filename="../config.cpp" line="104"/>
-        <location filename="../config.cpp" line="106"/>
-        <location filename="../config.cpp" line="108"/>
-        <location filename="../config.cpp" line="110"/>
-        <location filename="../config.cpp" line="112"/>
-        <location filename="../config.cpp" line="114"/>
+        <location filename="../config.cpp" line="117"/>
+        <location filename="../config.cpp" line="119"/>
+        <location filename="../config.cpp" line="121"/>
+        <location filename="../config.cpp" line="123"/>
+        <location filename="../config.cpp" line="125"/>
+        <location filename="../config.cpp" line="127"/>
+        <location filename="../config.cpp" line="129"/>
+        <location filename="../config.cpp" line="131"/>
+        <location filename="../config.cpp" line="133"/>
         <source>Align Mode: </source>
         <translation>对齐模式：</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="98"/>
+        <location filename="../config.cpp" line="117"/>
         <source>Align Left Top</source>
         <translation>左上角对齐</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="100"/>
+        <location filename="../config.cpp" line="119"/>
         <source>Align Left Center</source>
         <translation>左中部对齐</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="102"/>
+        <location filename="../config.cpp" line="121"/>
         <source>Align Left Bottom</source>
         <translation>左下角对齐</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="104"/>
+        <location filename="../config.cpp" line="123"/>
         <source>Align Center Top</source>
         <translation>中上部对齐</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="106"/>
+        <location filename="../config.cpp" line="125"/>
         <source>Align Center</source>
         <translation>居中对齐</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="108"/>
+        <location filename="../config.cpp" line="127"/>
         <source>Align Center Bottom</source>
         <translation>中下部对齐</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="110"/>
+        <location filename="../config.cpp" line="129"/>
         <source>Align Right Top</source>
         <translation>右上角对齐</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="112"/>
+        <location filename="../config.cpp" line="131"/>
         <source>Align Right Center</source>
         <translation>右中部对齐</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="114"/>
+        <location filename="../config.cpp" line="133"/>
         <source>Align Right Bottom</source>
         <translation>右下角对齐</translation>
+    </message>
+    <message>
+        <location filename="../config.cpp" line="136"/>
+        <location filename="../config.cpp" line="138"/>
+        <location filename="../config.cpp" line="140"/>
+        <source>Antialias Mode: </source>
+        <translation>平滑渲染： </translation>
+    </message>
+    <message>
+        <location filename="../config.cpp" line="136"/>
+        <source>Using When Pictures Zoom In</source>
+        <translation>当放大图片时使用</translation>
+    </message>
+    <message>
+        <location filename="../config.cpp" line="138"/>
+        <source>Always Using</source>
+        <translation>总是使用</translation>
+    </message>
+    <message>
+        <location filename="../config.cpp" line="140"/>
+        <source>Never Using</source>
+        <translation>从不使用</translation>
     </message>
 </context>
 <context>
@@ -593,40 +631,40 @@
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="229"/>
-        <location filename="../mainwindow.cpp" line="502"/>
+        <location filename="../mainwindow.cpp" line="523"/>
         <source>Property</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="388"/>
+        <location filename="../mainwindow.cpp" line="409"/>
         <source>&amp;Quit</source>
         <translation>退出(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="393"/>
+        <location filename="../mainwindow.cpp" line="414"/>
         <source>&amp;Open</source>
         <translation>打开(&amp;O)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="382"/>
+        <location filename="../mainwindow.cpp" line="403"/>
         <source>&amp;Setting</source>
         <translation>设置(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="278"/>
-        <location filename="../mainwindow.cpp" line="280"/>
-        <location filename="../mainwindow.cpp" line="403"/>
+        <location filename="../mainwindow.cpp" line="299"/>
+        <location filename="../mainwindow.cpp" line="301"/>
+        <location filename="../mainwindow.cpp" line="424"/>
         <source>Auto Play</source>
         <translation>自动放映</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="286"/>
-        <location filename="../mainwindow.cpp" line="288"/>
+        <location filename="../mainwindow.cpp" line="307"/>
+        <location filename="../mainwindow.cpp" line="309"/>
         <source>Stop Play</source>
         <translation>停止放映</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="385"/>
+        <location filename="../mainwindow.cpp" line="406"/>
         <source>&amp;About</source>
         <translation>关于(&amp;A)</translation>
     </message>
@@ -639,146 +677,166 @@
         <translation type="obsolete">最小化</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="406"/>
+        <location filename="../mainwindow.cpp" line="427"/>
         <source>Rotate &amp;Left</source>
         <translation>逆时钟旋转90度(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="410"/>
+        <location filename="../mainwindow.cpp" line="431"/>
         <source>Rotate &amp;Right</source>
         <translation>顺时钟旋转90度(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="413"/>
+        <location filename="../mainwindow.cpp" line="434"/>
         <source>Mirrored &amp;Horizontal</source>
         <translation>水平镜像(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="416"/>
+        <location filename="../mainwindow.cpp" line="437"/>
         <source>Mirrored &amp;Vertical</source>
         <translation>竖直镜像(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="419"/>
+        <location filename="../mainwindow.cpp" line="440"/>
         <source>&amp;Copy to clipboard</source>
         <translation>复制到剪贴板(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="422"/>
+        <location filename="../mainwindow.cpp" line="443"/>
         <source>&amp;Property</source>
         <translation>属性(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="427"/>
+        <location filename="../mainwindow.cpp" line="448"/>
         <source>&amp;Delete</source>
         <translation>删除(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="496"/>
+        <location filename="../mainwindow.cpp" line="517"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="534"/>
+        <location filename="../mainwindow.cpp" line="555"/>
         <source>Zoom In</source>
         <translation>放大</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="536"/>
+        <location filename="../mainwindow.cpp" line="557"/>
         <source>Zoom In (Slow)</source>
         <translation>放大(较慢)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="538"/>
+        <location filename="../mainwindow.cpp" line="559"/>
         <source>Zoom in (Fast)</source>
         <translation>放大(较快)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="540"/>
+        <location filename="../mainwindow.cpp" line="561"/>
         <source>Zoom Out</source>
         <translation>缩小</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="542"/>
+        <location filename="../mainwindow.cpp" line="563"/>
         <source>Zoom Out (Slow)</source>
         <translation>缩小(较慢)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="544"/>
+        <location filename="../mainwindow.cpp" line="565"/>
         <source>Zoom Out (Fast)</source>
         <translation>缩小(较快)</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="568"/>
+        <source>Move Content Up</source>
+        <translation>移向画面上方</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="570"/>
+        <source>Move Content Left</source>
+        <translation>移向画面左方</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="572"/>
+        <source>Move Content Right</source>
+        <translation>移向画面右方</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="574"/>
+        <source>Move Content Down</source>
+        <translation>移向画面下方</translation>
     </message>
     <message>
         <source>Switch Full Screen</source>
         <translation type="obsolete">切换全屏</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="498"/>
+        <location filename="../mainwindow.cpp" line="519"/>
         <source>Full Screen</source>
         <translation>切换全屏</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="500"/>
+        <location filename="../mainwindow.cpp" line="521"/>
         <source>Auto Play/Stop</source>
         <translation>自动放映/停止</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="504"/>
+        <location filename="../mainwindow.cpp" line="525"/>
         <source>Setting</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="506"/>
+        <location filename="../mainwindow.cpp" line="527"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="511"/>
+        <location filename="../mainwindow.cpp" line="532"/>
         <source>Next Picture</source>
         <translation>下一张图片</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="513"/>
+        <location filename="../mainwindow.cpp" line="534"/>
         <source>Previous Picture</source>
         <translation>上一张图片</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="508"/>
+        <location filename="../mainwindow.cpp" line="529"/>
         <source>Quit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="397"/>
+        <location filename="../mainwindow.cpp" line="418"/>
         <source>Show in &amp;Explorer</source>
         <translation>在资源管理器中定位(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="515"/>
+        <location filename="../mainwindow.cpp" line="536"/>
         <source>Rotate Left</source>
         <translation>逆时钟旋转90度</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="517"/>
+        <location filename="../mainwindow.cpp" line="538"/>
         <source>Rotate Right</source>
         <translation>顺时钟旋转90度</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="519"/>
+        <location filename="../mainwindow.cpp" line="540"/>
         <source>Mirrored Horizontal</source>
         <translation>水平镜像</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="521"/>
+        <location filename="../mainwindow.cpp" line="542"/>
         <source>Mirrored Vertical</source>
         <translation>竖直镜像</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="523"/>
+        <location filename="../mainwindow.cpp" line="544"/>
         <source>Animation Play/Pause</source>
         <translation>动画播放/暂停</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="525"/>
+        <location filename="../mainwindow.cpp" line="546"/>
         <source>Frame Step</source>
         <translation>帧步进</translation>
     </message>
@@ -791,17 +849,17 @@
         <translation type="obsolete">步进/下一帧</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="527"/>
+        <location filename="../mainwindow.cpp" line="548"/>
         <source>Copy to clipboard</source>
         <translation>复制到剪贴板</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="529"/>
+        <location filename="../mainwindow.cpp" line="550"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="531"/>
+        <location filename="../mainwindow.cpp" line="552"/>
         <source>Delete Without Notification</source>
         <translation>直接删除(没有通知)</translation>
     </message>
@@ -1354,32 +1412,32 @@ You can help to improve %1 by email the picture to %2</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="../settingdialog.cpp" line="42"/>
+        <location filename="../settingdialog.cpp" line="43"/>
         <source>Common</source>
         <translation>常规</translation>
     </message>
     <message>
-        <location filename="../settingdialog.cpp" line="46"/>
+        <location filename="../settingdialog.cpp" line="47"/>
         <source>File Association</source>
         <translation>文件关联</translation>
     </message>
     <message>
-        <location filename="../settingdialog.cpp" line="48"/>
+        <location filename="../settingdialog.cpp" line="49"/>
         <source>Keyboard Shortcuts</source>
         <translation>键盘快捷键</translation>
     </message>
     <message>
-        <location filename="../settingdialog.cpp" line="80"/>
+        <location filename="../settingdialog.cpp" line="81"/>
         <source>Check All</source>
         <translation>全部设置</translation>
     </message>
     <message>
-        <location filename="../settingdialog.cpp" line="85"/>
+        <location filename="../settingdialog.cpp" line="86"/>
         <source>Uncheck All</source>
         <translation>全部取消</translation>
     </message>
     <message>
-        <location filename="../settingdialog.cpp" line="90"/>
+        <location filename="../settingdialog.cpp" line="91"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>

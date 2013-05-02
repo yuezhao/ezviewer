@@ -47,15 +47,15 @@ CommonSetting::CommonSetting(QWidget *parent) :
     cacheValueSlider = ui->cacheValueSlider;
 
     alignButtonGroup = new QButtonGroup(this);
-    alignButtonGroup->addButton(ui->leftTopButton, 0);
-    alignButtonGroup->addButton(ui->centerTopButton, 1);
-    alignButtonGroup->addButton(ui->rightTopButton, 2);
-    alignButtonGroup->addButton(ui->leftCenterButton, 3);
-    alignButtonGroup->addButton(ui->centerCenterButton, 4);
-    alignButtonGroup->addButton(ui->rightCenterButton, 5);
-    alignButtonGroup->addButton(ui->leftBottomButton, 6);
-    alignButtonGroup->addButton(ui->centerBottomButton, 7);
-    alignButtonGroup->addButton(ui->rightBottomButton, 8);
+    alignButtonGroup->addButton(ui->leftTopButton, Config::AlignLeftTop);
+    alignButtonGroup->addButton(ui->centerTopButton, Config::AlignCenterTop);
+    alignButtonGroup->addButton(ui->rightTopButton, Config::AlignRightTop);
+    alignButtonGroup->addButton(ui->leftCenterButton, Config::AlignLeftCenter);
+    alignButtonGroup->addButton(ui->centerCenterButton, Config::AlignCenterCenter);
+    alignButtonGroup->addButton(ui->rightCenterButton, Config::AlignRightCenter);
+    alignButtonGroup->addButton(ui->leftBottomButton, Config::AlignLeftBottom);
+    alignButtonGroup->addButton(ui->centerBottomButton, Config::AlignCenterBottom);
+    alignButtonGroup->addButton(ui->rightBottomButton, Config::AlignRightBottom);
 
     initUIvalue();
 
@@ -83,10 +83,13 @@ CommonSetting::CommonSetting(QWidget *parent) :
     connect(button, SIGNAL(clicked()), SIGNAL(clickClose()));
     button = buttonBox->addButton(QDialogButtonBox::RestoreDefaults);
     connect(button, SIGNAL(clicked()), SLOT(restoreDefaults()));
+
+    Config::insertConfigWatcher(this, SLOT(initUIvalue()));
 }
 
 CommonSetting::~CommonSetting()
 {
+    Config::cancelConfigWatcher(this);
     delete ui;
 }
 
@@ -98,18 +101,23 @@ void CommonSetting::initUIvalue()
     antialiasModeCombo->setCurrentIndex(Config::antialiasMode());
     timerSpinBox->setValue(Config::timerInterval());
     preReadingCheckBox->setChecked(Config::enablePreReading());
-    cacheValueLabel->setText(QString::number(Config::cacheValue()));
-    cacheValueSlider->setValue(Config::cacheValue());
+    cacheValueLabel->setText(QString::number(Config::cacheNum()));
+    cacheValueSlider->setValue(Config::cacheNum());
 
-    QPixmap pix(25, 25);
-    pix.fill(Config::bgColor());
-    colorButton->setIcon(QIcon(pix));
-    colorEdit->setText(Config::bgColor().name());
+    changeColorSettingUI(Config::bgColor());
     bool enabledBgColor = Config::enableBgColor();
     colorCheckBox->setChecked(enabledBgColor);
     colorLabel->setEnabled(enabledBgColor);
     colorButton->setEnabled(enabledBgColor);
     colorEdit->setEnabled(enabledBgColor);
+}
+
+void CommonSetting::changeColorSettingUI(const QColor &color)
+{
+    QPixmap pix(25, 25);
+    pix.fill(color);
+    colorButton->setIcon(QIcon(pix));
+    colorEdit->setText(color.name());
 }
 
 void CommonSetting::showDialogChange(int state)
@@ -125,14 +133,14 @@ void CommonSetting::scaleModeChange(int index)
 
 void CommonSetting::alignModeChange(int id)
 {
-    if (id < Config::AlignLeftTop || id > Config::AlignRightBottom) return;
+    if (id < Config::AlignModeBegin || id > Config::AlignModeEnd) return;
     Config::setAlignMode(Config::AlignMode(id));
 }
 
 void CommonSetting::antialiasModeChange(int index)
 {
     if(index == -1) return;
-    Config::setAntialiasMode(index);
+    Config::setAntialiasMode(Config::AntialiasMode(index));
 }
 
 void CommonSetting::bgColorEnable(int state)
@@ -149,10 +157,7 @@ void CommonSetting::setColor()
 {
     QColor color = QColorDialog::getColor(Config::bgColor(), this);
     if (color.isValid()) {
-        QPixmap pix(25, 25);
-        pix.fill(color);
-        colorButton->setIcon(QIcon(pix));
-        colorEdit->setText(color.name());
+        changeColorSettingUI(color);
         Config::setBgColor(color);
     }
 }
@@ -176,7 +181,5 @@ void CommonSetting::cacheValueChanged(int val)
 void CommonSetting::restoreDefaults()
 {
     Config::restoreDefaultsConfig();
-    qApp->processEvents();  /// make sure the value of Config refreshed.
-    initUIvalue();
 }
 

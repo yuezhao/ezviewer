@@ -35,9 +35,7 @@ public:
     void setFillBackground(bool enabled);
 
 signals:
-    void mouseDoubleClick();
     void mouseClicked();
-    void showContextMenu(const QPoint &pos);
 
 public slots:
     void addWidget(QWidget *w);
@@ -47,10 +45,8 @@ public slots:
     void set_enabled(bool enabled);
 
 protected slots:
-    void contextMenuEvent ( QContextMenuEvent * event );
     void enterEvent( QEvent * event );
     void leaveEvent( QEvent * event );
-    void mouseDoubleClickEvent ( QMouseEvent * event );
     void mouseReleaseEvent ( QMouseEvent * event );
     void timerEvent(QTimerEvent *e);
 

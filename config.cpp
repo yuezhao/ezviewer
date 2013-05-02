@@ -26,20 +26,39 @@
 #include <QFileSystemWatcher>
 #include <QImageReader>
 
-#define SPLIT(x) &x, #x
-#define MERGE(x, y) &x, #x "+" #y, y
+#define SPLIT_FUNCTION(x) &x, #x
+#define SPLIT_PARAM(x) #x, x
 
 
-const qreal Config::ScaleMax = 20.0;
-const qreal Config::ScaleMin = 0.1;
+const qreal Config::ZoomInRatioNomal = 0.1;
+const qreal Config::ZoomInRatioSlow = 0.05;
+const qreal Config::ZoomInRatioFast = 0.2;
+const qreal Config::ZoomOutRatioNomal = -0.1;
+const qreal Config::ZoomOutRatioSlow = -0.05;
+const qreal Config::ZoomOutRatioFast = -0.2;
+const int   Config::DefaultMoveContentSpeed = 15;
+
+const qreal Config::ScaleMaxLimit = 20.0;
+const qreal Config::ScaleMinLimit = 0.1;
 const QPointF Config::OriginPoint(0.0, 0.0);
 const QSize Config::SizeAdjusted(0, 1);
 const QSize Config::WindowMinSize(280, 200);
 const QSize Config::WindowFitSize(800, 500);
-const QString Config::BgGreen = "#C7EDCC";
-const QDir::SortFlags Config::DirSortFlag = QDir::Name | QDir::IgnoreCase;
-const int Config::AutoScrollInterval = 25;    //20
+const QString Config::DefaultBgColor = "#C7EDCC";
+const QDir::SortFlags Config::DefaultDirSortFlag = QDir::LocaleAware;//QDir::Name | QDir::IgnoreCase;
+const int Config::AutoScrollInterval = 20;
 const int Config::FileSizePrecision = 2;
+
+
+const bool DefaultShowDialog = true;
+const bool DefaultEnableBgColor = true;
+const int  DefaultTimerInterval = 4;
+const int  TimerIntervalMinLimit = 1;
+const int  TimerIntervalMaxLimit = 1000;
+const int  InvalidCacheNum = -1;
+const int  CacheNumMinLimit = 0;
+const int  CacheNumMaxLimit = 5;
+
 
 Config *Config::sInstance = NULL;
 
@@ -61,11 +80,11 @@ const QString AutoPlayGroup = "AutoPlay";
 const QString TimerIntervalKey = AutoPlayGroup + "/TimerInterval";
 const QString AdvancedGroup = "Advanced";
 const QString EnablePreReadingKey = AdvancedGroup + "/PreReading";
-const QString CacheValueKey = AdvancedGroup + "/CacheValue";
+const QString CacheNumKey = AdvancedGroup + "/CacheValue";
 const QString FormGroup = "Form";
 const QString UseTitleBarKey = FormGroup + "/UseTitleBar";
 
-const QString RootKey = "root";
+const QString RootKey = "ezviewer";
 const QString ShortcutKey = "shortcut";
 const QString KeySequenceKey = "keys";
 const QString ActionKey = "action";
@@ -78,42 +97,48 @@ Config::Config()
     loadAllShortcut();
 
     ActionManager::registerFunction(tr("Enable/Disable Custom Background Color"),
-                                    this, SPLIT(Config::changeBgColorMode));
+                   this, SPLIT_FUNCTION(Config::changeBgColorMode));
     ActionManager::registerFunction(tr("Enable/Disable Pre-reading"),
-                                    this, SPLIT(Config::changePreReadingMode));
+                   this, SPLIT_FUNCTION(Config::changePreReadingMode));
 
     ActionManager::registerFunction(tr("Scale Mode: ") + tr("Scale Large Image to Fit Window"),
-                                    this, MERGE(Config::changeScaleMode, ScaleLargeImageToFitWidget));
+                   this, &Config::changeScaleMode, SPLIT_PARAM(ScaleLargeImageToFitWidget));
     ActionManager::registerFunction(tr("Scale Mode: ") + tr("Keep Image Size"),
-                                    this, MERGE(Config::changeScaleMode, KeepImageSize));
+                   this, &Config::changeScaleMode, SPLIT_PARAM(KeepImageSize));
     ActionManager::registerFunction(tr("Scale Mode: ") + tr("Fit Window Width"),
-                                    this, MERGE(Config::changeScaleMode, FitWidgetWidth));
+                   this, &Config::changeScaleMode, SPLIT_PARAM(FitWidgetWidth));
     ActionManager::registerFunction(tr("Scale Mode: ") + tr("Fit Window Height"),
-                                    this, MERGE(Config::changeScaleMode, FitWidgetHeight));
+                   this, &Config::changeScaleMode, SPLIT_PARAM(FitWidgetHeight));
     ActionManager::registerFunction(tr("Scale Mode: ") + tr("Scale to Fit Window"),
-                                    this, MERGE(Config::changeScaleMode, ScaleToFitWidget));
+                   this, &Config::changeScaleMode, SPLIT_PARAM(ScaleToFitWidget));
     ActionManager::registerFunction(tr("Scale Mode: ") + tr("Scale to Expand Window"),
-                                    this, MERGE(Config::changeScaleMode, ScaleToExpandWidget));
+                   this, &Config::changeScaleMode, SPLIT_PARAM(ScaleToExpandWidget));
 
     ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Left Top"),
-                                    this, MERGE(Config::changeAlignMode, AlignLeftTop));
+                   this, &Config::changeAlignMode, SPLIT_PARAM(AlignLeftTop));
     ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Left Center"),
-                                    this, MERGE(Config::changeAlignMode, AlignLeftCenter));
+                   this, &Config::changeAlignMode, SPLIT_PARAM(AlignLeftCenter));
     ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Left Bottom"),
-                                    this, MERGE(Config::changeAlignMode, AlignLeftBottom));
+                   this, &Config::changeAlignMode, SPLIT_PARAM(AlignLeftBottom));
     ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Center Top"),
-                                    this, MERGE(Config::changeAlignMode, AlignCenterTop));
+                   this, &Config::changeAlignMode, SPLIT_PARAM(AlignCenterTop));
     ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Center"),
-                                    this, MERGE(Config::changeAlignMode, AlignCenterCenter));
+                   this, &Config::changeAlignMode, SPLIT_PARAM(AlignCenterCenter));
     ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Center Bottom"),
-                                    this, MERGE(Config::changeAlignMode, AlignCenterBottom));
+                   this, &Config::changeAlignMode, SPLIT_PARAM(AlignCenterBottom));
     ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Right Top"),
-                                    this, MERGE(Config::changeAlignMode, AlignRightTop));
+                   this, &Config::changeAlignMode, SPLIT_PARAM(AlignRightTop));
     ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Right Center"),
-                                    this, MERGE(Config::changeAlignMode, AlignRightCenter));
+                   this, &Config::changeAlignMode, SPLIT_PARAM(AlignRightCenter));
     ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Right Bottom"),
-                                    this, MERGE(Config::changeAlignMode, AlignRightBottom));
+                   this, &Config::changeAlignMode, SPLIT_PARAM(AlignRightBottom));
 
+    ActionManager::registerFunction(tr("Antialias Mode: ") + tr("Using When Pictures Zoom In"),
+                   this, &Config::changeAntialiasMode, SPLIT_PARAM(AntialiasWhenZoomIn));
+    ActionManager::registerFunction(tr("Antialias Mode: ") + tr("Always Using"),
+                   this, &Config::changeAntialiasMode, SPLIT_PARAM(AlwaysAntialias));
+    ActionManager::registerFunction(tr("Antialias Mode: ") + tr("Never Using"),
+                   this, &Config::changeAntialiasMode, SPLIT_PARAM(NoAntialias));
 
     QList<QByteArray> list = QImageReader::supportedImageFormats();
     for(int i=0; i < list.size(); ++i)
@@ -156,31 +181,31 @@ void Config::fileChanged(const QString &filePath)
 void Config::initConfigValue()
 {
     QSettings settings(ConfigFilePath(), QSettings::IniFormat);
-    mShowDialog = settings.value(DialogKey, true).toBool();
-    mScaleMode = (ScaleMode)settings.value(ScaleModeKey, ScaleLargeImageToFitWidget).toInt();
-    mAlignMode = (AlignMode)settings.value(AlignModeKey, AlignCenterCenter).toInt();
-    mAntialiasMode = settings.value(AntialiasModeKey, 0).toInt();
-    mEnableBgColor = settings.value(EnableBgColorKey, true).toBool();
-    QString colorStr = settings.value(BgColorKey, BgGreen).toString();
-    mTimerInterval = settings.value(TimerIntervalKey, 4).toInt();
+    mShowDialog = settings.value(DialogKey, DefaultShowDialog).toBool();
+    mScaleMode = (ScaleMode)settings.value(ScaleModeKey, DefaultScaleMode).toInt();
+    mAlignMode = (AlignMode)settings.value(AlignModeKey, DefaultAlignMode).toInt();
+    mAntialiasMode = (AntialiasMode)settings.value(AntialiasModeKey, DefaultAntialiasMode).toInt();
+    mEnableBgColor = settings.value(EnableBgColorKey, DefaultEnableBgColor).toBool();
+    QString colorStr = settings.value(BgColorKey, DefaultBgColor).toString();
+    mTimerInterval = settings.value(TimerIntervalKey, DefaultTimerInterval).toInt();
     mEnablePreReading = settings.value(
                 EnablePreReadingKey, OSRelated::preReadingSuggested()).toBool();
-    mCacheValue = settings.value(CacheValueKey, -1).toInt();
+    mCacheNum = settings.value(CacheNumKey, InvalidCacheNum).toInt();
     mLastGeometry = settings.value(GeometryKey).toByteArray();
 
-    if (mScaleMode < ScaleLargeImageToFitWidget || mScaleMode > ScaleToExpandWidget)
-        mScaleMode = ScaleLargeImageToFitWidget;
-    if (mAlignMode < AlignLeftTop || mAlignMode > AlignRightBottom)
-        mAlignMode = AlignCenterCenter;
-    if(mAntialiasMode < 0 || mAntialiasMode > 2) // 3 modes
-        mAntialiasMode = 0;
+    if (mScaleMode < ScaleModeBegin || mScaleMode > ScaleModeEnd)
+        mScaleMode = DefaultScaleMode;
+    if (mAlignMode < AlignModeBegin || mAlignMode > AlignModeEnd)
+        mAlignMode = DefaultAlignMode;
+    if(mAntialiasMode < AntialiasModeBegin || mAntialiasMode > AntialiasModeEnd)
+        mAntialiasMode = DefaultAntialiasMode;
     mBgColor.setNamedColor(colorStr);
     if(!mBgColor.isValid())
-        mBgColor.setNamedColor(BgGreen);
-    if(mTimerInterval < 1 || mTimerInterval > 1000)
-        mTimerInterval = 4;
-    if(mCacheValue < 0 || mCacheValue > 5)
-        mCacheValue = OSRelated::cacheSizeSuggested();
+        mBgColor.setNamedColor(DefaultBgColor);
+    if(mTimerInterval < TimerIntervalMinLimit || mTimerInterval > TimerIntervalMaxLimit)
+        mTimerInterval = DefaultTimerInterval;
+    if(mCacheNum < CacheNumMinLimit || mCacheNum > CacheNumMaxLimit)
+        mCacheNum = OSRelated::cacheSizeSuggested();
 
     emit configChanged();
 }
@@ -215,7 +240,7 @@ void Config::setAlignMode(AlignMode mode)
     setValue(AlignModeKey, mode);
 }
 
-void Config::setAntialiasMode(int mode)
+void Config::setAntialiasMode(AntialiasMode mode)
 {
     setValue(AntialiasModeKey, mode);
 }
@@ -242,7 +267,7 @@ void Config::setEnablePreReading(bool enabled)
 
 void Config::setCacheValue(int value)
 {
-    setValue(CacheValueKey, value);
+    setValue(CacheNumKey, value);
 }
 
 void Config::setLastGeometry(const QByteArray &geometry)
@@ -253,7 +278,7 @@ void Config::setLastGeometry(const QByteArray &geometry)
 void Config::changeScaleMode(ScaleMode mode)
 {
     if (scaleMode() == mode)
-        setValue(ScaleModeKey, ScaleLargeImageToFitWidget);
+        setValue(ScaleModeKey, DefaultScaleMode);
     else
         setValue(ScaleModeKey, mode);
 }
@@ -261,9 +286,17 @@ void Config::changeScaleMode(ScaleMode mode)
 void Config::changeAlignMode(AlignMode mode)
 {
     if (alignMode() == mode)
-        setValue(AlignModeKey, AlignCenterCenter);
+        setValue(AlignModeKey, DefaultAlignMode);
     else
         setValue(AlignModeKey, mode);
+}
+
+void Config::changeAntialiasMode(AntialiasMode mode)
+{
+    if (antialiasMode() == mode)
+        setValue(AntialiasModeKey, DefaultAntialiasMode);
+    else
+        setValue(AntialiasModeKey, mode);
 }
 
 void Config::addShortcut(const QString &keySequence, const QString &actionScript)

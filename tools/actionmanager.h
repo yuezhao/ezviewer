@@ -32,29 +32,43 @@ class ActionManager
 public:
     template <typename PT, typename T, typename ReturnType>
     static void registerFunction(const QString &description, PT *obj,
-                          ReturnType (T::*function)(), const QString &script);
+                          ReturnType (T::*function)(), const QString &tag);
 
     template <typename PT, typename T, typename ReturnType, typename ArgumentType>
     static void registerFunction(const QString &description,
                                  PT *obj,
                                  ReturnType (T::*function)(ArgumentType),
-                                 const QString &script,
+                                 const QString &tag,
                                  ArgumentType arg);
 
-    static bool bindShortcut(const QString &keySequence, const QString &actionScript);
-    static void bindShortcut(const QStringList &keySequences, const QString &actionScript);
+    template <typename PT, typename T, typename ReturnType, typename ArgumentType>
+    static void registerFunction(const QString &description,
+                                 PT *obj,
+                                 ReturnType (T::*function)(const ArgumentType &),
+                                 const QString &tag,
+                                 ArgumentType arg);
+
+    template <typename PT, typename T, typename ReturnType, typename ArgumentType>
+    static void registerFunction(const QString &description,
+                                 PT *obj,
+                                 ReturnType (T::*function)(ArgumentType, ArgumentType),
+                                 const QString &tag,
+                                 ArgumentType arg, ArgumentType);
+
+    static bool bindShortcut(const QString &keySequence, const QString &actionTag);
+    static void bindShortcut(const QStringList &keySequences, const QString &actionTag);
     static bool unbindShortcut(const QString &keySequence);
     static void unbindShortcut(const QStringList &keySequences);
 
     static void unbindAllShortcut() { shortcutMap.clear(); }
 
-    // return: action description list, and if actionScript is not NULL, the action script list will be set.
-    static QStringList getAllActions(QStringList *actionScript = NULL);
-    // return: action script text that this key sequence bind with.
+    // return: action description list, and if actionScript is not NULL, the action tag list will be set.
+    static QStringList getAllActions(QStringList *actionTag = NULL);
+    // return: action tag text that this key sequence bind with.
     static QString getMatchAction(const QString &keySequence);
-    // return: all key sequence list that bind with the action script.
-    static QStringList getBindShortcuts(const QString &actionScript);
-    // return: all key sequence and action script pair.
+    // return: all key sequence list that bind with the action tag.
+    static QStringList getBindShortcuts(const QString &actionTag);
+    // return: all key sequence and action tag pair.
     static QMap<QString, QString> getAllShortcut() { return shortcutMap; }
 
     // run the function that bind with the key sequence.
@@ -63,8 +77,8 @@ public:
 private:
     ~ActionManager();
 
-    static QMap<QString, Action*> actionMap;   // actionScript - action
-    static QMap<QString, QString> shortcutMap; // keySequence  - actionScript
+    static QMap<QString, Action*> actionMap;   // actionTag - action
+    static QMap<QString, QString> shortcutMap; // keySequence  - actionTag
 
     static ActionManager ensure_destructor_invoke_while_quit;
 };
@@ -73,9 +87,9 @@ private:
 
 template <typename PT, typename T, typename ReturnType>
 inline void ActionManager::registerFunction(const QString &description, PT *obj,
-                      ReturnType (T::*function)(), const QString &script)
+                      ReturnType (T::*function)(), const QString &tag)
 {
-    actionMap.insert(script,
+    actionMap.insert(tag,
                      new ActionImpl<T, ReturnType>(description, obj, function) );
 }
 
@@ -83,12 +97,36 @@ template <typename PT, typename T, typename ReturnType, typename ArgumentType>
 inline void ActionManager::registerFunction(const QString &description,
                                             PT *obj,
                                             ReturnType (T::*function)(ArgumentType),
-                                            const QString &script,
+                                            const QString &tag,
                                             ArgumentType arg)
 {
-    actionMap.insert(script,
+    actionMap.insert(tag,
                      new ActionImplWithArgument<T, ReturnType, ArgumentType>
                      (description, obj, function, arg) );
+}
+
+template <typename PT, typename T, typename ReturnType, typename ArgumentType>
+inline void ActionManager::registerFunction(const QString &description,
+                             PT *obj,
+                             ReturnType (T::*function)(const ArgumentType &),
+                             const QString &tag,
+                             ArgumentType arg)
+{
+    actionMap.insert(tag,
+                     new ActionImplWithArgument<T, ReturnType, const ArgumentType &>
+                     (description, obj, function, arg) );
+}
+
+template <typename PT, typename T, typename ReturnType, typename ArgumentType>
+inline void ActionManager::registerFunction(const QString &description,
+                                            PT *obj,
+                                            ReturnType (T::*function)(ArgumentType, ArgumentType),
+                                            const QString &tag,
+                                            ArgumentType arg1, ArgumentType arg2)
+{
+    actionMap.insert(tag,
+                     new ActionImplWithArgument2<T, ReturnType, ArgumentType>
+                     (description, obj, function, arg1, arg2) );
 }
 
 inline QString ActionManager::getMatchAction(const QString &keySequence)

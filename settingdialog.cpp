@@ -25,6 +25,7 @@
 #include "osrelated.h"
 #include "shortcutsetting.h"
 
+#include <QCoreApplication>
 #include <QCheckBox>
 #include <QGridLayout>
 #include <QPushButton>

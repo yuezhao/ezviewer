@@ -43,28 +43,26 @@ public:
     bool noPicture()  const                 { return image.isNull(); }
     qreal currentScale() const              { return scale; }
 
-signals:
-    void siteChange(const QPoint &change);
-
 public slots:
-    void changeScaleMode();
-    void changeAlignMode();
+    void changeScaleMode(int mode);
+    void changeAlignMode(int mode);
     void changeAntialiasMode(int mode);
     // if color is invalid, means disabled custom background color.
     void changeBgColor(const QColor &color);
 
-    void zoomIn(double factor);
-    void rotateLeft()       { rotatePixmap(true); }
-    void rotateRight()      { rotatePixmap(false); }
-    void mirrorHorizontal() { mirrored(true, false); }
-    void mirrorVertical()   { mirrored(false, true); }
+    void moveContent(int deltaX, int deltaY);
+    void zoomIn(double factor); // pivot is center of this widget.
+    void zoomIn(double factor, const QPoint &pivot);
+    void rotateLeft()       { rotatePixmap(-90); }
+    void rotateRight()      { rotatePixmap(90); }
+    void mirrorHorizontal() { mirrored(MirrorHorizontal); }
+    void mirrorVertical()   { mirrored(MirrorVertical); }
     void copyToClipboard();
 
 protected slots:
     void paintEvent(QPaintEvent *e);
     void resizeEvent ( QResizeEvent * event );
 
-    void wheelEvent(QWheelEvent *e);
     void mouseMoveEvent ( QMouseEvent * event );
     void mousePressEvent ( QMouseEvent * event );
     void mouseReleaseEvent ( QMouseEvent * event );
@@ -90,8 +88,13 @@ private:
     void calcTopLeft();    // no use update()
     void calcShift();      // no use update()
     void updateShift();    // use update()
-    void rotatePixmap(bool isLeft); //ture left or right 90 degrees, use update()
-    void mirrored(bool horizontal = false, bool vertical = true);
+
+    void rotatePixmap(int degree); // use update()
+    enum MirrorMode {
+        MirrorHorizontal = 0,
+        MirrorVertical
+    };
+    void mirrored(MirrorMode mode);
 
     void myMouseMove(QMouseEvent * event);
 
@@ -99,6 +102,8 @@ private:
     QImage image;
     QString errStr; // msg to show if image is null.
 
+    int scaleMode;
+    int alignMode;
     int antialiasMode;
     QColor bgColor;
 
@@ -120,12 +125,6 @@ private:
     QTimer timer;
 };
 
-
-inline bool ImageViewer::scaleLargeThanWidget()
-{
-    return image.width() * scale > rect().width()
-            || image.height() * scale > rect().height();
-}
 
 inline void ImageViewer::calcTopLeft()
 {
