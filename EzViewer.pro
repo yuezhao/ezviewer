@@ -5,8 +5,11 @@ QT += svg xml
 DEPENDPATH  += . tools ui 3rdparty
 INCLUDEPATH += . tools ui 3rdparty
 
-INCLUDEPATH += ../qtimageformats/LibRaw-0.15.0-Beta4/libraw/
-LIBS += -L"../qtimageformats/LibRaw-build-desktop-Release/buildfiles/release-x86" -lraw
+# DEFINES += TESTING_RAW
+contains(DEFINES, TESTING_RAW) {
+    INCLUDEPATH += ../qtimageformats/LibRaw-0.15.0-Beta4/libraw/
+    LIBS += -L"../qtimageformats/LibRaw-build-desktop-Release/buildfiles/release-x86" -lraw
+}
 
 HEADERS = global.h \
     config.h \

@@ -46,7 +46,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     if (assocWidget)
         tab->addTab(assocWidget, tr("File Association"));
 
-    tab->addTab(shortcutSetting, tr("Keyboard Shortcuts"));
+    tab->addTab(shortcutSetting, tr("Keyboard"));
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(tab);

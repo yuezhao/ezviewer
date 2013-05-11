@@ -144,7 +144,7 @@ void VelocityTracker::handleMouseRelease(QMouseEvent *event)
 
     case VelocityTrackerPrivate::ManualScroll:
         delta = event->pos() - d->pressPos;
-        emit changedDelta(delta);
+//        emit changedDelta(delta);
         if (d->timeStamp.elapsed() > 100) {
             d->timeStamp = QTime::currentTime();
             d->speed = delta - d->delta;
@@ -181,13 +181,13 @@ void VelocityTracker::handleMouseMove(QMouseEvent *event)
     case VelocityTrackerPrivate::Pressed:
     case VelocityTrackerPrivate::Stop:
         delta = event->pos() - d->pressPos;
-        emit changedDelta(delta);
         if (delta.x() > d->threshold || delta.x() < -d->threshold ||
                 delta.y() > d->threshold || delta.y() < -d->threshold) {
             d->timeStamp = QTime::currentTime();
             d->state = VelocityTrackerPrivate::ManualScroll;
             d->delta = QPoint(0, 0);
             d->pressPos = event->pos();
+            emit changedDelta(delta);
         }
         break;
 

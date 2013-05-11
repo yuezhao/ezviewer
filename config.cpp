@@ -52,6 +52,7 @@ const int Config::FileSizePrecision = 2;
 
 const bool DefaultShowDialog = true;
 const bool DefaultEnableBgColor = true;
+const bool DefaultAutoRotateImage = true;
 const int  DefaultTimerInterval = 4;
 const int  TimerIntervalMinLimit = 1;
 const int  TimerIntervalMaxLimit = 1000;
@@ -79,6 +80,7 @@ const QString BgColorKey = EffectGroup + "/BgColor";
 const QString AutoPlayGroup = "AutoPlay";
 const QString TimerIntervalKey = AutoPlayGroup + "/TimerInterval";
 const QString AdvancedGroup = "Advanced";
+const QString AutoRotateKey = AdvancedGroup + "/AutoRotate";
 const QString EnablePreReadingKey = AdvancedGroup + "/PreReading";
 const QString CacheNumKey = AdvancedGroup + "/CacheValue";
 const QString FormGroup = "Form";
@@ -189,6 +191,7 @@ void Config::initConfigValue()
     mEnableBgColor = settings.value(EnableBgColorKey, DefaultEnableBgColor).toBool();
     QString colorStr = settings.value(BgColorKey, DefaultBgColor).toString();
     mTimerInterval = settings.value(TimerIntervalKey, DefaultTimerInterval).toInt();
+    mAutoRotateImage = settings.value(AutoRotateKey, DefaultAutoRotateImage).toBool();
     mEnablePreReading = settings.value(
                 EnablePreReadingKey, OSRelated::preReadingSuggested()).toBool();
     mCacheNum = settings.value(CacheNumKey, InvalidCacheNum).toInt();
@@ -259,6 +262,11 @@ void Config::setBgColor(const QColor &color)
 void Config::setTimerInterval(int interval)
 {
     setValue(TimerIntervalKey, interval);
+}
+
+void Config::setAutoRotateImage(bool enabled)
+{
+    setValue(AutoRotateKey, enabled);
 }
 
 void Config::setEnablePreReading(bool enabled)

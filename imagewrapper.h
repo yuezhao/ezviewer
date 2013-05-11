@@ -82,7 +82,9 @@ private slots:
 
 private:
     static bool isAnimationFromat(const QString &format);
+#ifdef TESTING_RAW
     static QImage loadRawImage(const QString &filePath);
+#endif // TESTING_RAW
 
     enum ImageFormatFlag {
         REGULAR_FLAG = 0x0,

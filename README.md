@@ -18,12 +18,13 @@ EZ看图是一个简单纯粹的图片浏览器，使用Qt4编写，开源跨平
     4. 预读下一张图片，以提高图片切换时的载入速度;
     5. 缓存浏览过的图片，以加快反向浏览时的速度;
     6. 图片属性中支持查看Exif信息;
-    7. 对于含多个帧的图片(gif, mng, ico, mng, svg等)，按F键可以循环切换各个帧;
-    8. 鼠标停在窗口右上角一定时间后显示图片属性(适合全屏观看时查看属性);
-    9. 可直接从资源管理器拖动一个或多个图片到看图器;
-    10. 自动放映/暂停功能;
-    11. 支持复制图片内容到剪贴板;
-    12. 支持自定义快捷键。
+    7. 根据Exif中的方向信息自动旋转图片;
+    8. 对于含多个帧的图片(gif, mng, ico, mng, svg等)，按F键可以循环切换各个帧;
+    9. 鼠标停在窗口右上角一定时间后显示图片属性(适合全屏观看时查看属性);
+    10. 可直接从资源管理器拖动一个或多个图片到看图器;
+    11. 自动放映/暂停功能;
+    12. 支持复制图片内容到剪贴板;
+    13. 丰富的自定义按键功能。
 
 编译
 --------------------
@@ -55,12 +56,13 @@ Features:
 	4. Pre-reading next picture, for improving file change performance.
 	5. Cache image has viewed, to improve the performance of browser back.
 	6. Support Exif informance in picture property.
-	7. Frame step by press F if the image has more than one frame.
-	8. If the cursor stay on the top-right, will show the image property.
-	9. Support dragging pictures directly from Windows Explorer to this viewer.
-	10. Auto play/stop play.
-	11. Support to copy the image content to the clipboard.
-	12. Support for shortcut keys.
+        7. Auto rotate image according EXIF orientation tag.
+        8. Frame step by press F if the image has more than one frame.
+        9. If the cursor stay on the top-right, will show the image property.
+        10. Support dragging pictures directly from Windows Explorer to this viewer.
+        11. Auto play/stop play.
+        12. Support to copy the image content to the clipboard.
+        13. Support for shortcut keys.
 
 Build
 --------------------

@@ -42,6 +42,7 @@ CommonSetting::CommonSetting(QWidget *parent) :
     colorEdit = ui->colorEdit;
     colorCheckBox = ui->colorCheckBox;
     colorLabel = ui->colorLabel;
+    autoRotateCheckBox = ui->autoRotateCheckBox;
     preReadingCheckBox = ui->preReadingCheckBox;
     cacheValueLabel = ui->cacheValueLabel;
     cacheValueSlider = ui->cacheValueSlider;
@@ -72,6 +73,8 @@ CommonSetting::CommonSetting(QWidget *parent) :
             SLOT(bgColorEnable(int)));
     connect(timerSpinBox, SIGNAL(valueChanged(int)),
             SLOT(timerIntervalChange(int)));
+    connect(autoRotateCheckBox, SIGNAL(stateChanged(int)),
+            SLOT(autoRotateImageChanged(int)));
     connect(preReadingCheckBox, SIGNAL(stateChanged(int)),
             SLOT(preReadingChanged(int)));
     connect(cacheValueSlider, SIGNAL(valueChanged(int)),
@@ -100,6 +103,7 @@ void CommonSetting::initUIvalue()
     alignButtonGroup->button(Config::alignMode())->setChecked(true);
     antialiasModeCombo->setCurrentIndex(Config::antialiasMode());
     timerSpinBox->setValue(Config::timerInterval());
+    autoRotateCheckBox->setChecked(Config::autoRotateImage());
     preReadingCheckBox->setChecked(Config::enablePreReading());
     cacheValueLabel->setText(QString::number(Config::cacheNum()));
     cacheValueSlider->setValue(Config::cacheNum());
@@ -165,6 +169,11 @@ void CommonSetting::setColor()
 void CommonSetting::timerIntervalChange(int val)
 {
     Config::setTimerInterval(val);
+}
+
+void CommonSetting::autoRotateImageChanged(int state)
+{
+    Config::setAutoRotateImage(state == Qt::Checked);
 }
 
 void CommonSetting::preReadingChanged(int state)

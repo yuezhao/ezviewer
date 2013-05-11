@@ -27,7 +27,7 @@
 
 namespace Global {
 
-const QString Version = "3.1 beta";
+const QString Version = "3.3 beta";
 const QString CopyRightYear = "2012/2-2013/5";
 const QString BuildTime = __TIME__ ", " __DATE__;
 const QString WeiboSite = "www.weibo.com/huangezhao";

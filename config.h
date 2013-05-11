@@ -126,6 +126,7 @@ public:
     static bool enableBgColor() { return instance()->mEnableBgColor; }
     static QColor bgColor()     { return instance()->mBgColor; }
     static int  timerInterval() { return instance()->mTimerInterval; }
+    static bool autoRotateImage() { return instance()->mAutoRotateImage; }
     static bool enablePreReading() { return instance()->mEnablePreReading; }
     static int  cacheNum()    { return instance()->mCacheNum; }
     static QByteArray lastGeometry(){ return instance()->mLastGeometry; }
@@ -137,6 +138,7 @@ public:
     static void setEnableBgColor(bool enabled);
     static void setBgColor(const QColor &color);
     static void setTimerInterval(int interval);
+    static void setAutoRotateImage(bool enabled);
     static void setEnablePreReading(bool enabled);
     static void setCacheValue(int value);
     static void setLastGeometry(const QByteArray &geometry);
@@ -183,6 +185,7 @@ private:
     bool mEnableBgColor;
     QColor mBgColor;
     int mTimerInterval;
+    bool mAutoRotateImage;
     bool mEnablePreReading;
     int mCacheNum;
     QByteArray mLastGeometry;

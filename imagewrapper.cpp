@@ -21,8 +21,11 @@
 #include "imagewrapper.h"
 #include "imageheader.h"
 #include "toolkit.h"
+#include "config.h"
 
+#ifdef TESTING_RAW
 #include <libraw.h>
+#endif // TESTING_RAW
 
 #include <QApplication>
 #include <QDateTime>
@@ -30,7 +33,7 @@
 #include <QPainter>
 #include <QSvgRenderer>
 
-#include<QMutex>
+#include <QMutex>
 
 
 ImageWrapper::ImageWrapper()
@@ -133,17 +136,19 @@ void ImageWrapper::load(const QString &filePath, bool isPreReading)
             reader.jumpToImage(maxIndex);
         }
 
+#ifdef TESTING_RAW
         QImage ret = loadRawImage(filePath);
         if (!ret.isNull())
             image = ret;
         else
+#endif // TESTING_RAW
         if (!reader.read(&image))
             image = QImage();    // cannot read image
 
-        if (!image.isNull() && ImageHeader::isFormatSupport(imageFormat)) {
-            if (header->loadFile(imagePath) && header->hasOrientation()) {
+        if (Config::autoRotateImage() && !image.isNull()
+                && ImageHeader::isFormatSupport(imageFormat)) {
+            if (header->loadFile(imagePath) && header->hasOrientation())
                 header->autoRotateImage(image);
-            }
         }
     }
 
@@ -160,6 +165,8 @@ void ImageWrapper::load(const QString &filePath, bool isPreReading)
     isReady = true;
 }
 
+
+#ifdef TESTING_RAW
 QImage ImageWrapper::loadRawImage(const QString &filePath)
 {
     LibRaw *raw = new LibRaw;
@@ -247,6 +254,8 @@ QImage ImageWrapper::loadRawImage(const QString &filePath)
     delete raw;
     return rawImage;
 }
+#endif // TESTING_RAW
+
 
 /*! NOTE: QMovie use QTimer for changing frame, and QTimer muse start in the thread that it has been created.
  *  Since QTimer has parent(QMovie) and we couldn't use moveToThread with it (it is a d-pointer member of QMovie),

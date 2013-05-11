@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>436</width>
-    <height>616</height>
+    <width>448</width>
+    <height>638</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
       <item row="0" column="0" colspan="2">
        <widget class="QCheckBox" name="showDialogCheckBox">
         <property name="text">
-         <string>Show File Dialog (if no picture opened).</string>
+         <string>Show file dialog (if no picture opened).</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -143,21 +143,21 @@
       <item row="2" column="0">
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#0000ff;&quot;&gt;Antialiasing Mode:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#0000ff;&quot;&gt;Antialiasing mode:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
       <item row="5" column="0">
        <widget class="QLabel" name="colorLabel">
         <property name="text">
-         <string>Background Color:</string>
+         <string>Background color:</string>
         </property>
        </widget>
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Scale Mode &lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;(New!)&lt;/span&gt;&lt;span style=&quot; color:#000000;&quot;&gt;:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Scale mode &lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;(New!)&lt;/span&gt;&lt;span style=&quot; color:#000000;&quot;&gt;:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -221,7 +221,7 @@
       <item row="4" column="0" colspan="3">
        <widget class="QCheckBox" name="colorCheckBox">
         <property name="text">
-         <string>Enable Custom Background Color</string>
+         <string>Enable custom background color</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -231,7 +231,7 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Align Mode &lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;(New!)&lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Align mode &lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;(New!)&lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -886,7 +886,7 @@ QSpinBox::up-button {
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Timing Interval:</string>
+         <string>Timing interval:</string>
         </property>
        </widget>
       </item>
@@ -905,7 +905,7 @@ QSpinBox::up-button {
       <item row="0" column="0">
        <widget class="QCheckBox" name="checkBox">
         <property name="text">
-         <string>Show Countral Bar</string>
+         <string>Show contral bar</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -921,7 +921,7 @@ QSpinBox::up-button {
       <string>Advanced</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_6">
-      <item row="1" column="0">
+      <item row="2" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
          <widget class="QLabel" name="label">
@@ -929,7 +929,7 @@ QSpinBox::up-button {
            <string>If the memory of your computer is large than 1G, cache is suggested.</string>
           </property>
           <property name="text">
-           <string>Cache Viewed Pictures:</string>
+           <string>Cache viewed pictures:</string>
           </property>
          </widget>
         </item>
@@ -1006,7 +1006,7 @@ QSpinBox::up-button {
         </item>
        </layout>
       </item>
-      <item row="0" column="0">
+      <item row="1" column="0">
        <widget class="QCheckBox" name="preReadingCheckBox">
         <property name="toolTip">
          <string>This will speed up picture switching.</string>
@@ -1015,7 +1015,17 @@ QSpinBox::up-button {
          <string/>
         </property>
         <property name="text">
-         <string>Pre-reading Next Picture</string>
+         <string>Pre-reading next picture</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="autoRotateCheckBox">
+        <property name="text">
+         <string>Auto rotate image according to EXIF orientation tag</string>
         </property>
         <property name="checked">
          <bool>true</bool>

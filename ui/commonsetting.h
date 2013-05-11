@@ -60,6 +60,7 @@ protected slots:
     void bgColorEnable(int state);
     void setColor();
     void timerIntervalChange(int val);
+    void autoRotateImageChanged(int state);
     void preReadingChanged(int state);
     void cacheValueChanged(int val);
 
@@ -75,6 +76,7 @@ private:
     QLineEdit *colorEdit;
     QCheckBox *colorCheckBox;
     QLabel    *colorLabel;
+    QCheckBox *autoRotateCheckBox;
     QCheckBox *preReadingCheckBox;
     QLabel    *cacheValueLabel;
     QSlider   *cacheValueSlider;

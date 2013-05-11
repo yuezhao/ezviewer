@@ -469,6 +469,10 @@ void MainWindow::registerAllFunction()
                    this, SPLIT_FUNCTION(MainWindow::about));
     ActionManager::registerFunction(tr("Quit"),
                    this, SPLIT_FUNCTION(MainWindow::close));
+    if (OSRelated::supportShowFileInExplorer()) {
+        ActionManager::registerFunction(tr("Show in Explorer"),
+                       this, SPLIT_FUNCTION(MainWindow::showInExplorer));
+    }
 
     ActionManager::registerFunction(tr("Next Picture"),
                    viewer, SPLIT_FUNCTION(PicManager::nextPic));
