@@ -33,10 +33,8 @@ EZ看图是一个简单纯粹的图片浏览器，使用Qt4编写，开源跨平
 
 注意: 
 
-1. 如果你需要exif支持，Linux上请先安装libexif，Windows则可用 [libexif-port](https://github.com/wang-bin/libexif-port) 代替。Windows用户还需要设置EzViewer.pro文件中的变量 `LIBEXIF_OUT` 的值为你编译得到的exif.dll文件所在的目录。
-2. 如果你不需要exif支持，请在EzViewer.pro文件中 `DEFINES += USE_EXIF` 这一行前面加个'#'将其注释掉。
-3. 如果想支持webp格式，可以使用 [qt_webp](http://github.com/cor3ntin/qt_webp).
-4. 如果想支持psd格式，可以使用 [libqpsd](http://github.com/Code-ReaQtor/libqpsd).
+1. 如果想支持webp格式，可以使用 [qt_webp](http://github.com/cor3ntin/qt_webp).
+2. 如果想支持psd格式，可以使用 [libqpsd](http://github.com/Code-ReaQtor/libqpsd).
     
     
 EzViewer is a simple image viewer, programmed by Qt4.   
@@ -72,7 +70,5 @@ Build
 
 NOTE: 
 
-1. If you want to support exif, you must install libexif on Linux, or [libexif-port](https://github.com/wang-bin/libexif-port) on Windows. On Windows you also need to change the variable `LIBEXIF_OUT` in EzViewer.pro to the path where exif.dll exist.
-2. If you don't need exif support, just prepend a '#' before `DEFINES += USE_EXIF` in EzViewer.pro.
-3. To get webp format support, use [qt_webp](http://github.com/cor3ntin/qt_webp).
-4. To get psd format support, use [libqpsd](http://github.com/Code-ReaQtor/libqpsd).
+1. To get webp format support, use [qt_webp](http://github.com/cor3ntin/qt_webp).
+2. To get psd format support, use [libqpsd](http://github.com/Code-ReaQtor/libqpsd).

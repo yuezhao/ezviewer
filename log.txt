@@ -110,3 +110,15 @@ BUGFIX：开启预读的情况下，有可能因为多个线程同时进入Image
 重构：ImageViewer和FloatFrame的部分用户操作逻辑移到MainWindow中。
 重构：规范Config中关于配置的默认值部分，方便集中修改。
 重构：移植Qt demo中的flickable，将惯性滑动部分封装为VelocityTracker，并将ImageViewer中惯性滑动的部分抽离，用VelocityTracker代替，以减少其处理逻辑。
+
+2013.5.4-2013.5.8:
+新增：使用libRaw进行raw格式文件支持(目前解析时CPU占用很高)。
+优化：使用easyexif代替libexif来解析exif信息；增加ImageHeader类来对其进行封装。
+新增：根据exif头的orientation信息自动旋转图片方向。
+
+2013.5.9-2013.5.11：
+BUGFIX：解决easyexif的一个崩溃问题(不再传入整个图像内容，而是自己先在ImageHeader里面解析找到exif标签部分的内容，再传入这部分内容)。
+新增：根据jhead的代码添加了jpeg质量猜测方法；根据exif2.2规范(参见http://www.exif.org/Exif2-2.PDF)为easyexif添加了一些tag的解析。
+优化：结合easyexif/jhead/exif2.2规范/exif2.1规范(http://www.cppblog.com/lymons/archive/2010/02/23/108266.html)的内容，解决了easyexif一些值的边界不严谨的问题。
+重构：规范ImageHeader使其具有扩展至其他图片格式的能力。
+

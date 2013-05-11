@@ -19,12 +19,10 @@
  ***************************************************************************/
 
 #include "imagewrapper.h"
+#include "imageheader.h"
 #include "toolkit.h"
 
-#ifdef USE_EXIF
-#include "ExifReader.h"
-using namespace PhotoKit;
-#endif // USE_EXIF
+#include <libraw.h>
 
 #include <QApplication>
 #include <QDateTime>
@@ -34,6 +32,18 @@ using namespace PhotoKit;
 
 #include<QMutex>
 
+
+ImageWrapper::ImageWrapper()
+    : Cache(), imageFrames(0), formatFlag(REGULAR_FLAG),
+      movie(NULL), svgRender(NULL), header(new ImageHeader())
+{
+}
+
+ImageWrapper::~ImageWrapper()
+{
+    recycle();
+    delete header;
+}
 
 QImage ImageWrapper::currentImage() const
 {
@@ -123,8 +133,18 @@ void ImageWrapper::load(const QString &filePath, bool isPreReading)
             reader.jumpToImage(maxIndex);
         }
 
-        if (!reader.read(&image)) // cannot read image
-            image = QImage();
+        QImage ret = loadRawImage(filePath);
+        if (!ret.isNull())
+            image = ret;
+        else
+        if (!reader.read(&image))
+            image = QImage();    // cannot read image
+
+        if (!image.isNull() && ImageHeader::isFormatSupport(imageFormat)) {
+            if (header->loadFile(imagePath) && header->hasOrientation()) {
+                header->autoRotateImage(image);
+            }
+        }
     }
 
 //    if (isPreReading) { // will re-create these when animation start.
@@ -140,6 +160,93 @@ void ImageWrapper::load(const QString &filePath, bool isPreReading)
     isReady = true;
 }
 
+QImage ImageWrapper::loadRawImage(const QString &filePath)
+{
+    LibRaw *raw = new LibRaw;
+    QImage rawImage;
+    if (raw->open_file(filePath.toLocal8Bit()) != LIBRAW_SUCCESS) {
+        delete raw;
+        return rawImage;
+    }
+
+    QSize defaultSize = QSize(raw->imgdata.sizes.width,
+                              raw->imgdata.sizes.height);
+    if (raw->imgdata.sizes.flip == 5 || raw->imgdata.sizes.flip == 6) {
+        defaultSize.transpose();
+    }
+
+    const libraw_data_t &imgdata = raw->imgdata;
+    libraw_processed_image_t *output;
+    if (defaultSize.width() < imgdata.thumbnail.twidth ||
+            defaultSize.height() < imgdata.thumbnail.theight) {
+        qDebug("Using thumbnail");
+        raw->unpack_thumb();
+        output = raw->dcraw_make_mem_thumb();
+    } else {
+        qDebug("Decoding raw data");
+        raw->unpack();
+        raw->dcraw_process();
+        output = raw->dcraw_make_mem_image();
+    }
+
+    QImage unscaled;
+    uchar *pixels = 0;
+    if (output->type == LIBRAW_IMAGE_JPEG) {
+        qDebug("libraw_image_jpeg");
+        unscaled.loadFromData(output->data, output->data_size, "JPEG");
+        if (imgdata.sizes.flip != 0) {
+            QTransform rotation;
+            int angle = 0;
+            if (imgdata.sizes.flip == 3) angle = 180;
+            else if (imgdata.sizes.flip == 5) angle = -90;
+            else if (imgdata.sizes.flip == 6) angle = 90;
+            if (angle != 0) {
+                rotation.rotate(angle);
+                unscaled = unscaled.transformed(rotation);
+            }
+        }
+    } else {
+        qDebug("get raw data, will convert");
+        int numPixels = output->width * output->height;
+        int colorSize = output->bits / 8;
+        int pixelSize = output->colors * colorSize;
+        pixels = new uchar[numPixels * 4];
+        uchar *data = output->data;
+        for (int i = 0; i < numPixels; i++, data += pixelSize) {
+            if (output->colors == 3) {
+                pixels[i * 4] = data[2 * colorSize];
+                pixels[i * 4 + 1] = data[1 * colorSize];
+                pixels[i * 4 + 2] = data[0];
+            } else {
+                pixels[i * 4] = data[0];
+                pixels[i * 4 + 1] = data[0];
+                pixels[i * 4 + 2] = data[0];
+            }
+        }
+        unscaled = QImage(pixels,
+                          output->width, output->height,
+                          QImage::Format_RGB32);
+    }
+
+    if (unscaled.size() != defaultSize) {
+        // TODO: use quality parameter to decide transformation method
+        rawImage = unscaled.scaled(defaultSize, Qt::IgnoreAspectRatio,
+                                   Qt::SmoothTransformation);
+        qDebug("after scale");
+    } else {
+        rawImage = unscaled;
+        if (output->type == LIBRAW_IMAGE_BITMAP) {
+            // make sure that the bits are copied
+            uchar *b = rawImage.bits();
+            Q_UNUSED(b);
+        }
+    }
+    raw->dcraw_clear_mem(output);
+    delete pixels;
+
+    delete raw;
+    return rawImage;
+}
 
 /*! NOTE: QMovie use QTimer for changing frame, and QTimer muse start in the thread that it has been created.
  *  Since QTimer has parent(QMovie) and we couldn't use moveToThread with it (it is a d-pointer member of QMovie),
@@ -241,14 +348,12 @@ QString ImageWrapper::attribute()
     QFileInfo fileInfo(imagePath);
 
     if(fileInfo.exists()){
-        const QString timeFormat(tr("yyyy-MM-dd, hh:mm:ss"));
         qint64 size = fileInfo.size();
-
-        imageAttribute += tr("File Name: %1").arg(ToolKit::filename(imagePath));
-        imageAttribute += "<br>" + tr("File Size: %1 (%2 Bytes)")
+        imageAttribute += tr("File name: %1").arg(ToolKit::filename(imagePath));
+        imageAttribute += "<br>" + tr("File size: %1 (%2 bytes)")
                 .arg(ToolKit::fileSize2Str(size)).arg(size);
-        imageAttribute += "<br>" + tr("Created Time: %1")
-                .arg(fileInfo.created().toString(timeFormat));
+        imageAttribute += "<br>" + tr("Created time: %1")
+                .arg(fileInfo.created().toString(tr("yyyy-MM-dd, hh:mm:ss")));
     }
 
     QImage curImage = currentImage();
@@ -257,59 +362,73 @@ QString ImageWrapper::attribute()
             imageAttribute += QString("<br>");
 
         if(!imageFormat.isEmpty())
-            imageAttribute += tr("Image Format: %1").arg(imageFormat);
-        if(curImage.colorCount() > 0)       // indexed
-            imageAttribute += "<br>" + tr("Color Count: %1").arg(curImage.colorCount());
-        else /*if(curImage.depth() >= 16)*/ // non-indexed (do not use color tables)
-            imageAttribute += "<br>" + tr("Color Count: True color");
-        imageAttribute += "<br>" + tr("Depth: %1").arg(curImage.depth());
+            imageAttribute += tr("Image format: %1").arg(imageFormat);
 
         int gcd = ToolKit::gcd(curImage.width(), curImage.height());
         QString ratioStr = (gcd == 0) ? "1:1" : QString("%1:%2")
                                         .arg(curImage.width() / gcd)
                                         .arg(curImage.height() / gcd);
-
-
-        imageAttribute += "<br>" + tr("Size: %1 x %2 (%3)")
+        imageAttribute += "<br>" + tr("Image size: %1 x %2 (%3)")
                 .arg(curImage.width()).arg(curImage.height()).arg(ratioStr);
+
+//        if(curImage.colorCount() > 0)       // indexed
+//            imageAttribute += "<br>" + tr("Color count: %1").arg(curImage.colorCount());
+//        else /*if(curImage.depth() >= 16)*/ // non-indexed (do not use color tables)
+//            imageAttribute += "<br>" + tr("Color count: true color");
+//        imageAttribute += "<br>" + tr("Depth: %1").arg(curImage.depth());
+
         if(fileInfo.exists() && imageFrames > 1)
-            imageAttribute += "<br>" + tr("Frame Count: %1").arg(imageFrames);
+            imageAttribute += "<br>" + tr("Frame count: %1").arg(imageFrames);
     }
 
-
-#ifdef USE_EXIF
-    if(fileInfo.exists()){
-        ExifReader exif;
-        exif.loadFile(imagePath);
-        if (exif.hasData()) {
-            ExifReader::TagInfo tags = exif.getIFD0Brief();
-            if (exif.hasIFD0()) {
-                QMap<QString, QString>::ConstIterator it;
-                for (it = tags.begin(); it != tags.end(); ++it) {
-                    if (!it.value().trimmed().isEmpty())
-                        imageAttribute += "<br>" + it.key() + ": " + it.value();
-                }
-            }
-            if (exif.hasIFDExif()) {
-                tags = exif.getExifBrief();
-                QMap<QString, QString>::ConstIterator it;
-                for (it = tags.begin(); it != tags.end(); ++it) {
-                    if (!it.value().trimmed().isEmpty())
-                        imageAttribute += "<br>" + it.key() + ": " + it.value();
-                }
-            }
-
-            if (exif.hasIFDGPS()) {
-                tags = exif.getGpsBrief();
-                QMap<QString, QString>::ConstIterator it;
-                for (it = tags.begin(); it != tags.end(); ++it) {
-                    if (!it.value().trimmed().isEmpty())
-                        imageAttribute += "<br>" + it.key() + ": " + it.value();
-                }
-            }
+    if (ImageHeader::isFormatSupport(imageFormat) && header->loadFile(imagePath)) {
+        if (header->isJpeg()) {
+            if (header->hasQuality()) // even if there is no exif tag, the quality info may also exist.
+                imageAttribute += "<br>" + tr("JPEG Quality: %1").arg(header->quality());
+        }
+        if (header->hasExif()) {
+            if (header->hasOrientation() && (header->orientation() != ImageHeader::NORMAL))
+                imageAttribute += "<br>" + tr("Orientation: %1").arg(header->orientationString());
+            if (header->hasSoftware())
+                imageAttribute += "<br>" + tr("Software: %1").arg(header->software());
+            if (header->hasMake())
+                imageAttribute += "<br>" + tr("Camera make: %1").arg(header->make());
+            if (header->hasModel())
+                imageAttribute += "<br>" + tr("Camera model: %1").arg(header->model());
+            if (header->hasDateTimeOriginal())
+                imageAttribute += "<br>" + tr("Original date/time: %1").arg(header->dateTimeOriginal());
+            if (header->hasFNumber())
+                imageAttribute += "<br>" + tr("F-stop: f/%1").arg(header->fNumber(), 0, 'f', 1);
+            if (header->hasExposureTime())
+                imageAttribute += "<br>" + tr("Exposure time: 1/%1 s").arg((unsigned) (1.0/header->exposureTime()));
+            if (header->hasISOSpeed())
+                imageAttribute += "<br>" + tr("ISO speed: ISO-%1").arg(header->ISOSpeed());
+            if (header->hasExposureBias())
+                imageAttribute += "<br>" + tr("Exposure bias: %1 EV").arg(header->exposureBias());
+            if (header->hasFocalLength())
+                imageAttribute += "<br>" + tr("Lens focal length: %1 mm").arg(header->focalLength());
+            // if (header->focalLengthIn35mm())
+            //      imageAttribute += "<br>" + tr("35mm focal length: %1 mm").arg(header->focalLengthIn35mm());
+            if (header->hasMeteringMode())
+                imageAttribute += "<br>" + tr("Metering mode: %1").arg(header->meteringMode());
+            if (header->hasSubjectDistance())
+                imageAttribute += "<br>" + tr("Subject distance: %1 m").arg(header->subjectDistance());
+            if (header->hasFlash())
+                imageAttribute += "<br>" + tr("Flash mode: %1").arg(header->flashMode());
+            if (header->hasLightSource())
+                imageAttribute += "<br>" + tr("Light source: %1").arg(header->lightSource());
+            if (header->hasExposureProgram())
+                imageAttribute += "<br>" + tr("Exposure program: %1").arg(header->exposureProgram());
+            if (header->hasWhiteBalance())
+                imageAttribute += "<br>" + tr("White balance: %1").arg(header->whiteBalance());
+            if (header->hasGPSLatitude())
+                imageAttribute += "<br>" + tr("GPS Latitude: %1").arg(header->GPSLatitudeString());
+            if (header->hasGPSLongitude())
+                imageAttribute += "<br>" + tr("GPS Longitude: %1").arg(header->GPSLongitudeString());
+            if (header->hasGPSAltitude())
+                imageAttribute += "<br>" + tr("GPS Altitude: %1").arg(header->GPSAltitudeString());
         }
     }
-#endif // USE_EXIF
 
     return imageAttribute;
 }

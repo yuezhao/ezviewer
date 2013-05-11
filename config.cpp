@@ -96,48 +96,48 @@ Config::Config()
     initConfigValue();
     loadAllShortcut();
 
-    ActionManager::registerFunction(tr("Enable/Disable Custom Background Color"),
+    ActionManager::registerFunction(tr("Setting: Enable/Disable Custom Background Color"),
                    this, SPLIT_FUNCTION(Config::changeBgColorMode));
-    ActionManager::registerFunction(tr("Enable/Disable Pre-reading"),
+    ActionManager::registerFunction(tr("Setting: Enable/Disable Pre-reading"),
                    this, SPLIT_FUNCTION(Config::changePreReadingMode));
 
-    ActionManager::registerFunction(tr("Scale Mode: ") + tr("Scale Large Image to Fit Window"),
+    ActionManager::registerFunction(tr("Setting Scale Mode: ") + tr("Scale Large Image to Fit Window"),
                    this, &Config::changeScaleMode, SPLIT_PARAM(ScaleLargeImageToFitWidget));
-    ActionManager::registerFunction(tr("Scale Mode: ") + tr("Keep Image Size"),
+    ActionManager::registerFunction(tr("Setting Scale Mode: ") + tr("Keep Image Size"),
                    this, &Config::changeScaleMode, SPLIT_PARAM(KeepImageSize));
-    ActionManager::registerFunction(tr("Scale Mode: ") + tr("Fit Window Width"),
+    ActionManager::registerFunction(tr("Setting Scale Mode: ") + tr("Fit Window Width"),
                    this, &Config::changeScaleMode, SPLIT_PARAM(FitWidgetWidth));
-    ActionManager::registerFunction(tr("Scale Mode: ") + tr("Fit Window Height"),
+    ActionManager::registerFunction(tr("Setting Scale Mode: ") + tr("Fit Window Height"),
                    this, &Config::changeScaleMode, SPLIT_PARAM(FitWidgetHeight));
-    ActionManager::registerFunction(tr("Scale Mode: ") + tr("Scale to Fit Window"),
+    ActionManager::registerFunction(tr("Setting Scale Mode: ") + tr("Scale to Fit Window"),
                    this, &Config::changeScaleMode, SPLIT_PARAM(ScaleToFitWidget));
-    ActionManager::registerFunction(tr("Scale Mode: ") + tr("Scale to Expand Window"),
+    ActionManager::registerFunction(tr("Setting Scale Mode: ") + tr("Scale to Expand Window"),
                    this, &Config::changeScaleMode, SPLIT_PARAM(ScaleToExpandWidget));
 
-    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Left Top"),
+    ActionManager::registerFunction(tr("Setting Align Mode: ") + tr("Align Left Top"),
                    this, &Config::changeAlignMode, SPLIT_PARAM(AlignLeftTop));
-    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Left Center"),
+    ActionManager::registerFunction(tr("Setting Align Mode: ") + tr("Align Left Center"),
                    this, &Config::changeAlignMode, SPLIT_PARAM(AlignLeftCenter));
-    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Left Bottom"),
+    ActionManager::registerFunction(tr("Setting Align Mode: ") + tr("Align Left Bottom"),
                    this, &Config::changeAlignMode, SPLIT_PARAM(AlignLeftBottom));
-    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Center Top"),
+    ActionManager::registerFunction(tr("Setting Align Mode: ") + tr("Align Center Top"),
                    this, &Config::changeAlignMode, SPLIT_PARAM(AlignCenterTop));
-    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Center"),
+    ActionManager::registerFunction(tr("Setting Align Mode: ") + tr("Align Center"),
                    this, &Config::changeAlignMode, SPLIT_PARAM(AlignCenterCenter));
-    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Center Bottom"),
+    ActionManager::registerFunction(tr("Setting Align Mode: ") + tr("Align Center Bottom"),
                    this, &Config::changeAlignMode, SPLIT_PARAM(AlignCenterBottom));
-    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Right Top"),
+    ActionManager::registerFunction(tr("Setting Align Mode: ") + tr("Align Right Top"),
                    this, &Config::changeAlignMode, SPLIT_PARAM(AlignRightTop));
-    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Right Center"),
+    ActionManager::registerFunction(tr("Setting Align Mode: ") + tr("Align Right Center"),
                    this, &Config::changeAlignMode, SPLIT_PARAM(AlignRightCenter));
-    ActionManager::registerFunction(tr("Align Mode: ") + tr("Align Right Bottom"),
+    ActionManager::registerFunction(tr("Setting Align Mode: ") + tr("Align Right Bottom"),
                    this, &Config::changeAlignMode, SPLIT_PARAM(AlignRightBottom));
 
-    ActionManager::registerFunction(tr("Antialias Mode: ") + tr("Using When Pictures Zoom In"),
+    ActionManager::registerFunction(tr("Setting Antialias Mode: ") + tr("Using When Pictures Zoom In"),
                    this, &Config::changeAntialiasMode, SPLIT_PARAM(AntialiasWhenZoomIn));
-    ActionManager::registerFunction(tr("Antialias Mode: ") + tr("Always Using"),
+    ActionManager::registerFunction(tr("Setting Antialias Mode: ") + tr("Always Using"),
                    this, &Config::changeAntialiasMode, SPLIT_PARAM(AlwaysAntialias));
-    ActionManager::registerFunction(tr("Antialias Mode: ") + tr("Never Using"),
+    ActionManager::registerFunction(tr("Setting Antialias Mode: ") + tr("Never Using"),
                    this, &Config::changeAntialiasMode, SPLIT_PARAM(NoAntialias));
 
     QList<QByteArray> list = QImageReader::supportedImageFormats();

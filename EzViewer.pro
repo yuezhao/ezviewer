@@ -2,8 +2,11 @@ TEMPLATE = app
 TARGET = EzViewer
 
 QT += svg xml
-DEPENDPATH += . tools ui
-INCLUDEPATH += . tools ui
+DEPENDPATH  += . tools ui 3rdparty
+INCLUDEPATH += . tools ui 3rdparty
+
+INCLUDEPATH += ../qtimageformats/LibRaw-0.15.0-Beta4/libraw/
+LIBS += -L"../qtimageformats/LibRaw-build-desktop-Release/buildfiles/release-x86" -lraw
 
 HEADERS = global.h \
     config.h \
@@ -23,8 +26,10 @@ HEADERS = global.h \
     tools/tooltip.h \
     tools/action.h \
     tools/actionmanager.h \
-    tools/qxmlputget.h \
-    tools/velocitytracker.h
+    tools/velocitytracker.h \
+    3rdparty/qxmlputget.h \
+    3rdparty/exif.h \
+    tools/imageheader.h
 
 SOURCES = main.cpp \
     config.cpp \
@@ -43,8 +48,11 @@ SOURCES = main.cpp \
     tools/toolkit.cpp \
     tools/tooltip.cpp \
     tools/actionmanager.cpp \
-    tools/qxmlputget.cpp \
-    tools/velocitytracker.cpp
+    tools/velocitytracker.cpp \
+    3rdparty/qxmlputget.cpp \
+    3rdparty/exif.cpp \
+    tools/imageheader.cpp \
+    3rdparty/jpgqguess.cpp
 
 TRANSLATIONS += res/EzViewer_zh_CN.ts
 
@@ -60,22 +68,5 @@ OTHER_FILES += $$RC_FILE \
     log.txt \
     TODO.txt \
     ReadMe.txt \
-    COPYING
-
-
-
-# if you don't need reading exif infornation, append '#' at next line to cancel it.
-DEFINES += USE_EXIF
-LIBEXIF_OUT = $$PWD/libexif-port/out/bin
-
-contains(DEFINES, USE_EXIF) {
-    HEADERS += tools/ExifReader.h
-    SOURCES += tools/ExifReader.cpp
-
-    win32 {
-        INCLUDEPATH += libexif-port
-        LIBS += -L$$LIBEXIF_OUT -lexif
-    } else {
-        LIBS += -lexif
-    }
-}
+    COPYING \
+    README.md

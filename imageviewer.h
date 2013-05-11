@@ -85,6 +85,8 @@ private:
     void calcTopLeft();    // no use update()
     void calcShift();      // no use update()
 
+    void changeCursor(Qt::CursorShape shape); // for updateCursor()
+    void updateCursor();
     void updateShift();    // use update()
 
     void rotatePixmap(int degree); // use update()
@@ -113,6 +115,7 @@ private:
     QPointF shift;    //
     bool hasUserZoom;
 
+    bool leftMousePressed;  // for updateCursor()
     VelocityTracker *velocityTracker;
 };
 
@@ -123,5 +126,10 @@ inline void ImageViewer::calcTopLeft()
     topLeft.setY((rect().height() - image.height() * scale ) / qreal(2));
 }
 
+inline void ImageViewer::changeCursor(Qt::CursorShape shape)
+{
+    if (cursor().shape() != shape)
+        setCursor(shape);
+}
 
 #endif

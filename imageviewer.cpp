@@ -32,6 +32,7 @@ ImageViewer::ImageViewer(QWidget *parent)
       alignMode(Config::DefaultAlignMode),
       antialiasMode(Config::DefaultAntialiasMode),
       bgColor(Config::DefaultBgColor),
+      leftMousePressed(false),
       velocityTracker(new VelocityTracker(this))
 {
     setMinimumSize(Config::WindowMinSize);
@@ -81,6 +82,7 @@ void ImageViewer::changeBgColor(const QColor &color)
     }
 }
 
+
 void ImageViewer::updatePixmap(const QImage &im)
 {
     image = im;
@@ -108,19 +110,27 @@ void ImageViewer::loadImage(const QImage &im, const QString &msg_if_no_image)
     repaint();      ///
 }
 
+
 void ImageViewer::layoutImage()
 {
-    //restore the cursor even if the image cannot load.
-    setCursor(Qt::ArrowCursor);
+    if(hasPicture()) {
+        calcScaleRatio();
+        calcTopLeft();
+        calcShift();
+    }
 
-    if(noPicture()) return;
+    updateCursor();
+}
 
-    calcScaleRatio();
-    calcTopLeft();
-    calcShift();
-
-    if (scaleLargeThanWidget())
-        setCursor(Qt::OpenHandCursor);
+void ImageViewer::updateCursor()
+{
+    if(noPicture() || !scaleLargeThanWidget()) {
+        changeCursor(Qt::ArrowCursor);
+    } else if(leftMousePressed) {
+        changeCursor(Qt::ClosedHandCursor);
+    } else {
+        changeCursor(Qt::OpenHandCursor);
+    }
 }
 
 bool ImageViewer::scaleLargeThanWidget()
@@ -231,7 +241,6 @@ void ImageViewer::updateShift()
     if(pixRect.width() <= widgetRect.width()
             && pixRect.height() <= widgetRect.height()){
         shift = QPointF(0, 0);
-        setCursor(Qt::ArrowCursor);
     }else{
         if(pixRect.width() <= widgetRect.width())
             shift.setX(0);
@@ -246,13 +255,11 @@ void ImageViewer::updateShift()
             shift.setY(shift.y() + (0 - pixRect.top()));
         else if(pixRect.top() < 0 && pixRect.bottom() < widgetRect.height())
             shift.setY(shift.y() + (widgetRect.height() - pixRect.bottom()));
-
-        if(cursor().shape() != Qt::ClosedHandCursor)// in mouse move event
-            setCursor(Qt::OpenHandCursor);
     }
 
     update();
 }
+
 
 void ImageViewer::scrollContent(int deltaX, int deltaY)
 {
@@ -281,6 +288,7 @@ void ImageViewer::zoomIn(double factor)
     shift /= scale_old;
     shift *= scale;
     updateShift();
+    updateCursor();
     hasUserZoom = true;
 
     ToolTip::showText(mapToGlobal(rect().center()),
@@ -308,8 +316,8 @@ void ImageViewer::rotatePixmap(int degree)
 
     rotate += degree;
     rotate %= 360;
-    QMatrix m = QMatrix().rotate(degree);
-    image = image.transformed(m, Qt::SmoothTransformation);
+    QMatrix matrix = QMatrix().rotate(degree);
+    image = image.transformed(matrix, Qt::SmoothTransformation);
     layoutImage();
     update();
 }
@@ -338,6 +346,7 @@ void ImageViewer::copyToClipboard()
 {
     QApplication::clipboard()->setImage(image);
 }
+
 
 void ImageViewer::paintEvent(QPaintEvent *e)
 {
@@ -407,6 +416,7 @@ void ImageViewer::resizeEvent(QResizeEvent *e)
     if(hasUserZoom){
         calcTopLeft();
         updateShift();
+        updateCursor();
     }else{
         layoutImage(); //! FIXME: if user drag and move image content (when AlignCenter is hasUserZoom and shift != (0,0)) , this will reset the shift if align mode isn't AlignCenterCenter.
     }
@@ -418,8 +428,8 @@ void ImageViewer::mousePressEvent ( QMouseEvent * event )
     velocityTracker->handleMousePress(event);
 
     if(event->button() & Qt::LeftButton){
-        if(hasPicture() && cursor().shape() == Qt::OpenHandCursor)
-            setCursor(Qt::ClosedHandCursor);
+        leftMousePressed = true;
+        updateCursor();
     }
 }
 
@@ -433,8 +443,7 @@ void ImageViewer::mouseReleaseEvent ( QMouseEvent * event )
     velocityTracker->handleMouseRelease(event);
 
     if(event->button() & Qt::LeftButton){
-        if(cursor().shape() == Qt::ClosedHandCursor)
-            setCursor(Qt::OpenHandCursor);
+        leftMousePressed = false;
+        updateCursor();
     }
 }
-

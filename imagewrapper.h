@@ -49,15 +49,15 @@ private: // do not copy object
 };
 
 
+class ImageHeader;
 class QMovie;
 class QSvgRenderer;
 class ImageWrapper : public QObject, public Cache
 {
     Q_OBJECT
 public:
-    ImageWrapper() : Cache(), imageFrames(0), formatFlag(REGULAR_FLAG),
-        movie(NULL), svgRender(NULL)  {}
-    ~ImageWrapper()  { recycle(); }
+    ImageWrapper();
+    ~ImageWrapper();
 
     QImage  currentImage() const;
     QString format() const { return isValid() ? imageFormat : QString::null; }
@@ -82,13 +82,14 @@ private slots:
 
 private:
     static bool isAnimationFromat(const QString &format);
+    static QImage loadRawImage(const QString &filePath);
 
     enum ImageFormatFlag {
         REGULAR_FLAG = 0x0,
         MOVIE_FLAG = 0x1,
         SVG_FLAG = 0x2,
 
-        ANIMATION_MASK = 0xf,
+        ANIMATION_MASK = 0xf
     };
 
     QImage  image;
@@ -100,6 +101,7 @@ private:
     uint    formatFlag;
     QMovie *movie;
     QSvgRenderer *svgRender;
+    ImageHeader *header;
 };
 
 

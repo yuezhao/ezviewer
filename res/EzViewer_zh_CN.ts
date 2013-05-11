@@ -181,24 +181,16 @@
 <context>
     <name>Config</name>
     <message>
-        <location filename="../config.cpp" line="99"/>
         <source>Enable/Disable Custom Background Color</source>
-        <translation>启用/禁用自定义背景颜色</translation>
+        <translation type="obsolete">启用/禁用自定义背景颜色</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="101"/>
         <source>Enable/Disable Pre-reading</source>
-        <translation>启用/禁用预读功能</translation>
+        <translation type="obsolete">启用/禁用预读功能</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="104"/>
-        <location filename="../config.cpp" line="106"/>
-        <location filename="../config.cpp" line="108"/>
-        <location filename="../config.cpp" line="110"/>
-        <location filename="../config.cpp" line="112"/>
-        <location filename="../config.cpp" line="114"/>
         <source>Scale Mode: </source>
-        <translation>缩放模式：</translation>
+        <translation type="obsolete">缩放模式：</translation>
     </message>
     <message>
         <location filename="../config.cpp" line="104"/>
@@ -231,6 +223,35 @@
         <translation>缩放以充满窗口</translation>
     </message>
     <message>
+        <source>Align Mode: </source>
+        <translation type="obsolete">对齐模式：</translation>
+    </message>
+    <message>
+        <location filename="../config.cpp" line="99"/>
+        <source>Setting: Enable/Disable Custom Background Color</source>
+        <translation>设置：启用/禁用自定义背景颜色</translation>
+    </message>
+    <message>
+        <location filename="../config.cpp" line="101"/>
+        <source>Setting: Enable/Disable Pre-reading</source>
+        <translation>设置：启用/禁用预读功能</translation>
+    </message>
+    <message>
+        <location filename="../config.cpp" line="104"/>
+        <location filename="../config.cpp" line="106"/>
+        <location filename="../config.cpp" line="108"/>
+        <location filename="../config.cpp" line="110"/>
+        <location filename="../config.cpp" line="112"/>
+        <location filename="../config.cpp" line="114"/>
+        <source>Setting Scale Mode: </source>
+        <translation>设置缩放模式：</translation>
+    </message>
+    <message>
+        <location filename="../config.cpp" line="117"/>
+        <source>Align Left Top</source>
+        <translation>左上角对齐</translation>
+    </message>
+    <message>
         <location filename="../config.cpp" line="117"/>
         <location filename="../config.cpp" line="119"/>
         <location filename="../config.cpp" line="121"/>
@@ -240,13 +261,8 @@
         <location filename="../config.cpp" line="129"/>
         <location filename="../config.cpp" line="131"/>
         <location filename="../config.cpp" line="133"/>
-        <source>Align Mode: </source>
-        <translation>对齐模式：</translation>
-    </message>
-    <message>
-        <location filename="../config.cpp" line="117"/>
-        <source>Align Left Top</source>
-        <translation>左上角对齐</translation>
+        <source>Setting Align Mode: </source>
+        <translation>设置对齐模式：</translation>
     </message>
     <message>
         <location filename="../config.cpp" line="119"/>
@@ -289,16 +305,20 @@
         <translation>右下角对齐</translation>
     </message>
     <message>
-        <location filename="../config.cpp" line="136"/>
-        <location filename="../config.cpp" line="138"/>
-        <location filename="../config.cpp" line="140"/>
         <source>Antialias Mode: </source>
-        <translation>平滑渲染： </translation>
+        <translation type="obsolete">平滑渲染： </translation>
     </message>
     <message>
         <location filename="../config.cpp" line="136"/>
         <source>Using When Pictures Zoom In</source>
         <translation>当放大图片时使用</translation>
+    </message>
+    <message>
+        <location filename="../config.cpp" line="136"/>
+        <location filename="../config.cpp" line="138"/>
+        <location filename="../config.cpp" line="140"/>
+        <source>Setting Antialias Mode: </source>
+        <translation>设置平滑渲染： </translation>
     </message>
     <message>
         <location filename="../config.cpp" line="138"/>
@@ -555,54 +575,219 @@
 <context>
     <name>ImageWrapper</name>
     <message>
-        <location filename="../imagewrapper.cpp" line="244"/>
+        <location filename="../imagewrapper.cpp" line="356"/>
         <source>yyyy-MM-dd, hh:mm:ss</source>
         <translation>yyyy年MM月dd日，hh:mm:ss</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="247"/>
         <source>File Name: %1</source>
+        <translation type="obsolete">文件名： %1</translation>
+    </message>
+    <message>
+        <source>File Size: %1 (%2 Bytes)</source>
+        <translation type="obsolete">文件大小: %1 (%2 字节)</translation>
+    </message>
+    <message>
+        <source>Created Time: %1</source>
+        <translation type="obsolete">创建时间: %1</translation>
+    </message>
+    <message>
+        <source>Image Format: %1</source>
+        <translation type="obsolete">图像格式： %1</translation>
+    </message>
+    <message>
+        <source>Color Count: %1</source>
+        <translation type="obsolete">颜色数: %1</translation>
+    </message>
+    <message>
+        <source>Color Count: True color</source>
+        <translation type="obsolete">颜色数: 真彩色</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="352"/>
+        <source>File name: %1</source>
         <translation>文件名： %1</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="248"/>
-        <source>File Size: %1 (%2 Bytes)</source>
-        <translation>文件大小: %1 (%2 字节)</translation>
+        <location filename="../imagewrapper.cpp" line="353"/>
+        <source>File size: %1 (%2 bytes)</source>
+        <translation>文件大小： %1 (%2 字节)</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="250"/>
-        <source>Created Time: %1</source>
-        <translation>创建时间: %1</translation>
+        <location filename="../imagewrapper.cpp" line="355"/>
+        <source>Created time: %1</source>
+        <translation>创建时间： %1</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="260"/>
-        <source>Image Format: %1</source>
+        <location filename="../imagewrapper.cpp" line="365"/>
+        <source>Image format: %1</source>
         <translation>图像格式： %1</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="262"/>
-        <source>Color Count: %1</source>
-        <translation>颜色数: %1</translation>
+        <source>Color count: %1</source>
+        <translation type="obsolete">颜色数： %1</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="264"/>
-        <source>Color Count: True color</source>
-        <translation>颜色数: 真彩色</translation>
+        <source>Color count: true color</source>
+        <translation type="obsolete">颜色数： 真彩色</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="265"/>
         <source>Depth: %1</source>
-        <translation>色深: %1</translation>
+        <translation type="obsolete">色深： %1</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="273"/>
         <source>Size: %1 x %2 (%3)</source>
-        <translation>尺寸: %1 x %2 (%3)</translation>
+        <translation type="obsolete">尺寸： %1 x %2 (%3)</translation>
     </message>
     <message>
-        <location filename="../imagewrapper.cpp" line="276"/>
-        <source>Frame Count: %1</source>
+        <location filename="../imagewrapper.cpp" line="381"/>
+        <source>Frame count: %1</source>
         <translation>帧数： %1</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="395"/>
+        <source>Camera make: %1</source>
+        <translation>相机制造商： %1</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="397"/>
+        <source>Camera model: %1</source>
+        <translation>相机型号： %1</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="391"/>
+        <source>Orientation: %1</source>
+        <translation>方向： %1</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="393"/>
+        <source>Software: %1</source>
+        <translation>处理程序： %1</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="399"/>
+        <source>Original date/time: %1</source>
+        <translation>原始日期/时间： %1</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="403"/>
+        <source>Exposure time: 1/%1 s</source>
+        <translation>曝光时间： 1/%1 秒</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="401"/>
+        <source>F-stop: f/%1</source>
+        <translation>光圈值： f/%1</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="371"/>
+        <source>Image size: %1 x %2 (%3)</source>
+        <translation>图像尺寸： %1 x %2 (%3)</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="421"/>
+        <source>Exposure program: %1</source>
+        <translation>曝光程序： %1</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="425"/>
+        <source>GPS Latitude: %1</source>
+        <translation>GPS纬度： %1</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="427"/>
+        <source>GPS Longitude: %1</source>
+        <translation>GPS经度： %1</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="429"/>
+        <source>GPS Altitude: %1</source>
+        <translation>GPS高度： %1</translation>
+    </message>
+    <message>
+        <source>Aperture: f/%1</source>
+        <translation type="obsolete">光圈值： f/%1</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="405"/>
+        <source>ISO speed: ISO-%1</source>
+        <translation>感光度： ISO-%1</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="423"/>
+        <source>White balance: %1</source>
+        <translation>白平衡： %1</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="419"/>
+        <source>Light source: %1</source>
+        <translation>光源： %1</translation>
+    </message>
+    <message>
+        <source>Exposure Program: %1</source>
+        <translation type="obsolete">曝光程序： %1</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="387"/>
+        <source>JPEG Quality: %1</source>
+        <translation>JPEG质量： %1</translation>
+    </message>
+    <message>
+        <source>ISO speed: %1</source>
+        <translation type="obsolete">感光度： %1</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="415"/>
+        <source>Subject distance: %1 m</source>
+        <translation>目标距离： %1 米</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="407"/>
+        <source>Exposure bias: %1 EV</source>
+        <translation>曝光补偿： %1 EV</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="417"/>
+        <source>Flash mode: %1</source>
+        <translation>闪光模式： %1</translation>
+    </message>
+    <message>
+        <source>Quality: %1</source>
+        <translation type="obsolete">质量： %1</translation>
+    </message>
+    <message>
+        <source>Flash used?: %1</source>
+        <translation type="obsolete">闪光灯： %1</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="413"/>
+        <source>Metering mode: %1</source>
+        <translation>测光模式： %1</translation>
+    </message>
+    <message>
+        <location filename="../imagewrapper.cpp" line="409"/>
+        <source>Lens focal length: %1 mm</source>
+        <translation>焦距： %1 毫米</translation>
+    </message>
+    <message>
+        <source>35mm focal length: %1 mm</source>
+        <translation type="obsolete">35mm焦距： %1 毫米</translation>
+    </message>
+    <message>
+        <source>GPS Latitude: %1 deg</source>
+        <translation type="obsolete">GPS纬度： %1 度</translation>
+    </message>
+    <message>
+        <source>GPS Longitude: %1 deg</source>
+        <translation type="obsolete">GPS经度： %1 度</translation>
+    </message>
+    <message>
+        <source>GPS Altitude: %1 m</source>
+        <translation type="obsolete">GPS高度： %1 米</translation>
+    </message>
+    <message>
+        <source>Frame Count: %1</source>
+        <translation type="obsolete">帧数： %1</translation>
     </message>
 </context>
 <context>
@@ -916,103 +1101,84 @@
 <context>
     <name>PhotoKit</name>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="49"/>
         <source>Manufacturer</source>
-        <translation>相机厂商</translation>
+        <translation type="obsolete">相机厂商</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="50"/>
         <source>Model</source>
-        <translation>相机型号</translation>
+        <translation type="obsolete">相机型号</translation>
     </message>
     <message>
         <source>Exif Verion</source>
         <translation type="obsolete">Exif 版本</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="57"/>
         <source>F-Number</source>
-        <translation>光圈</translation>
+        <translation type="obsolete">光圈</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="58"/>
         <source>Exposure time</source>
-        <translation>曝光时间</translation>
+        <translation type="obsolete">曝光时间</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="59"/>
         <source>Exposure mode</source>
-        <translation>曝光模式</translation>
+        <translation type="obsolete">曝光模式</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="60"/>
         <source>Focal length</source>
-        <translation>焦距</translation>
+        <translation type="obsolete">焦距</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="61"/>
         <source>Orientation</source>
-        <translation>旋转方向</translation>
+        <translation type="obsolete">旋转方向</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="62"/>
         <source>Flash</source>
-        <translation>闪光灯</translation>
+        <translation type="obsolete">闪光灯</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="63"/>
         <source>ISO Speed Ratings</source>
-        <translation>ISO 速度</translation>
+        <translation type="obsolete">ISO 速度</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="64"/>
         <source>Date and Time (Original)</source>
-        <translation>原始日期时间</translation>
+        <translation type="obsolete">原始日期时间</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="66"/>
         <source>White balance</source>
-        <translation>白平衡</translation>
+        <translation type="obsolete">白平衡</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="70"/>
         <source>North or South</source>
-        <translation>南北半球</translation>
+        <translation type="obsolete">南北半球</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="71"/>
         <source>Latitude</source>
-        <translation>纬度</translation>
+        <translation type="obsolete">纬度</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="72"/>
         <source>East or West</source>
-        <translation>东西半球</translation>
+        <translation type="obsolete">东西半球</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="73"/>
         <source>Longitude</source>
-        <translation>经度</translation>
+        <translation type="obsolete">经度</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="74"/>
         <source>Altitude refrence</source>
-        <translation>海拔参考</translation>
+        <translation type="obsolete">海拔参考</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="75"/>
         <source>Altitude</source>
-        <translation>海拔(m)</translation>
+        <translation type="obsolete">海拔(m)</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="76"/>
         <source>Image Direction Refrence</source>
-        <translation>图片方向参考</translation>
+        <translation type="obsolete">图片方向参考</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="77"/>
         <source>Image Direction</source>
-        <translation>图片方向</translation>
+        <translation type="obsolete">图片方向</translation>
     </message>
 </context>
 <context>
@@ -1187,123 +1353,537 @@ You can help to improve %1 by email the picture to %2</source>
         <translation>文件 ‘%1’ 删除失败！</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="29"/>
         <source>Manufacturer</source>
-        <translation>相机厂商</translation>
+        <translation type="obsolete">相机厂商</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="29"/>
         <source>Model</source>
-        <translation>相机型号</translation>
+        <translation type="obsolete">相机型号</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="29"/>
         <source>Software</source>
-        <translation>软件</translation>
+        <translation type="obsolete">软件</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="30"/>
         <source>Copyright</source>
-        <translation>版权</translation>
+        <translation type="obsolete">版权</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="30"/>
         <source>Exif Verion</source>
-        <translation>Exif 版本</translation>
+        <translation type="obsolete">Exif 版本</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="30"/>
         <source>F-Number</source>
-        <translation>光圈</translation>
+        <translation type="obsolete">光圈</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="31"/>
         <source>Exposure time</source>
-        <translation>曝光时间</translation>
+        <translation type="obsolete">曝光时间</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="31"/>
         <source>Exposure mode</source>
-        <translation>曝光模式</translation>
+        <translation type="obsolete">曝光模式</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="31"/>
         <source>Focal length</source>
-        <translation>焦距</translation>
+        <translation type="obsolete">焦距</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="32"/>
-        <source>Flash</source>
+        <location filename="../tools/imageheader.cpp" line="157"/>
+        <source>normal</source>
+        <translation>正常</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="158"/>
+        <source>flip horizontal</source>
+        <translation>水平翻转</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="159"/>
+        <source>rotate 180</source>
+        <translation>旋转180度</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="160"/>
+        <source>flip vertical</source>
+        <translation>竖直翻转</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="161"/>
+        <source>transpose</source>
+        <translation>沿主对角线翻转</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="187"/>
+        <source>flash fired</source>
+        <translation>已闪光</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="191"/>
+        <location filename="../tools/imageheader.cpp" line="210"/>
+        <source>, compulsory</source>
+        <translation>，强制</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="192"/>
+        <source>, compulsory, return light not detected</source>
+        <translation>，强制，未检测到回光</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="193"/>
+        <source>, compulsory, return light detected</source>
+        <translation>，强制，检测到回光</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="197"/>
+        <source>, red-eye reduction mode</source>
+        <translation>，红眼消除模式</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="198"/>
+        <source>, red-eye reduction mode, return light not detected</source>
+        <translation>,红眼消除模式，未检测到回光</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="199"/>
+        <location filename="../tools/imageheader.cpp" line="202"/>
+        <source>, red-eye reduction mode, return light detected</source>
+        <translation>,红眼消除模式，检测到回光</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="200"/>
+        <source>, compulsory, red-eye reduction mode</source>
+        <translation>，强制，红眼消除模式</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="201"/>
+        <source>, compulsory, red-eye reduction mode, return light not detected</source>
+        <translation>，强制，红眼消除模式，未检测到回光</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="203"/>
+        <source>, auto, red-eye reduction mode</source>
+        <translation>，自动，红眼消除模式</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="204"/>
+        <source>, auto, red-eye reduction mode, return light not detected</source>
+        <translation>，自动，红眼消除模式，未检测到回光</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="205"/>
+        <source>, auto, red-eye reduction mode, return light detected</source>
+        <translation>，自动，红眼消除模式，检测到回光</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="208"/>
+        <source>no flash</source>
+        <translation>未闪光</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="221"/>
+        <location filename="../tools/imageheader.cpp" line="236"/>
+        <source>manual</source>
+        <translation>手动</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="222"/>
+        <source>normal program</source>
+        <translation>正常模式</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="223"/>
+        <source>aperture priority</source>
+        <translation>光圈优先</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="224"/>
+        <source>shutter priority</source>
+        <translation>快门优先</translation>
+    </message>
+    <message>
+        <source>creative program</source>
+        <translation type="obsolete">创意程序(慢速程序)</translation>
+    </message>
+    <message>
+        <source>action program</source>
+        <translation type="obsolete">动作程序(高速程序)</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="225"/>
+        <source>creative program (biased toward depth of field)</source>
+        <translation>景深模式(慢速程序)</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="226"/>
+        <source>action program (biased toward fast shutter speed)</source>
+        <translation>运动模式(高速程序)</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="227"/>
+        <source>portrait mode</source>
+        <translation>肖像模式</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="228"/>
+        <source>landscape mode</source>
+        <translation>风景模式</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="237"/>
+        <source>auto</source>
+        <translation>自动</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="245"/>
+        <source>daylight</source>
+        <translation>日光</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="246"/>
+        <source>fluorescent</source>
+        <translation>荧光灯</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="247"/>
+        <source>tungsten (incandescent light) </source>
+        <translation>钨丝灯(白炽灯)</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="248"/>
+        <source>flash</source>
         <translation>闪光灯</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="32"/>
+        <location filename="../tools/imageheader.cpp" line="249"/>
+        <source>fine weather</source>
+        <translation>晴天</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="250"/>
+        <source>cloudy weather</source>
+        <translation>多云/阴天</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="251"/>
+        <source>shade</source>
+        <translation>阴影</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="252"/>
+        <source>daylight fluorescent (D 5700 â 7100K)</source>
+        <translation>日光荧光灯 (D 5700 - 7100K)</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="253"/>
+        <source>day white fluorescent (N 4600 â 5400K)</source>
+        <translation>白天荧光灯 (N 4600 - 5400K)</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="254"/>
+        <source>cool white fluorescent (W 3900 â 4500K)</source>
+        <translation>冷白荧光灯 (W 3900 - 4500K)</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="255"/>
+        <source>white fluorescent (WW 3200 â 3700K)</source>
+        <translation>白色荧光灯 (WW 3200 - 3700K)</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="256"/>
+        <source>standard light A</source>
+        <translation>标准光A</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="257"/>
+        <source>standard light B</source>
+        <translation>标准光B</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="258"/>
+        <source>standard light C</source>
+        <translation>标准光C</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="259"/>
+        <source>D55</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="260"/>
+        <source>D65</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="261"/>
+        <source>D75</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="262"/>
+        <source>D50</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="263"/>
+        <source>ISO studio tungsten</source>
+        <translation>摄影室钨丝灯</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="276"/>
+        <source>pattern</source>
+        <translation>	
+图案</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="287"/>
+        <source>North latitude</source>
+        <translation>北纬</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="288"/>
+        <source>South latitude</source>
+        <translation>南纬</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="293"/>
+        <location filename="../tools/imageheader.cpp" line="315"/>
+        <source>%1 %2d %3m</source>
+        <translation>%1 %2度 %3分</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="298"/>
+        <location filename="../tools/imageheader.cpp" line="320"/>
+        <source>%1 %2d %3m %4s</source>
+        <translation>%1 %2度 %3分 %4秒</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="309"/>
+        <source>East longitude</source>
+        <translation>东经</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="310"/>
+        <source>West longitude</source>
+        <translation>西经</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="330"/>
+        <source>%1 m</source>
+        <translation>%1 米</translation>
+    </message>
+    <message>
+        <source>rotate 90</source>
+        <translation type="obsolete">旋转90度</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="162"/>
+        <source>rotate 90 CW</source>
+        <translation>逆时针旋转90度</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="163"/>
+        <source>transverse</source>
+        <translation>沿副对角线翻转</translation>
+    </message>
+    <message>
+        <source>rotate 270</source>
+        <translation type="obsolete">旋转270度</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="164"/>
+        <source>rotate 270 CW</source>
+        <translation>逆时针旋转270度</translation>
+    </message>
+    <message>
+        <source>Flash</source>
+        <translation type="obsolete">已闪光</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="189"/>
+        <source>, strobe light not detected</source>
+        <translation>，频闪观测器未侦测到光</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="190"/>
+        <source>, strobe light detected</source>
+        <translation>，频闪观测器侦测到光</translation>
+    </message>
+    <message>
+        <source>, manual</source>
+        <translation type="obsolete">，手动</translation>
+    </message>
+    <message>
+        <source>, manual, return light not detected</source>
+        <translation type="obsolete">，手动，未检测到回光</translation>
+    </message>
+    <message>
+        <source>, manual, return light detected</source>
+        <translation type="obsolete">，手动，检测到回光</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="194"/>
+        <location filename="../tools/imageheader.cpp" line="211"/>
+        <source>, auto</source>
+        <translation>，自动</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="195"/>
+        <source>, auto, return light not detected</source>
+        <translation>，自动，未检测到回光</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="196"/>
+        <source>, auto, return light detected</source>
+        <translation>，自动，检测到回光</translation>
+    </message>
+    <message>
+        <source>, red eye reduction mode</source>
+        <translation type="obsolete">,红眼消除模式</translation>
+    </message>
+    <message>
+        <source>, red eye reduction mode return light not detected</source>
+        <translation type="obsolete">,红眼消除模式，反射光不检测</translation>
+    </message>
+    <message>
+        <source>, red eye reduction mode return light  detected</source>
+        <translation type="obsolete">,红眼消除模式，反射光检测</translation>
+    </message>
+    <message>
+        <source>, manual, red eye reduction mode</source>
+        <translation type="obsolete">，手动，红眼消除模式</translation>
+    </message>
+    <message>
+        <source>, manual, red eye reduction mode, return light not detected</source>
+        <translation type="obsolete">，手动，红眼消除模式，未检测到回光</translation>
+    </message>
+    <message>
+        <source>, red eye reduction mode, return light detected</source>
+        <translation type="obsolete">,红眼消除模式，检测到回光</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="177"/>
+        <source>yyyy-MM-dd, hh:mm:ss</source>
+        <translation>yyyy年MM月dd日，hh:mm:ss</translation>
+    </message>
+    <message>
+        <source>, red eye reduction mode, return light not detected</source>
+        <translation type="obsolete">,红眼消除模式，未检测到回光</translation>
+    </message>
+    <message>
+        <source>, auto, red eye reduction mode</source>
+        <translation type="obsolete">，自动，红眼消除模式</translation>
+    </message>
+    <message>
+        <source>, auto, red eye reduction mode, return light not detected</source>
+        <translation type="obsolete">，自动，红眼消除模式，未检测到回光</translation>
+    </message>
+    <message>
+        <source>, auto, red eye reduction mode, return light detected</source>
+        <translation type="obsolete">，自动，红眼消除模式，检测到回光</translation>
+    </message>
+    <message>
+        <source>No flash</source>
+        <translation type="obsolete">未闪光</translation>
+    </message>
+    <message>
+        <source>, forced</source>
+        <translation type="obsolete">，强制</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="272"/>
+        <source>average</source>
+        <translation>平均</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="273"/>
+        <source>center weighted average</source>
+        <translation>中央重点平均</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="274"/>
+        <source>spot</source>
+        <translation>点测</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="275"/>
+        <source>multi-spot</source>
+        <translation>分区</translation>
+    </message>
+    <message>
+        <source>multi-segment</source>
+        <translation type="obsolete">多区域</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="277"/>
+        <source>partial</source>
+        <translation>局部</translation>
+    </message>
+    <message>
+        <location filename="../tools/imageheader.cpp" line="264"/>
+        <location filename="../tools/imageheader.cpp" line="278"/>
+        <source>other</source>
+        <translation>其他</translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation type="obsolete">未知</translation>
+    </message>
+    <message>
         <source>ISO Speed Ratings</source>
-        <translation>ISO 速度</translation>
+        <translation type="obsolete">ISO 速度</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="32"/>
         <source>Date and Time (Original)</source>
-        <translation>原始日期时间</translation>
+        <translation type="obsolete">原始日期时间</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="33"/>
         <source>Metering mode</source>
-        <translation>测光模式</translation>
+        <translation type="obsolete">测光模式</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="33"/>
         <source>White balance</source>
-        <translation>白平衡</translation>
+        <translation type="obsolete">白平衡</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="34"/>
-        <location filename="../tools/ExifReader.cpp" line="249"/>
         <source>North or South</source>
-        <translation>南北半球</translation>
+        <translation type="obsolete">南北半球</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="34"/>
         <source>Latitude</source>
-        <translation>纬度</translation>
+        <translation type="obsolete">纬度</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="34"/>
-        <location filename="../tools/ExifReader.cpp" line="247"/>
         <source>East or West</source>
-        <translation>东西半球</translation>
+        <translation type="obsolete">东西半球</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="35"/>
         <source>Longitude</source>
-        <translation>经度</translation>
+        <translation type="obsolete">经度</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="35"/>
-        <location filename="../tools/ExifReader.cpp" line="253"/>
         <source>Altitude refrence</source>
-        <translation>海拔参考</translation>
+        <translation type="obsolete">海拔参考</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="35"/>
         <source>Altitude</source>
-        <translation>海拔(m)</translation>
+        <translation type="obsolete">海拔(m)</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="36"/>
-        <location filename="../tools/ExifReader.cpp" line="251"/>
         <source>Image Direction Refrence</source>
-        <translation>图片方向参考</translation>
+        <translation type="obsolete">图片方向参考</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="36"/>
         <source>Image Direction</source>
-        <translation>图片方向</translation>
+        <translation type="obsolete">图片方向</translation>
     </message>
     <message>
-        <location filename="../tools/ExifReader.cpp" line="37"/>
         <source>Orientation</source>
-        <translation>旋转方向</translation>
+        <translation type="obsolete">旋转方向</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="obsolete">闪光</translation>
     </message>
 </context>
 <context>
