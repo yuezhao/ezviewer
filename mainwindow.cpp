@@ -117,6 +117,8 @@ void MainWindow::imageChanged(const QString &fileName)
     rotateRightButton->setEnabled(hasPicture);
     deleteButton->setEnabled(!slideTimer->isActive() && hasFile);   ////
 
+    // TODO: if hasFile() , show tooltip ?
+
     if(!hasFile && slideTimer->isActive())  // TODO: if only one file, stop slide show.
         switchSlideShow();    ///
 }

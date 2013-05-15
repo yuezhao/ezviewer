@@ -77,8 +77,8 @@ void ImageWrapper::load(const QString &filePath, bool isPreReading)
     if (filePath.isEmpty())
         return;
 
-    static QMutex mutex;
-    QMutexLocker locker(&mutex);    //! FIXME: if the thread pool has more than one thread, when they call this function at the same time, may cause problem by the calling order.
+//    static QMutex mutex;
+//    QMutexLocker locker(&mutex);    //! FIXME: if the thread pool has more than one thread, when they call this function at the same time, may cause problem by the calling order.
 
     recycle();
 
@@ -390,7 +390,7 @@ QString ImageWrapper::attribute()
             imageAttribute += "<br>" + tr("Frame count: %1").arg(imageFrames);
     }
 
-    if (ImageHeader::isFormatSupport(imageFormat) && header->loadFile(imagePath)) {
+    if (!curImage.isNull() && ImageHeader::isFormatSupport(imageFormat) && header->loadFile(imagePath)) {
         if (header->isJpeg()) {
             if (header->hasQuality()) // even if there is no exif tag, the quality info may also exist.
                 imageAttribute += "<br>" + tr("JPEG Quality: %1").arg(header->quality());

@@ -50,7 +50,7 @@ bool isSupportAssociation()
 }
 
 #ifdef Q_WS_WIN
-QString makeProgID(const QString & extension)
+static QString makeProgID(const QString & extension)
 {
     // ProgID: like editor.txt
     // txt -> .txt  -> editor.txt
@@ -58,19 +58,28 @@ QString makeProgID(const QString & extension)
             + "." + extension;
 }
 
-bool hasProgID(const QString &ProgID)
+static bool hasProgID(const QString &ProgID)
 {
     QSettings RegCR("HKEY_CLASSES_ROOT", QSettings::NativeFormat);
     QSettings RegCU("HKEY_CURRENT_USER", QSettings::NativeFormat);
 
     RegCU.beginGroup("Software/Classes");
-    return RegCR.childGroups().contains(ProgID)
-            || RegCU.childGroups().contains(ProgID);
 
-    /// if app path didn't match ?
+    QString key = ProgID + "/shell/open/command/.";
+    QString appPath = qApp->applicationFilePath();
+    appPath.replace('/', '\\');
+    QString expect = QString("\"%1\" \"%2\"").arg(appPath, "%1"); // If it is set file association by this app, the value of key @key will be like this.
+
+    if (RegCR.childGroups().contains(ProgID)) {
+        return RegCR.value(key).toString() == expect;
+    } else if (RegCU.childGroups().contains(ProgID)) {
+        return RegCU.value(key).toString() == expect;
+    } else {
+        return false;
+    }
 }
 
-bool setProgID(const QString &ProgID,
+static bool setProgID(const QString &ProgID,
                const QString &typeDescription,
                const QString &friendlyName)
 {
@@ -100,7 +109,8 @@ bool setProgID(const QString &ProgID,
 
     return true;
 }
-bool removeUserChoice(const QString & extension)
+
+static bool removeUserChoice(const QString & extension)
 {
     QSettings RegCU("HKEY_CURRENT_USER", QSettings::NativeFormat);
     QString FileExtsKey = QString("Software/Microsoft/Windows/CurrentVersion/Explorer/FileExts/.") + extension;

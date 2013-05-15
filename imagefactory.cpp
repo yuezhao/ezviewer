@@ -65,6 +65,7 @@ ImageWrapper * ImageFactory::newOrReuseImage()
         image = new ImageWrapper();
     }else{
         image = list.at(total - 1);
+        waitForImageReady(image);
         list.removeAt(total - 1);
         image->setReady(false);
         image->setHashCode(ImageWrapper::HASH_INVALID);
@@ -87,7 +88,7 @@ ImageWrapper * ImageFactory::findImageByHash(uint hash)
 void ImageFactory::waitForImageReady(ImageWrapper *image)
 {
     while(!image->getReady()){
-        qApp->processEvents(QEventLoop::AllEvents);
+//        qApp->processEvents(QEventLoop::AllEvents);
         // wait for pre-reading in another thread
     }
 }

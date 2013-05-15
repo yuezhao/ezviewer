@@ -320,9 +320,14 @@ bool ImageHeader::isJpegFile(QFile &file)
     if (file.seek(0)
             && file.getChar((char*)&ch) && ch == 0xff
             && file.getChar((char*)&ch) && ch == M_SOI
-            && file.seek(file.size() - 2)           // jump to file end
-            && file.getChar((char*)&ch) && ch == 0xff
-            && file.getChar((char*)&ch) && ch == M_EOI ) {
+            /*!
+             * Some jpeg file ends with extra padding bytes.
+             * So we just detect the jpeg header.
+             */
+//            && file.seek(file.size() - 2)           // jump to file end
+//            && file.getChar((char*)&ch) && ch == 0xff
+//            && file.getChar((char*)&ch) && ch == M_EOI
+            ) {
         return true;
     }
 
