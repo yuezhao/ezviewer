@@ -70,7 +70,6 @@ protected slots:
     void directoryChanged();
     void fileChanged(const QString &filePath);
 
-    void paintEvent(QPaintEvent *e);
     void hideEvent ( QHideEvent * event );
     void showEvent ( QShowEvent * event );
 
@@ -117,8 +116,6 @@ private:
     QStringList list;
     int currentIndex;
     QFileSystemWatcher fsWatcher;
-
-    bool blockDraw;
 };
 
 

@@ -46,6 +46,8 @@ const QSize Config::WindowMinSize(280, 200);
 const QSize Config::WindowFitSize(800, 500);
 const QString Config::DefaultBgColor = "#C7EDCC";
 const QDir::SortFlags Config::DefaultDirSortFlag = QDir::LocaleAware;//QDir::Name | QDir::IgnoreCase;
+const int Config::ClickInterval = 1500;
+const int Config::ClickThreshold = 30;
 const int Config::AutoScrollInterval = 20;
 const int Config::FileSizePrecision = 2;
 

@@ -97,6 +97,8 @@ public:
     const static QSize WindowFitSize;
     const static QString DefaultBgColor;
 
+    const static int   ClickInterval;
+    const static int   ClickThreshold;
     const static int   AutoScrollInterval;
     const static int   FileSizePrecision;
 

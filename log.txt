@@ -129,3 +129,7 @@ BUGFIX：解决多线程同时写入一个ImageWrapper，引起显示黑边的Bu
 
 2013.5.16:
 BUGFIX：解决文件格式关联的一个bug(无法分辨不同路径的程序)。
+
+2013.6.15、2013.6.17:
+优化：FloatFrame的点击信号发送时机。
+BUGFIX：彻底解决VelocityTracker在鼠标拖动结束后图片滑动方向有时相反的问题。

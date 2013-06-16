@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "floatframe.h"
+#include "config.h"
 
 #include <QTimerEvent>
 #include <QMouseEvent>
@@ -29,6 +30,8 @@ FloatFrame::FloatFrame(QWidget *parent) :
 {
     hideInterval = 1000;
     expireInterval = 300;
+    timeStamp = QTime::currentTime();
+    pressPos = QPoint(-1, -1);
 
     QPalette pal(palette());
     pal.setBrush(QPalette::Window, QBrush(QColor(0, 0, 0, 50)));
@@ -109,8 +112,20 @@ void FloatFrame::timerEvent(QTimerEvent *e)
     expireTimer.stop();
 }
 
+void FloatFrame::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button() & Qt::LeftButton) {
+        timeStamp = QTime::currentTime();
+        pressPos = event->pos();
+    }
+}
+
 void FloatFrame::mouseReleaseEvent(QMouseEvent *event)
 {
-    if(event->button() & Qt::LeftButton)
+    if(event->button() & Qt::LeftButton
+            && timeStamp.msecsTo(QTime::currentTime()) < Config::ClickInterval
+            && (event->pos() - pressPos).manhattanLength() < Config::ClickThreshold
+            ) {
         emit mouseClicked();
+    }
 }

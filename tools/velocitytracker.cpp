@@ -144,12 +144,12 @@ void VelocityTracker::handleMouseRelease(QMouseEvent *event)
 
     case VelocityTrackerPrivate::ManualScroll:
         delta = event->pos() - d->pressPos;
-        emit changedDelta(delta);
         if (d->timeStamp.elapsed() > 100) {
             d->timeStamp = QTime::currentTime();
             d->speed = delta - d->delta;
             d->delta = delta;
         }
+        emit changedDelta(delta);   //
         d->pressPos = event->pos();
         if (d->speed == QPoint(0, 0)) {
             d->state = VelocityTrackerPrivate::Steady;

@@ -61,7 +61,7 @@ public:
     void stopAutoScrolling();
 
     void setThreshold(int threshold);
-    int threshold() const;
+    int  threshold() const;
 
     void setTickInterval(int interval);
 

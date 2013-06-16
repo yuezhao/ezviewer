@@ -23,10 +23,6 @@
 #include "toolkit.h"
 #include "config.h"
 
-#ifdef TESTING_RAW
-#include <libraw.h>
-#endif // TESTING_RAW
-
 #include <QApplication>
 #include <QDateTime>
 #include <QMovie>
@@ -34,6 +30,10 @@
 #include <QSvgRenderer>
 
 #include <QMutex>
+
+#ifdef TESTING_RAW
+#include <libraw.h>
+#endif // TESTING_RAW
 
 
 ImageWrapper::ImageWrapper()
@@ -138,9 +138,10 @@ void ImageWrapper::load(const QString &filePath, bool isPreReading)
 
 #ifdef TESTING_RAW
         QImage ret = loadRawImage(filePath);
-        if (!ret.isNull())
+        if (!ret.isNull()) {
             image = ret;
-        else
+            imageFormat = "raw";
+        } else
 #endif // TESTING_RAW
         if (!reader.read(&image))
             image = QImage();    // cannot read image
@@ -184,23 +185,17 @@ QImage ImageWrapper::loadRawImage(const QString &filePath)
 
     const libraw_data_t &imgdata = raw->imgdata;
     libraw_processed_image_t *output;
-    if (defaultSize.width() < imgdata.thumbnail.twidth ||
-            defaultSize.height() < imgdata.thumbnail.theight) {
-        qDebug("Using thumbnail");
-        raw->unpack_thumb();
-        output = raw->dcraw_make_mem_thumb();
-    } else {
-        qDebug("Decoding raw data");
-        raw->unpack();
-        raw->dcraw_process();
-        output = raw->dcraw_make_mem_image();
-    }
+    qDebug("Decoding raw data");
+    raw->unpack();
+    raw->dcraw_process();
+    qDebug("after dcraw_process...");
+    output = raw->dcraw_make_mem_image();
 
-    QImage unscaled;
+    QImage image;
     uchar *pixels = 0;
     if (output->type == LIBRAW_IMAGE_JPEG) {
         qDebug("libraw_image_jpeg");
-        unscaled.loadFromData(output->data, output->data_size, "JPEG");
+        image.loadFromData(output->data, output->data_size, "JPEG");
         if (imgdata.sizes.flip != 0) {
             QTransform rotation;
             int angle = 0;
@@ -209,7 +204,7 @@ QImage ImageWrapper::loadRawImage(const QString &filePath)
             else if (imgdata.sizes.flip == 6) angle = 90;
             if (angle != 0) {
                 rotation.rotate(angle);
-                unscaled = unscaled.transformed(rotation);
+                image = image.transformed(rotation);
             }
         }
     } else {
@@ -230,24 +225,19 @@ QImage ImageWrapper::loadRawImage(const QString &filePath)
                 pixels[i * 4 + 2] = data[0];
             }
         }
-        unscaled = QImage(pixels,
+        image = QImage(pixels,
                           output->width, output->height,
                           QImage::Format_RGB32);
     }
 
-    if (unscaled.size() != defaultSize) {
-        // TODO: use quality parameter to decide transformation method
-        rawImage = unscaled.scaled(defaultSize, Qt::IgnoreAspectRatio,
-                                   Qt::SmoothTransformation);
-        qDebug("after scale");
-    } else {
-        rawImage = unscaled;
-        if (output->type == LIBRAW_IMAGE_BITMAP) {
-            // make sure that the bits are copied
-            uchar *b = rawImage.bits();
-            Q_UNUSED(b);
-        }
+
+    rawImage = image;
+    if (output->type == LIBRAW_IMAGE_BITMAP) {
+        // make sure that the bits are copied
+        uchar *b = rawImage.bits();
+        Q_UNUSED(b);
     }
+
     raw->dcraw_clear_mem(output);
     delete pixels;
 

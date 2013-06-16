@@ -33,8 +33,7 @@
 
 PicManager::PicManager(QWidget *parent)
     : ImageViewer(parent), curImage(ImageFactory::getImageWrapper(QString::null)),
-      listMode(FileNameListMode), currentIndex(-1), fsWatcher(this),
-      blockDraw(false)
+      listMode(FileNameListMode), currentIndex(-1), fsWatcher(this)
 {
 //    state = NoFileNoPicture;
     connect(&fsWatcher, SIGNAL(directoryChanged(QString)),
@@ -120,8 +119,6 @@ void PicManager::readFile(const QString &fullPath)
     curPath = fileInfo.absoluteFilePath();
     curName = fileInfo.fileName();
 
-    blockDraw = true;
-
     curImage->recycle();
     curImage = ImageFactory::getImageWrapper(curPath);
 
@@ -136,8 +133,6 @@ void PicManager::readFile(const QString &fullPath)
     } else if (curImage->frameCount() > 1){ // like ico format
         connect(curImage, SIGNAL(frameUpdated()), SLOT(updateImage()));
     }
-
-    blockDraw = false;
 
     QImage image = curImage->currentImage();
     QString errorMsg = image.isNull() ? Global::LoadFileErrorInfo().arg(curPath)
@@ -236,12 +231,6 @@ void PicManager::updateAnimation()
 void PicManager::updateImage()
 {
     loadImage(curImage->currentImage());
-}
-
-void PicManager::paintEvent(QPaintEvent *e)
-{
-    if (!blockDraw)
-        ImageViewer::paintEvent(e);
 }
 
 void PicManager::hideEvent ( QHideEvent * event )

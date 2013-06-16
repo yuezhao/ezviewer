@@ -24,6 +24,7 @@
 #include <QWidget>
 #include <QList>
 #include <QBasicTimer>
+#include <QTime>
 
 
 class FloatFrame : public QWidget
@@ -45,9 +46,10 @@ public slots:
     void set_enabled(bool enabled);
 
 protected slots:
-    void enterEvent( QEvent * event );
-    void leaveEvent( QEvent * event );
-    void mouseReleaseEvent ( QMouseEvent * event );
+    void enterEvent(QEvent *event);
+    void leaveEvent(QEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
     void timerEvent(QTimerEvent *e);
 
     void hideAll();
@@ -57,6 +59,9 @@ private:
     QBasicTimer hideTimer, expireTimer;
     int hideInterval;
     int expireInterval;
+
+    QTime timeStamp;
+    QPoint pressPos;
 
     bool fillBackground;
     bool _enabled;
