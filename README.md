@@ -2,9 +2,9 @@ Ez看图
 =======
 
 EZ看图是一个简单纯粹的图片浏览器，使用Qt4编写，开源跨平台，国际化支持。   
-默认支持jpg, bmp, gif(包括动画), png, jpeg, ico, svg(包括动画), mng(包括动画), webp, psd(不支持图层), psb(不支持图层),pbm, pgm, ppm, tif, tiff, xbm, xpm等多种图片格式。     
+默认支持jpg, bmp, gif(包括动画), png, jpeg, ico, svg(包括动画), mng(包括动画), webp, psd(不支持图层), psb(不支持图层),pbm, pgm, ppm, tif, tiff, xbm, xpm, tga(未完善)等多种图片格式。
 
-***下载可执行文件:*** [v3.0正式版，2013/3/31](http://goo.gl/n8hvO)
+***下载可执行文件 (Windows XP/7):*** [v3.4正式版，2013/6/22](http://goo.gl/N3XPP)
 
 作者
 --------------------
@@ -32,6 +32,8 @@ EZ看图是一个简单纯粹的图片浏览器，使用Qt4编写，开源跨平
 2. 运行 `qmake`
 3. 运行 `make`
 
+[以上步骤在Windows 7 sp1和Fedora 17(KDE桌面版)上验证过，Qt版本是4.7.2。]
+
 注意: 
 
 1. 如果想支持webp格式，可以使用 [qt_webp](http://github.com/cor3ntin/qt_webp).
@@ -42,7 +44,7 @@ EzViewer is a simple image viewer, programmed by Qt4.
 It's open-source and cross-platform software, with full international support.   
 It supports jpg, bmp, gif, png, jpeg, ico, svg, webp, mng, psd(layer not support), psb(layer not support), pbm, pgm, ppm, tif, tiff, xbm, xpm, and many other image formats.
 
-***Get the binary:*** [v3.0，2013/3/31](http://goo.gl/n8hvO)
+***Get the binary file for Windows XP/7:*** [v3.4，2013/6/22](http://goo.gl/N3XPP)
 
 Author
 --------------------
@@ -50,25 +52,27 @@ Author
     
 Features:
 --------------------
-	1. Unified display mechanism, support rotate, mirror, zoom in/out, drag the image, including animation image.
-	2. Use anti-aliasing when zoom in/out the pictures.
-	3. When image scaling larger than the form, the picture will sliding inertially when the left mouse button quickly drag a picture and release then.
-	4. Pre-reading next picture, for improving file change performance.
-	5. Cache image has viewed, to improve the performance of browser back.
-	6. Support Exif informance in picture property.
-        7. Auto rotate image according EXIF orientation tag.
-        8. Frame step by press F if the image has more than one frame.
-        9. If the cursor stay on the top-right, will show the image property.
-        10. Support dragging pictures directly from Windows Explorer to this viewer.
-        11. Auto play/stop play.
-        12. Support to copy the image content to the clipboard.
-        13. Support for shortcut keys.
+    1. Unified display mechanism, support rotate, mirror, zoom in/out, drag the image, including animation image.
+    2. Use anti-aliasing when zoom in/out the pictures.
+    3. When image scaling larger than the form, the picture will sliding inertially when the left mouse button quickly drag a picture and release then.
+    4. Pre-reading next picture, for improving file change performance.
+    5. Cache image has viewed, to improve the performance of browser back.
+    6. Support Exif informance in picture property.
+    7. Auto rotate image according EXIF orientation tag.
+    8. Frame step by press F if the image has more than one frame.
+    9. If the cursor stay on the top-right, will show the image property.
+    10. Support dragging pictures directly from Windows Explorer to this viewer.
+    11. Auto play/stop play.
+    12. Support to copy the image content to the clipboard.
+    13. Support for shortcut keys.
 
 Build
 --------------------
 1. Clone the project
 2. qmake
 3. make
+
+[ I have tested these steps above in Windows 7 sp1 and Fedora 17 (KDE desktop), with Qt 4.7.2. ]
 
 NOTE: 
 

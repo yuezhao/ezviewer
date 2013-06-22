@@ -3,8 +3,8 @@
 IDI_ICON1 ICON DISCARDABLE "res/EzViewer.ico"
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,0,0,0
- PRODUCTVERSION 3,0,0,0
+ FILEVERSION 3,4,0,0
+ PRODUCTVERSION 3,4,0,0
  FILEFLAGS 0x0L
  FILEFLAGSMASK 0x3fL
  FILEOS 0x00040004L
@@ -17,12 +17,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "huangezhao@gmail.com"
             VALUE "FileDescription", "A Simple Picture Viewer"
-                        VALUE "FileVersion", "3.0.0.0"
+                        VALUE "FileVersion", "3.4.0.0"
             VALUE "LegalCopyright", "Copyright (C) 2013 huangezhao."
             VALUE "InternalName", "EzViewer"
             VALUE "OriginalFilename", "EzViewer.exe"
             VALUE "ProductName", "EzViewer"
-                        VALUE "ProductVersion", "3.0.0.0"
+                        VALUE "ProductVersion", "3.4.0.0"
         END
     END
     BLOCK "VarFileInfo"
