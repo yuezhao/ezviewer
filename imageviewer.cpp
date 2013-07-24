@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <QtGui>
+#include <QApplication>
 
 #include "config.h"
 #include "imageviewer.h"

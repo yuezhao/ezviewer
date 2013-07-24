@@ -116,6 +116,10 @@ void ShortcutSetting::setupData()
 void ShortcutSetting::currentItemChanged(int currentRow, int currentColumn,
                                          int previousRow, int previousColumn)
 {
+    Q_UNUSED(currentColumn)
+    Q_UNUSED(previousRow)
+    Q_UNUSED(previousColumn)
+
     if (currentRow >= 0) {
         QString keySequence = table->item(currentRow, 1)->text();
         label->setEnabled(true);

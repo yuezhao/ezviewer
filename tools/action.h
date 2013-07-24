@@ -29,13 +29,14 @@ class Action
 {
 public:
     Action(const QString &description) : mDescription(description) {}
+    virtual ~Action() {}
 
     QString description() const { return mDescription; }
 
     virtual bool run() = 0;
 
 protected:
-    QString mDescription;   // for use reading
+    QString mDescription;   // for user reading
 };
 
 

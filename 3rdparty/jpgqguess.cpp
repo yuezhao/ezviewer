@@ -84,7 +84,6 @@ int process_DQT (const uchar * Data, int length)
     int a;
     int c;
     int tableindex, coefindex/*, row, col*/;
-    unsigned int table[64];
     int *reftable = NULL;
     double cumsf = 0.0, cumsf2 = 0.0;
     int allones = 1;
@@ -110,7 +109,6 @@ int process_DQT (const uchar * Data, int length)
             } else {
                 val=(unsigned int) Data[a++];
             }
-            table[coefindex] = val;
             if (reftable) {
                 double x;
                 // scaling factor in percent 
@@ -124,10 +122,9 @@ int process_DQT (const uchar * Data, int length)
 
         // Print summary stats 
         if (reftable) { // terse output includes quality 
-            double qual, var;
+            double qual;
             cumsf /= 64.0;    // mean scale factor 
             cumsf2 /= 64.0;
-            var = cumsf2 - (cumsf * cumsf); // variance 
             if (allones){      // special case for all-ones table 
                 qual = 100.0;
             }else if (cumsf <= 100.0){

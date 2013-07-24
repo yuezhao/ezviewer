@@ -29,6 +29,11 @@
 #include <QTextStream>
 #include <QProcess>
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#define Q_WS_WIN Q_OS_WIN
+#endif // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+
+
 #ifdef Q_WS_WIN
 #include <Shlobj.h> //for SHChangeNotify(), refresh windows explorer
 #endif  // Q_WS_WIN

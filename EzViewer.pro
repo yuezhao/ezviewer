@@ -2,6 +2,7 @@ TEMPLATE = app
 TARGET = EzViewer
 
 QT += svg xml
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 DEPENDPATH  += . tools ui 3rdparty
 INCLUDEPATH += . tools ui 3rdparty
 

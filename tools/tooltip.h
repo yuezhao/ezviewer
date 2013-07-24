@@ -42,7 +42,7 @@
 #ifndef TOOLTIP_H
 #define TOOLTIP_H
 
-#include <QtGui/qwidget.h>
+#include <QWidget>
 
 
 class ToolTip

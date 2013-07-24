@@ -233,12 +233,12 @@ void PicManager::updateImage()
     loadImage(curImage->currentImage());
 }
 
-void PicManager::hideEvent ( QHideEvent * event )
+void PicManager::hideEvent ( QHideEvent * /* event */ )
 {
     setAnimationPaused(true);
 }
 
-void PicManager::showEvent ( QShowEvent * event )
+void PicManager::showEvent ( QShowEvent * /* event */ )
 {
     setAnimationPaused(false);
 }

@@ -30,11 +30,17 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QTabWidget>
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QtConcurrent/QtConcurrentRun>
+#else
 #include <QtConcurrentRun>
+#endif // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 
 
 SettingsDialog::SettingsDialog(QWidget *parent)
-    : QDialog(parent, Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint),
+    : QDialog(parent, Qt::MSWindowsFixedSizeDialogHint | Qt::WindowTitleHint
+              | Qt::WindowCloseButtonHint),
       commonSetting(new CommonSetting(this)),
       shortcutSetting(new ShortcutSetting(this)),
       willExit(false)

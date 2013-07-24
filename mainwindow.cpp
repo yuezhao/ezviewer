@@ -32,6 +32,11 @@
 
 #include <QtGui>
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QtWidgets>
+#endif // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+
+
 #define GET_SCRIPT(x) #x
 #define SPLIT_FUNCTION(x) &x, #x
 #define SPLIT_PARAM(x) #x, x
@@ -126,8 +131,13 @@ void MainWindow::imageChanged(const QString &fileName)
 void MainWindow::openFile()
 {
     QString currentFile(viewer->filePath());
-    QString defaultDir(currentFile.isEmpty()
-                       ? QDesktopServices::storageLocation(QDesktopServices::PicturesLocation)
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+    const QString systemPicturesPath = QDesktopServices::storageLocation(QDesktopServices::PicturesLocation);
+#else
+    const QStringList systemPaths = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation);
+    const QString systemPicturesPath = systemPaths.empty() ? QString::null : systemPaths.first();
+#endif // QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+    QString defaultDir(currentFile.isEmpty() ? systemPicturesPath
                        : QFileInfo(currentFile).absolutePath());
     QString fileName =
             QFileDialog::getOpenFileName(

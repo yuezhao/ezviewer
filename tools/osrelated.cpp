@@ -27,6 +27,11 @@
 #include <QProcess>
 #include <QThread>
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#define Q_WS_WIN Q_OS_WIN
+#endif // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+
+
 #ifdef Q_WS_WIN
 #define _WIN32_WINNT  0x0500    //! for memory size
 #include <windows.h>
