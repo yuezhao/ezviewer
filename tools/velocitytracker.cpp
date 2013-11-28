@@ -107,12 +107,15 @@ static QPoint deaccelerate(const QPoint &speed, int a = 1, int max = 64)
 
 void VelocityTracker::handleMousePress(QMouseEvent *event)
 {
+    event->ignore();
+
     if (event->button() != Qt::LeftButton)
         return;
 
     switch (d->state) {
 
     case VelocityTrackerPrivate::Steady:
+        event->accept();
         d->state = VelocityTrackerPrivate::Pressed;
         d->pressPos = event->pos();
         break;
@@ -131,16 +134,20 @@ void VelocityTracker::handleMousePress(QMouseEvent *event)
 
 void VelocityTracker::handleMouseRelease(QMouseEvent *event)
 {
+    event->ignore();
+
     if (event->button() != Qt::LeftButton)
         return;
 
     switch (d->state) {
 
     case VelocityTrackerPrivate::Pressed:
+        event->accept();
         d->state = VelocityTrackerPrivate::Steady;
         break;
 
     case VelocityTrackerPrivate::ManualScroll:
+        event->accept();
         if (d->timeStamp.elapsed() > 100) {
             d->timeStamp = QTime::currentTime();
         }
@@ -154,6 +161,7 @@ void VelocityTracker::handleMouseRelease(QMouseEvent *event)
         break;
 
     case VelocityTrackerPrivate::Stop:
+        event->accept();
         d->state = VelocityTrackerPrivate::Steady;
         break;
 
@@ -164,6 +172,8 @@ void VelocityTracker::handleMouseRelease(QMouseEvent *event)
 
 void VelocityTracker::handleMouseMove(QMouseEvent *event)
 {
+    event->ignore();
+
     if (!(event->buttons() & Qt::LeftButton))
         return;
 
@@ -180,11 +190,13 @@ void VelocityTracker::handleMouseMove(QMouseEvent *event)
             d->state = VelocityTrackerPrivate::ManualScroll;
             d->delta = QPoint(0, 0);
             d->pressPos = event->pos();
+            event->accept();
             emit changedDelta(delta);
         }
         break;
 
     case VelocityTrackerPrivate::ManualScroll:
+        event->accept();
         delta = event->pos() - d->pressPos;
         emit changedDelta(delta);
         d->pressPos = event->pos();
