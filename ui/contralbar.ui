@@ -55,7 +55,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset resource="../res/res.qrc">
          <normaloff>:/Setting.png</normaloff>:/Setting.png</iconset>
        </property>
        <property name="iconSize">
@@ -93,7 +93,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset resource="../res/res.qrc">
          <normaloff>:/Open.png</normaloff>:/Open.png</iconset>
        </property>
        <property name="iconSize">
@@ -153,7 +153,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset resource="../res/res.qrc">
          <normaloff>:/Left.png</normaloff>:/Left.png</iconset>
        </property>
        <property name="iconSize">
@@ -191,7 +191,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset resource="../res/res.qrc">
          <normaloff>:/Play.png</normaloff>:/Play.png</iconset>
        </property>
        <property name="iconSize">
@@ -229,7 +229,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset resource="../res/res.qrc">
          <normaloff>:/Right.png</normaloff>:/Right.png</iconset>
        </property>
        <property name="iconSize">
@@ -267,7 +267,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset resource="../res/res.qrc">
          <normaloff>:/Undo.png</normaloff>:/Undo.png</iconset>
        </property>
        <property name="iconSize">
@@ -305,7 +305,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset resource="../res/res.qrc">
          <normaloff>:/Redo.png</normaloff>:/Redo.png</iconset>
        </property>
        <property name="iconSize">
@@ -343,7 +343,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset resource="../res/res.qrc">
          <normaloff>:/Delete.png</normaloff>:/Delete.png</iconset>
        </property>
        <property name="iconSize">
@@ -362,7 +362,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="res.qrc"/>
+  <include location="../res/res.qrc"/>
  </resources>
  <connections/>
 </ui>
