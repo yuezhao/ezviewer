@@ -48,6 +48,11 @@ public:
     void setPreReadingEnabled(bool enabled)
     { ImageFactory::setPreReadingEnabled(enabled); }
 
+    int getCurIndex() const;
+    int getPreIndex(int curIndex) const;
+    int getNextIndex(int curIndex) const;
+    int getDirSize() const;
+
 signals:
     void imageChanged(const QString &fileName);
 
@@ -99,8 +104,6 @@ private:
     QString curPath;
     QString curName;
 
-    int getPreIndex(int curIndex) const;
-    int getNextIndex(int curIndex) const;
     QString getPathAtIndex(int index) const;
 
     void preReadingPic(int index) const;
@@ -118,7 +121,10 @@ private:
     QFileSystemWatcher fsWatcher;
 };
 
-
+inline int PicManager::getCurIndex() const
+{
+    return currentIndex;
+}
 
 inline int PicManager::getPreIndex(int curIndex) const
 {
@@ -130,6 +136,11 @@ inline int PicManager::getNextIndex(int curIndex) const
 {
     //arrive the end of the file list
     return (curIndex + 1 == list.size()) ? 0 : curIndex + 1;
+}
+
+inline int PicManager::getDirSize() const
+{
+    return list.size();
 }
 
 inline void PicManager::preReadingPic(int index) const
