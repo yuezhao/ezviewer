@@ -28,7 +28,9 @@
 #include <QThread>
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-#define Q_WS_WIN Q_OS_WIN
+#   ifdef Q_OS_WIN
+#   define Q_WS_WIN Q_OS_WIN
+#   endif
 #endif // QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 
 
