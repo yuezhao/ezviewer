@@ -106,9 +106,11 @@ void MainWindow::imageChanged(const QString &fileName)
 {
     bool hasFile = !fileName.isEmpty();
     bool hasPicture = viewer->hasPicture();
+    const int curIndex = viewer->getCurIndex();
+    int numTotalPictures = viewer->getDirSize();
 
     setWindowTitle(hasFile
-                   ? QString("%1 - %2").arg(fileName).arg(Global::ProjectName())
+                   ? QString("%1 (%2/%3) - %4").arg(fileName).arg(curIndex + 1).arg(numTotalPictures).arg(Global::ProjectName())
                    : Global::ProjectName());
     ToolTip::hideText();
     QWhatsThis::hideText();
